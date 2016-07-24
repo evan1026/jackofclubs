@@ -18,11 +18,15 @@ RenderEngine::RenderEngine() {
 }
 
 void RenderEngine::init() {
-    inst = new RenderEngine();
+    if (inst == nullptr) {
+        inst = new RenderEngine();
+    }
 }
 
 void RenderEngine::end() {
-    delete inst;
+    if (inst != nullptr) {
+        delete inst;
+    }
 }
 
 void RenderEngine::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
@@ -57,4 +61,23 @@ void RenderEngine::render() {
     for (auto i = renderables.begin(); i != renderables.end(); i++) {
         (*i)->render(*this);
     }
+}
+
+void RenderEngine::startRender(const sf::Vector3f& position) {
+    glPushMatrix();
+    glTranslatef(position.x, position.y, position.z);
+    glBegin(GL_QUADS);
+}
+
+void RenderEngine::color(const sf::Color& color) {
+    glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
+}
+
+void RenderEngine::vertex(const sf::Vector3f& position) {
+    glVertex3f(position.x, position.y, position.z);
+}
+
+void RenderEngine::endRender() {
+    glEnd();
+    glPopMatrix();
 }

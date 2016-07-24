@@ -27,6 +27,11 @@ class RenderEngine {
         void removeRenderable(IRenderable&);
 
         void render();
+
+        void startRender(const sf::Vector3f& position);
+        void color(const sf::Color&);
+        void vertex(const sf::Vector3f&);
+        void endRender();
 };
 
 #endif

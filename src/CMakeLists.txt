@@ -5,4 +5,6 @@ set(SOURCES "${SOURCES} ${CURR_DIR}/main.cpp
                         ${CURR_DIR}/Block.cpp
                         ${CURR_DIR}/RenderEngine.cpp
                         ${CURR_DIR}/Exception.cpp
-                        ${CURR_DIR}/IRenderable.cpp" CACHE STRING "Sources for project" FORCE)
+                        ${CURR_DIR}/IRenderable.cpp
+                        ${CURR_DIR}/Chunk.cpp
+                        ${CURR_DIR}/World.cpp" CACHE STRING "Sources for project" FORCE)

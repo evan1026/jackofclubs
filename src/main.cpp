@@ -5,7 +5,7 @@
 #include <SFML/Window.hpp>
 #include <sstream>
 
-#include "Block.h"
+#include "World.h"
 #include "RenderEngine.h"
 
 sf::Vector3f cameraPos = sf::Vector3f(0.f, 0.f, -200.f);
@@ -22,7 +22,7 @@ float cosDeg(float a);
 int doMain();
 
 #define PI    3.1415926535897932384626433832795
-#define SPEED 10
+#define SPEED 1
 
 using namespace std;
 
@@ -62,7 +62,7 @@ int doMain(){
 
     RenderEngine::init();
     std::shared_ptr<sf::Window> window = RenderEngine::getInst().window;
-
+    World::init();
 
     screenMiddle = sf::Vector2i(window->getSize().x / 2, window->getSize().y / 2);
     sf::Mouse::setPosition(screenMiddle, *window);
@@ -77,9 +77,6 @@ int doMain(){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     perspectiveGL(90.f, 1.f, 1.f, 5000.f);
-
-    Block b1(sf::Vector3f(0.f, 0.f, 0.f), sf::Color(0, 255, 0));
-    Block b2(sf::Vector3f(50.f, 50.f, 50.f), sf::Color(128, 0, 128));
 
     bool running = true;
     while (running){
