@@ -6,7 +6,7 @@ class RenderEngine;
 // Interface for renderable objects. Used by RenderEngine.
 class IRenderable {
     public:
-        virtual void render(RenderEngine&) const = 0;
+        virtual void render(RenderEngine&) = 0;
 
         void addToEngine();
         void removeFromEngine();

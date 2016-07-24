@@ -26,7 +26,7 @@ class World : public IRenderable {
         static void end();
         static World& getInst();
 
-        void render(RenderEngine& e) const;
+        void render(RenderEngine& e);
 
         Block& getBlock(const sf::Vector3i& pos);
         bool blockExists(const sf::Vector3i& pos);

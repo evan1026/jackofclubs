@@ -4,10 +4,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
 
-#include "IRenderable.h"
-#include "RenderEngine.h"
-
-class Block : public IRenderable {
+class Block {
     public:
         enum class Type {
             AIR,
@@ -19,12 +16,8 @@ class Block : public IRenderable {
         sf::Color _color;
         Type _type;
 
-        void renderSide(RenderEngine& e, int sidenum) const;
-
     public:
-        static const float model[6][12];
-        static constexpr float UNIT_LENGTH = 15;
-        static constexpr float SIZE = UNIT_LENGTH * 2;
+        static constexpr float SIZE = 30;
 
         Block(const sf::Vector3i& position, const sf::Color& color, const Type& type)
             : _position(position), _color(color), _type(type) {}
@@ -39,8 +32,6 @@ class Block : public IRenderable {
 
         Type getType() const;
         void setType(const Type& t);
-
-        void render(RenderEngine&) const;
 };
 
 #endif

@@ -43,7 +43,7 @@ World& World::getInst() {
     return *inst;
 }
 
-void World::render(RenderEngine& e) const {
+void World::render(RenderEngine& e) {
     for (auto i = chunks.begin(); i != chunks.end(); ++i) {
         i->second.render(e);
     }
@@ -58,23 +58,19 @@ Block& World::getBlock(const sf::Vector3i& pos) {
         throw OutOfRangeException();
     }
 
-    return chunks[getChunkPos(pos)].getBlock(pos);
+    return chunks.at(getChunkPos(pos)).getBlock(pos);
 }
 
 bool World::blockExists(const sf::Vector3i& pos) {
     std::tuple<int, int, int> chunkPos = getChunkPos(pos);
     auto iter = chunks.find(chunkPos);
 
-    if (iter != chunks.end()) {
-        return chunks[chunkPos].blockExists(pos);
-    } else {
-        return false;
-    }
+    return iter != chunks.end(); //If the block is in a valid chunk, it must exist
 }
 
 Block::Type World::getBlockType(const sf::Vector3i& pos) {
     if (blockExists(pos)) {
-        return chunks[getChunkPos(pos)].getBlockType(pos);
+        return chunks.at(getChunkPos(pos)).getBlockType(pos);
     } else {
         return Block::Type::AIR;
     }
