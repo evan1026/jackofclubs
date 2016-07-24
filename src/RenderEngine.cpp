@@ -11,8 +11,7 @@
 RenderEngine* RenderEngine::inst = nullptr;
 
 RenderEngine::RenderEngine() {
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
+    sf::ContextSettings settings(24, 0, 0, 1, 1, sf::ContextSettings::Attribute::Debug);
     window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(800,600), "jack o' clubs", sf::Style::Default, settings));
     window->setVerticalSyncEnabled(true);
 }
@@ -63,8 +62,16 @@ void RenderEngine::render() {
     }
 }
 
-void RenderEngine::startRender(const sf::Vector3f& position) {
+void RenderEngine::pushMatrix() {
     glPushMatrix();
+}
+
+void RenderEngine::popMatrix() {
+    glPopMatrix();
+}
+
+void RenderEngine::startRender(const sf::Vector3f& position) {
+    pushMatrix();
     glTranslatef(position.x, position.y, position.z);
     glBegin(GL_QUADS);
 }
@@ -79,5 +86,5 @@ void RenderEngine::vertex(const sf::Vector3f& position) {
 
 void RenderEngine::endRender() {
     glEnd();
-    glPopMatrix();
+    popMatrix();
 }

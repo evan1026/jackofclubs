@@ -6,6 +6,7 @@
 
 #include "IRenderable.h"
 #include "Chunk.h"
+#include "Block.h"
 #include "tuple_fix.h"
 
 class World : public IRenderable {
@@ -16,6 +17,8 @@ class World : public IRenderable {
 
     World();
 
+    std::tuple<int, int, int> getChunkPos(const sf::Vector3i& pos);
+
     public:
         virtual ~World(); //virtual just to silence warnings; doesn't make an actual difference here
 
@@ -24,6 +27,10 @@ class World : public IRenderable {
         static World& getInst();
 
         void render(RenderEngine& e) const;
+
+        Block& getBlock(const sf::Vector3i& pos);
+        bool blockExists(const sf::Vector3i& pos);
+        Block::Type getBlockType(const sf::Vector3i& pos);
 };
 
 #endif

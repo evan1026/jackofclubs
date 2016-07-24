@@ -22,7 +22,7 @@ float cosDeg(float a);
 int doMain();
 
 #define PI    3.1415926535897932384626433832795
-#define SPEED 1
+#define SPEED 5
 
 using namespace std;
 

@@ -18,6 +18,8 @@ class Chunk : public IRenderable {
     __chunk  blocks;
     sf::Vector3i position;
 
+    sf::Vector3i translatePos(const sf::Vector3i& worldPos);
+
     public:
 
         static constexpr int BLOCK_COUNT = BLOCK_COUNT_DEF;
@@ -27,6 +29,10 @@ class Chunk : public IRenderable {
         Chunk();
 
         void render(RenderEngine& e) const;
+
+        Block& getBlock(const sf::Vector3i& pos);
+        bool blockExists(const sf::Vector3i& pos);
+        Block::Type getBlockType(const sf::Vector3i& pos);
 };
 
 #endif

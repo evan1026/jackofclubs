@@ -4,6 +4,7 @@
 #include "Chunk.h"
 #include "RenderEngine.h"
 #include "NullptrException.h"
+#include "OutOfRangeException.h"
 
 World* World::inst = nullptr;
 
@@ -45,5 +46,36 @@ World& World::getInst() {
 void World::render(RenderEngine& e) const {
     for (auto i = chunks.begin(); i != chunks.end(); ++i) {
         i->second.render(e);
+    }
+}
+
+std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) {
+    return std::make_tuple(pos.x / Chunk::BLOCK_COUNT, pos.y / Chunk::BLOCK_COUNT, pos.z / Chunk::BLOCK_COUNT);
+}
+
+Block& World::getBlock(const sf::Vector3i& pos) {
+    if (!blockExists(pos)) {
+        throw OutOfRangeException();
+    }
+
+    return chunks[getChunkPos(pos)].getBlock(pos);
+}
+
+bool World::blockExists(const sf::Vector3i& pos) {
+    std::tuple<int, int, int> chunkPos = getChunkPos(pos);
+    auto iter = chunks.find(chunkPos);
+
+    if (iter != chunks.end()) {
+        return chunks[chunkPos].blockExists(pos);
+    } else {
+        return false;
+    }
+}
+
+Block::Type World::getBlockType(const sf::Vector3i& pos) {
+    if (blockExists(pos)) {
+        return chunks[getChunkPos(pos)].getBlockType(pos);
+    } else {
+        return Block::Type::AIR;
     }
 }

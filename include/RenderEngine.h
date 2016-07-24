@@ -28,6 +28,8 @@ class RenderEngine {
 
         void render();
 
+        void pushMatrix();
+        void popMatrix();
         void startRender(const sf::Vector3f& position);
         void color(const sf::Color&);
         void vertex(const sf::Vector3f&);
