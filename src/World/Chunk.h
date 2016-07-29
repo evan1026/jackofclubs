@@ -2,11 +2,13 @@
 #define CHUNK_H
 
 #include <array>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System.hpp>
 #include <vector>
 
-#include "World/Block.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
+#include "World/Block.h"
 
 #define BLOCK_COUNT_DEF 16
 
@@ -16,20 +18,20 @@ typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
 
 class Chunk {
 
-    __chunk  blocks;
-    sf::Vector3i position;
-    std::vector<Vertex> vertArray;
-    bool changed;
+    __chunk _blocks;
+    sf::Vector3i _position;
+    std::vector<Vertex> _vertArray;
+    bool _changed;
 
-    sf::Vector3i globalToLocalBlockPos(const sf::Vector3i& worldPos);
-    sf::Vector3i localToGlobalBlockPos(const sf::Vector3i& localPos);
+    sf::Vector3i globalToLocalBlockPos(const sf::Vector3i& worldPos) const;
+    sf::Vector3i localToGlobalBlockPos(const sf::Vector3i& localPos) const;
     void rebuildVertArray();
-    void addFace(float fp[3], float fc[3], const sf::Vector2i& order);
+    void addFace(const sf::Vector3i& target, const int& addTarget, const sf::Color& c, const sf::Vector2i& order);
 
     public:
 
         static constexpr int BLOCK_COUNT = BLOCK_COUNT_DEF;
-        static constexpr float SIZE = BLOCK_COUNT * Block::SIZE;
+        static constexpr float RENDER_WIDTH = BLOCK_COUNT * Block::SIZE;
 
         Chunk(const sf::Vector3i& position);
         Chunk();
@@ -37,8 +39,9 @@ class Chunk {
         void render(RenderEngine& e);
 
         Block& getBlock(const sf::Vector3i& pos);
-        Block::Type getBlockType(const sf::Vector3i& pos);
-        bool isInChunk(const sf::Vector3i& pos);
+        const Block& getBlock(const sf::Vector3i& pos) const;
+        Block::Type getBlockType(const sf::Vector3i& pos) const;
+        bool isInChunk(const sf::Vector3i& pos) const;
 
         void notifyChanged();
 };

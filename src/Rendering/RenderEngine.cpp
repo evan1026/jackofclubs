@@ -10,15 +10,15 @@
 
 RenderEngine* RenderEngine::inst = nullptr;
 
-RenderEngine::RenderEngine() {
-    sf::ContextSettings settings(24, 0, 0, 1, 1, sf::ContextSettings::Attribute::Debug);
-    window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(1920,1080), "jack o' clubs", sf::Style::Default, settings));
+RenderEngine::RenderEngine(int width, int height) {
+    sf::ContextSettings settings(24);
+    window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(width, height), "jack o' clubs", sf::Style::Default, settings));
     window->setVerticalSyncEnabled(true);
 }
 
-void RenderEngine::init() {
+void RenderEngine::init(int width, int height) {
     if (inst == nullptr) {
-        inst = new RenderEngine();
+        inst = new RenderEngine(width, height);
     }
 }
 
@@ -28,10 +28,10 @@ void RenderEngine::end() {
     }
 }
 
+//Code from stackoverflow
 void RenderEngine::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
     GLdouble fW, fH;
 
-    //fH = tan( (fovY / 2) / 180 * pi ) * zNear;
     fH = tan( fovY / 360 * PI ) * zNear;
     fW = fH * aspect;
 
@@ -46,45 +46,35 @@ RenderEngine& RenderEngine::getInst() {
 }
 
 void RenderEngine::addRenderable(IRenderable& object) {
-    renderables.insert(&object);
+    _renderables.insert(&object);
 }
 
 void RenderEngine::removeRenderable(IRenderable& object) {
-    auto search = renderables.find(&object);
-    if (search != renderables.end()) {
-        renderables.erase(search);
+    auto search = _renderables.find(&object);
+    if (search != _renderables.end()) {
+        _renderables.erase(search);
     }
 }
 
 void RenderEngine::render() {
-    for (auto i = renderables.begin(); i != renderables.end(); i++) {
+    for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
         (*i)->render(*this);
     }
 }
 
-void RenderEngine::pushMatrix() {
+void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
     glPushMatrix();
-}
 
-void RenderEngine::popMatrix() {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].pos[0]);
+    glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].color[0]);
+
+    glDrawArrays(GL_QUADS, 0, vertices.size());
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
     glPopMatrix();
-}
-
-void RenderEngine::startRender(const sf::Vector3f& position) {
-    pushMatrix();
-    glTranslatef(position.x, position.y, position.z);
-    glBegin(GL_QUADS);
-}
-
-void RenderEngine::color(const sf::Color& color) {
-    glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
-}
-
-void RenderEngine::vertex(const sf::Vector3f& position) {
-    glVertex3f(position.x, position.y, position.z);
-}
-
-void RenderEngine::endRender() {
-    glEnd();
-    popMatrix();
 }

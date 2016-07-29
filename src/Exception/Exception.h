@@ -2,18 +2,18 @@
 #define EXCEPTION_H
 
 #include <sstream>
-#include <stdexcept>
-#include <execinfo.h>
+
+#define STACK_TRACE_MAX_SIZE 500
 
 class Exception : public std::runtime_error {
     char ** _out;
     std::string _reason;
-    void *_stackTrace[500];
+    void *_stackTrace[STACK_TRACE_MAX_SIZE];
     size_t _stackSize;
     int _stackSkip;
 
-    void printStackTrace(std::stringstream& ss, int stack_skip) const;
-    void demangle(std::stringstream&ss, char** symbollist, size_t addrlen, int stack_skip) const;
+    void printStackTrace(std::stringstream& ss) const;
+    void demangle(std::stringstream&ss, char** symbollist, size_t addrlen) const;
     void saveStackTrace();
 
 public:

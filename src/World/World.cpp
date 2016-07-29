@@ -1,19 +1,21 @@
 #include <SFML/System.hpp>
 
-#include "World/World.h"
-#include "World/Chunk.h"
-#include "Rendering/RenderEngine.h"
 #include "Exception/NullptrException.h"
 #include "Exception/OutOfRangeException.h"
+#include "Rendering/RenderEngine.h"
+#include "World/Chunk.h"
+#include "World/World.h"
 
 World* World::inst = nullptr;
 
 World::World() {
-    for (int i = -2; i < 2; ++i) {
-        for (int j = -2; j < 2; ++j) {
-            sf::Vector3i pos(i, 0, j);
-            std::tuple<int, int, int> posTup = std::make_tuple(pos.x, pos.y, pos.z);
-            chunks[posTup] = Chunk(pos);
+    for (int x = -2; x < 2; ++x) {
+        for (int y = 0; y < 8; ++y) {
+            for (int z = -2; z < 2; ++z) {
+                sf::Vector3i pos(x, y, z);
+                std::tuple<int, int, int> posTup = std::make_tuple(pos.x, pos.y, pos.z);
+                _chunks[posTup] = Chunk(pos);
+            }
         }
     }
 
@@ -44,12 +46,12 @@ World& World::getInst() {
 }
 
 void World::render(RenderEngine& e) {
-    for (auto i = chunks.begin(); i != chunks.end(); ++i) {
+    for (auto i = _chunks.begin(); i != _chunks.end(); ++i) {
         i->second.render(e);
     }
 }
 
-std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) {
+std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) const {
     int x = pos.x;
     int y = pos.y;
     int z = pos.z;
@@ -69,24 +71,23 @@ std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) {
     return std::make_tuple(x, y, z);
 }
 
-const Block& World::getBlock(const sf::Vector3i& pos) {
+const Block& World::getBlock(const sf::Vector3i& pos) const {
     if (!blockExists(pos)) {
         throw OutOfRangeException();
     }
 
-    return chunks.at(getChunkPos(pos)).getBlock(pos);
+    return _chunks.at(getChunkPos(pos)).getBlock(pos);
 }
 
-bool World::blockExists(const sf::Vector3i& pos) {
+bool World::blockExists(const sf::Vector3i& pos) const {
     std::tuple<int, int, int> chunkPos = getChunkPos(pos);
-    auto iter = chunks.find(chunkPos);
-
-    return iter != chunks.end(); //If the block is in a valid chunk, it must exist
+    auto iter = _chunks.find(chunkPos);
+    return iter != _chunks.end(); //If the block is in a valid chunk, it must exist
 }
 
-Block::Type World::getBlockType(const sf::Vector3i& pos) {
+Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     if (blockExists(pos)) {
-        return chunks.at(getChunkPos(pos)).getBlockType(pos);
+        return _chunks.at(getChunkPos(pos)).getBlockType(pos);
     } else {
         return Block::Type::AIR;
     }
@@ -94,7 +95,7 @@ Block::Type World::getBlockType(const sf::Vector3i& pos) {
 
 void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
     if (blockExists(pos)) {
-        auto& chunk = chunks.at(getChunkPos(pos));
+        Chunk& chunk = _chunks.at(getChunkPos(pos));
         chunk.getBlock(pos).setType(type);
         notifyChanged(pos);
 
@@ -112,6 +113,6 @@ void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
 
 void World::notifyChanged(const sf::Vector3i& pos) {
     if (blockExists(pos)) {
-        chunks.at(getChunkPos(pos)).notifyChanged();
+        _chunks.at(getChunkPos(pos)).notifyChanged();
     }
 }

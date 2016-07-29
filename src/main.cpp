@@ -4,12 +4,11 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <sstream>
-#include <random>
 
-#include "World/World.h"
 #include "Rendering/RenderEngine.h"
+#include "World/World.h"
 
-sf::Vector3f cameraPos = sf::Vector3f(0.f, 0.f, -200.f);
+sf::Vector3f cameraPos = sf::Vector3f(0.f, -128.f * 30, 0.f);
 sf::Vector3f cameraRot = sf::Vector3f(0.f, 0.f, 0.f);
 sf::Vector2i screenMiddle;
 bool focused = true;
@@ -62,14 +61,7 @@ int doMain(){
 
     //poop(nullptr, nullptr);
 
-    //std::default_random_engine generator;
-    //std::uniform_int_distribution<int> xzdistribution(-32, 31);
-    //std::uniform_int_distribution<int> ydistribution(0,16);
-
-    //auto xzrand = std::bind(xzdistribution, generator);
-    //auto yrand = std::bind(ydistribution, generator);
-
-    RenderEngine::init();
+    RenderEngine::init(1920, 1080);
     std::shared_ptr<sf::Window> window = RenderEngine::getInst().window;
     World::init();
 
@@ -85,7 +77,8 @@ int doMain(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    perspectiveGL(90.f, 1920.f / 1080.f, 1.f, 5000.f);
+    glViewport(0,0,window->getSize().x,window->getSize().y);
+    perspectiveGL(60.f, (float)window->getSize().x / (float)window->getSize().y, 1.f, 5000.f);
 
     int x = -32, y = 0, z = -32;
 
@@ -95,10 +88,10 @@ int doMain(){
 
         if (++x == 32) {
             x = -32;
-            if (++y == 16) {
+            if (++y == 128) {
                 y = 0;
                 if (++z == 32) {
-                    z = -31;
+                    z = -32;
                 }
             }
         }

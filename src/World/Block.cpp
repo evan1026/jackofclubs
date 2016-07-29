@@ -1,6 +1,5 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
-#include <SFML/OpenGL.hpp>
 
 #include "World/Block.h"
 #include "World/World.h"
