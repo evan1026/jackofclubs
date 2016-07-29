@@ -4,6 +4,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <sstream>
+#include <random>
 
 #include "World.h"
 #include "RenderEngine.h"
@@ -36,6 +37,7 @@ void perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFa
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
+#include <cstring>
 int main() {
     try {
         return doMain();
@@ -45,7 +47,7 @@ int main() {
         std::cout << "* Exception uncaught. Must terminate. *" << std::endl;
         std::cout << "*      Exception details follow       *" << std::endl;
         std::cout << "***************************************" << std::endl;
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
         std::cout << "If you're seeing this in production, please screenshot and send to the developer." << std::endl;
         return 1;
     }
@@ -59,6 +61,13 @@ void poop(char * no, RenderEngine* yes) {
 int doMain(){
 
     //poop(nullptr, nullptr);
+
+    //std::default_random_engine generator;
+    //std::uniform_int_distribution<int> xzdistribution(-32, 31);
+    //std::uniform_int_distribution<int> ydistribution(0,16);
+
+    //auto xzrand = std::bind(xzdistribution, generator);
+    //auto yrand = std::bind(ydistribution, generator);
 
     RenderEngine::init();
     std::shared_ptr<sf::Window> window = RenderEngine::getInst().window;
@@ -76,10 +85,26 @@ int doMain(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    perspectiveGL(90.f, 1.f, 1.f, 5000.f);
+    perspectiveGL(90.f, 1920.f / 1080.f, 1.f, 5000.f);
+
+    int x = -32, y = 0, z = -32;
 
     bool running = true;
     while (running){
+        sf::Vector3i pos(x, y, z);
+
+        if (++x == 32) {
+            x = -32;
+            if (++y == 16) {
+                y = 0;
+                if (++z == 32) {
+                    z = -31;
+                }
+            }
+        }
+        //sf::Vector3i pos(xzrand(), yrand(), xzrand());
+        World::getInst().setBlockType(pos, Block::Type::AIR);
+
         sf::Event event;
         while (window->pollEvent(event)){
             if (event.type == sf::Event::Closed){
@@ -138,7 +163,11 @@ void draw(){
 
 void doTranslations(sf::Window & window){
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2i diff = mousePos - screenMiddle;
+    sf::Vector2i diffi = mousePos - screenMiddle;
+
+#define SENSITIVITY 0.1
+
+    sf::Vector2f diff = sf::Vector2f(diffi.x * SENSITIVITY, diffi.y * SENSITIVITY);
 
     cameraRot += sf::Vector3f(diff.y, diff.x, 0.f);
     if (cameraRot.x > 90) cameraRot.x = 90;

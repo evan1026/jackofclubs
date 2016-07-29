@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <sstream>
@@ -5,7 +6,7 @@
 
 #include "Exception.h"
 
-void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrlen, int stack_skip) {
+void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrlen, int stack_skip) const {
     size_t funcnamesize = 1024;
     char funcname[1024];
 
@@ -71,30 +72,29 @@ void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrle
     }
 }
 
-void Exception::printStackTrace(std::stringstream& ss, int stack_skip) {
-    void *array[1000];
-    size_t size;
-
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 1000);
-
-    // print out all the frames to stderr
-    char** lines = backtrace_symbols(array, size);
-
-    demangle(ss, lines, size, stack_skip + 1);
-
+void Exception::printStackTrace(std::stringstream& ss, int stackSkip) const {
+    char** lines = backtrace_symbols(_stackTrace, _stackSize);
+    demangle(ss, lines, _stackSize, stackSkip);
     delete[] lines;
 }
 
-Exception::Exception(std::string reason, int stack_skip) : std::runtime_error(reason), _reason(reason) {
-    std::stringstream ss;
-    printStackTrace(ss, stack_skip + 1);
-    _other = ss.str();
+void Exception::saveStackTrace() {
+    _stackSize = backtrace(_stackTrace, 1000);
 }
 
-const char* Exception::what() const _GLIBCXX_USE_NOEXCEPT {
+Exception::Exception(std::string reason, int stackSkip) :
+            std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2) { //+2 because of the 2 extra functions we add
+    _out = new char*;
+    saveStackTrace();
+}
+
+const char* Exception::what() const noexcept {
     std::stringstream ss;
-    ss << _reason << std::endl << _other;
-    return ss.str().c_str();
+    ss << _reason << std::endl;
+    printStackTrace(ss, _stackSkip);
+
+    *_out = new char[ss.str().length()]; //Have to do it this way to get around the const thing
+    strcpy(*_out, ss.str().c_str());
+    return *_out;
 }
 

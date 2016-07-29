@@ -12,7 +12,7 @@ RenderEngine* RenderEngine::inst = nullptr;
 
 RenderEngine::RenderEngine() {
     sf::ContextSettings settings(24, 0, 0, 1, 1, sf::ContextSettings::Attribute::Debug);
-    window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(800,600), "jack o' clubs", sf::Style::Default, settings));
+    window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(1920,1080), "jack o' clubs", sf::Style::Default, settings));
     window->setVerticalSyncEnabled(true);
 }
 

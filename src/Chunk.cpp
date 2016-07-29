@@ -134,7 +134,15 @@ void Chunk::render(RenderEngine& e) {
 
 
 sf::Vector3i Chunk::globalToLocalBlockPos(const sf::Vector3i& worldPos) {
-    return sf::Vector3i(worldPos.x % BLOCK_COUNT, worldPos.y % BLOCK_COUNT, worldPos.z % BLOCK_COUNT);
+    int x = worldPos.x % BLOCK_COUNT;
+    int y = worldPos.y % BLOCK_COUNT;
+    int z = worldPos.z % BLOCK_COUNT;
+
+    if (x < 0) x += BLOCK_COUNT;
+    if (y < 0) y += BLOCK_COUNT;
+    if (z < 0) z += BLOCK_COUNT;
+
+    return sf::Vector3i(x, y, z);
 }
 
 sf::Vector3i Chunk::localToGlobalBlockPos(const sf::Vector3i& localPos) {
@@ -149,7 +157,6 @@ Block& Chunk::getBlock(const sf::Vector3i& worldPos) {
     }
 
     sf::Vector3i pos = globalToLocalBlockPos(worldPos);
-
     return blocks.at(pos.x).at(pos.y).at(pos.z);
 }
 
@@ -165,4 +172,8 @@ bool Chunk::isInChunk(const sf::Vector3i& pos) {
     return (pos.x >= position.x * BLOCK_COUNT && pos.x < position.x * BLOCK_COUNT + BLOCK_COUNT
             && pos.y >= position.y * BLOCK_COUNT && pos.y < position.y * BLOCK_COUNT + BLOCK_COUNT
             && pos.z >= position.z * BLOCK_COUNT && pos.z < position.z * BLOCK_COUNT + BLOCK_COUNT);
+}
+
+void Chunk::notifyChanged() {
+    changed = true;
 }

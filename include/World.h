@@ -28,9 +28,12 @@ class World : public IRenderable {
 
         void render(RenderEngine& e);
 
-        Block& getBlock(const sf::Vector3i& pos);
+        const Block& getBlock(const sf::Vector3i& pos);
         bool blockExists(const sf::Vector3i& pos);
         Block::Type getBlockType(const sf::Vector3i& pos);
+        void setBlockType(const sf::Vector3i& pos, const Block::Type& type);
+
+        void notifyChanged(const sf::Vector3i& pos);
 };
 
 #endif
