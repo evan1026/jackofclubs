@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(jackofclubs)
 
 set(SOURCE_DIR "src")
-set(INCLUDE_DIR "include")
+set(INCLUDE_DIR "src")
 set(EXECUTABLE_NAME "jackofclubs")
 set(DEBUG true)
 

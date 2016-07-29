@@ -1,10 +1,10 @@
 #include <SFML/System.hpp>
 
-#include "World.h"
-#include "Chunk.h"
-#include "RenderEngine.h"
-#include "NullptrException.h"
-#include "OutOfRangeException.h"
+#include "World/World.h"
+#include "World/Chunk.h"
+#include "Rendering/RenderEngine.h"
+#include "Exception/NullptrException.h"
+#include "Exception/OutOfRangeException.h"
 
 World* World::inst = nullptr;
 

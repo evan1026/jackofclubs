@@ -2,9 +2,9 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "NullptrException.h"
-#include "RenderEngine.h"
-#include "IRenderable.h"
+#include "Exception/NullptrException.h"
+#include "Rendering/RenderEngine.h"
+#include "Rendering/IRenderable.h"
 
 #define PI 3.1415926535897932384626433832795
 

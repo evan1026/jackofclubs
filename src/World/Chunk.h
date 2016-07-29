@@ -4,9 +4,9 @@
 #include <array>
 #include <vector>
 
-#include "Block.h"
-#include "RenderEngine.h"
-#include "Vertex.h"
+#include "World/Block.h"
+#include "Rendering/RenderEngine.h"
+#include "Rendering/Vertex.h"
 
 #define BLOCK_COUNT_DEF 16
 

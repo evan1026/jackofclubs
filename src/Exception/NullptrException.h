@@ -1,7 +1,7 @@
 #ifndef NULLPTR_EXCEPTION_H
 #define NULLPTR_EXCEPTION_H
 
-#include "Exception.h"
+#include "Exception/Exception.h"
 
 class NullptrException : public Exception {
 public:

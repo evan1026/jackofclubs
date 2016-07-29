@@ -1,9 +1,9 @@
 #include <SFML/System.hpp>
 
-#include "Block.h"
-#include "Chunk.h"
-#include "OutOfRangeException.h"
-#include "World.h"
+#include "World/Block.h"
+#include "World/Chunk.h"
+#include "Exception/OutOfRangeException.h"
+#include "World/World.h"
 
 constexpr float COLOR_SCALE = 256.f / Chunk::BLOCK_COUNT;
 

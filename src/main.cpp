@@ -6,8 +6,8 @@
 #include <sstream>
 #include <random>
 
-#include "World.h"
-#include "RenderEngine.h"
+#include "World/World.h"
+#include "Rendering/RenderEngine.h"
 
 sf::Vector3f cameraPos = sf::Vector3f(0.f, 0.f, -200.f);
 sf::Vector3f cameraRot = sf::Vector3f(0.f, 0.f, 0.f);

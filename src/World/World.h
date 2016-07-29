@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include <SFML/System.hpp>
 
-#include "IRenderable.h"
-#include "Chunk.h"
-#include "Block.h"
-#include "tuple_fix.h"
+#include "Rendering/IRenderable.h"
+#include "World/Chunk.h"
+#include "World/Block.h"
+#include "Utils/tuple_fix.h"
 
 class World : public IRenderable {
 

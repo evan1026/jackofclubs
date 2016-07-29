@@ -2,9 +2,8 @@
 #include <SFML/System.hpp>
 #include <SFML/OpenGL.hpp>
 
-#include "Block.h"
-#include "RenderEngine.h"
-#include "World.h"
+#include "World/Block.h"
+#include "World/World.h"
 
 sf::Vector3i Block::getPosition() const {
     return _position;

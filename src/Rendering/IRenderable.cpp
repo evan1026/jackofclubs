@@ -1,5 +1,5 @@
-#include "IRenderable.h"
-#include "RenderEngine.h"
+#include "Rendering/IRenderable.h"
+#include "Rendering/RenderEngine.h"
 
 void IRenderable::addToEngine() {
     RenderEngine::getInst().addRenderable(*this);

@@ -1,7 +1,7 @@
 #ifndef OUT_OF_RANGE_EXCEPTION_H
 #define OUT_OF_RANGE_EXCEPTION_H
 
-#include "Exception.h"
+#include "Exception/Exception.h"
 
 class OutOfRangeException : public Exception {
 public:
