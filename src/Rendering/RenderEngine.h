@@ -25,11 +25,14 @@ class RenderEngine {
         static void end();
         static RenderEngine& getInst();
 
-        void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+        void setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar);
+
         void addRenderable(IRenderable&);
         void removeRenderable(IRenderable&);
 
-        void render();
+        void handleResize(int width, int height);
+
+        void render(const sf::Vector3f& rotation, const sf::Vector3f& position); //TODO temp parameters because they are in main still
 
         void renderVertexArray(const std::vector<Vertex>& vertices);
 };

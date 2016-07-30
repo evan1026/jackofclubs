@@ -14,6 +14,14 @@ RenderEngine::RenderEngine(int width, int height) {
     sf::ContextSettings settings(24);
     window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(width, height), "jack o' clubs", sf::Style::Default, settings));
     window->setVerticalSyncEnabled(true);
+
+    glClearDepth(1.f);
+    glClearColor(0.f, 0.f, 0.f, 0.f);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+
+    setPerspective(60.f, window->getSize().x, window->getSize().y, 1.f, 10000.f);
 }
 
 void RenderEngine::init(int width, int height) {
@@ -29,7 +37,13 @@ void RenderEngine::end() {
 }
 
 //Code from stackoverflow
-void RenderEngine::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
+void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar) {
+    GLdouble aspect = (double) width / height;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, window->getSize().x, window->getSize().y);
+
     GLdouble fW, fH;
 
     fH = tan( fovY / 360 * PI ) * zNear;
@@ -56,7 +70,21 @@ void RenderEngine::removeRenderable(IRenderable& object) {
     }
 }
 
-void RenderEngine::render() {
+void RenderEngine::handleResize(int width, int height) {
+    glViewport(0, 0, width, height);
+    setPerspective(60.f, width, height, 1.f, 10000.f);
+}
+
+void RenderEngine::render(const sf::Vector3f& rotation, const sf::Vector3f& position) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glRotatef(rotation.x, 1.f, 0.f, 0.f);
+    glRotatef(rotation.y, 0.f, 1.f, 0.f);
+    glRotatef(rotation.z, 0.f, 0.f, 1.f);
+    glTranslatef(position.x, position.y, position.z);
+
     for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
         (*i)->render(*this);
     }
