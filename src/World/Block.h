@@ -4,7 +4,10 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
 
-class Block {
+#include "Utils/ICollidable.h"
+#include "Utils/AABB.h"
+
+class Block : public ICollidable {
     public:
         enum class Type {
             AIR,
@@ -19,10 +22,8 @@ class Block {
     public:
         static constexpr float SIZE = 30;
 
-        Block(const sf::Vector3i& position, const sf::Color& color, const Type& type)
-            : _position(position), _color(color), _type(type) {}
-
-        Block() : Block(sf::Vector3i(0,0,0), sf::Color(0,0,0), Type(Type::AIR)) {}
+        Block(const sf::Vector3i& position, const sf::Color& color, const Type& type);
+        Block();
 
         sf::Vector3i getPosition() const;
         void setPosition(const sf::Vector3i& position);
@@ -32,6 +33,8 @@ class Block {
 
         Type getType() const;
         void setType(const Type& t);
+
+        AABB getBoundingBox() const;
 };
 
 #endif

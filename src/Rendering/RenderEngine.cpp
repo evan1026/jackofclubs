@@ -83,7 +83,7 @@ void RenderEngine::render(const sf::Vector3f& rotation, const sf::Vector3f& posi
     glRotatef(rotation.x, 1.f, 0.f, 0.f);
     glRotatef(rotation.y, 0.f, 1.f, 0.f);
     glRotatef(rotation.z, 0.f, 0.f, 1.f);
-    glTranslatef(position.x, position.y, position.z);
+    glTranslatef(-position.x * 30, -(position.y + 2)  * 30, -position.z * 30);
 
     for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
         (*i)->render(*this);

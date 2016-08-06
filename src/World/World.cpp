@@ -1,7 +1,9 @@
 #include <SFML/System.hpp>
+#include <vector>
 
 #include "Exception/NullptrException.h"
 #include "Exception/OutOfRangeException.h"
+#include "Player.h"
 #include "Rendering/RenderEngine.h"
 #include "World/Chunk.h"
 #include "World/World.h"
@@ -98,21 +100,79 @@ void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
         Chunk& chunk = _chunks.at(getChunkPos(pos));
         chunk.getBlock(pos).setType(type);
         notifyChanged(pos);
+    }
+}
 
-        //To avoid render bug where you can see through the world,
-        //we notify in all directions to make sure neighboring chunks
-        //get updated as well
-        notifyChanged(sf::Vector3i(pos.x + 1, pos.y, pos.z));
-        notifyChanged(sf::Vector3i(pos.x - 1, pos.y, pos.z));
-        notifyChanged(sf::Vector3i(pos.x, pos.y + 1, pos.z));
-        notifyChanged(sf::Vector3i(pos.x, pos.y - 1, pos.z));
-        notifyChanged(sf::Vector3i(pos.x, pos.y, pos.z + 1));
-        notifyChanged(sf::Vector3i(pos.x, pos.y, pos.z - 1));
+sf::Color World::getBlockColor(const sf::Vector3i& pos) const {
+    if (blockExists(pos)) {
+        return _chunks.at(getChunkPos(pos)).getBlock(pos).getColor();
+    } else {
+        return sf::Color::Black;
+    }
+}
+
+void World::setBlockColor(const sf::Vector3i& pos, const sf::Color& color) {
+    if (blockExists(pos)) {
+        Chunk& chunk = _chunks.at(getChunkPos(pos));
+        chunk.getBlock(pos).setColor(color);
+        notifyChanged(pos);
     }
 }
 
 void World::notifyChanged(const sf::Vector3i& pos) {
+        notifyChangedSingle(pos);
+
+        //To avoid render bug where you can see through the world,
+        //we notify in all directions to make sure neighboring chunks
+        //get updated as well
+        notifyChangedSingle(sf::Vector3i(pos.x + 1, pos.y, pos.z));
+        notifyChangedSingle(sf::Vector3i(pos.x - 1, pos.y, pos.z));
+        notifyChangedSingle(sf::Vector3i(pos.x, pos.y + 1, pos.z));
+        notifyChangedSingle(sf::Vector3i(pos.x, pos.y - 1, pos.z));
+        notifyChangedSingle(sf::Vector3i(pos.x, pos.y, pos.z + 1));
+        notifyChangedSingle(sf::Vector3i(pos.x, pos.y, pos.z - 1));
+}
+
+void World::notifyChangedSingle(const sf::Vector3i& pos) {
     if (blockExists(pos)) {
         _chunks.at(getChunkPos(pos)).notifyChanged();
     }
+}
+
+std::vector<Block> World::checkCollision(const Player& player) {
+    auto& position = player.getPosition();
+    std::vector<Block> collision;
+
+    for (int x = std::floor(position.x); x <= std::ceil(position.x + 1); ++x) {
+
+        for (int z = std::floor(position.z); z <= std::ceil(position.z + 1); ++z) {
+            sf::Vector3i top, bottom;
+
+            for (int y = std::floor(position.y); y <= std::ceil(position.y + 3); ++y) {
+                sf::Vector3i blockPos(x, y, z);
+
+                if (blockExists(blockPos)) {
+
+                    if (player.checkCollision(getBlock(blockPos))) {
+
+                        if (bottom == sf::Vector3i(0,0,0)) {
+                            bottom = blockPos;
+                        } else {
+                            top = blockPos;
+                        } // if (bottom uninit)
+
+                    } //if (checkCollision)
+
+                } // if block exists
+
+            } //for y
+
+            if (top != sf::Vector3i(0,0,0))
+                collision.push_back(getBlock(top));
+            if (bottom != sf::Vector3i(0,0,0))
+                collision.push_back(getBlock(bottom));
+
+        } //for z
+    } // for x
+    return collision;
 }

@@ -3,13 +3,15 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include "Player.h"
 #include "Rendering/RenderEngine.h"
 #include "World/World.h"
 
-sf::Vector3f cameraPos = sf::Vector3f(0.f, -128.f * 30, 0.f);
+sf::Vector3f cameraPos = sf::Vector3f(0.f, 140.f, 0.f);
 sf::Vector3f cameraRot = sf::Vector3f(0.f, 0.f, 0.f);
 sf::Vector2i screenMiddle;
 bool focused = true;
+Player p(Player::Type::SELF, cameraPos, cameraRot);
 
 void doTranslations(sf::Window & window);
 float sinDeg(float a);
@@ -17,7 +19,7 @@ float cosDeg(float a);
 int doMain();
 
 #define PI    3.1415926535897932384626433832795
-#define SPEED 5
+#define SPEED 0.6
 
 int main() {
     try {
@@ -41,6 +43,8 @@ void throwException(char * no, RenderEngine* yes) {
 }
 
 int doMain(){
+
+    cameraPos += sf::Vector3f(0.5f, 0.f, 0.5f);
 
     //throwException(nullptr, nullptr);
 
@@ -124,23 +128,26 @@ void doTranslations(sf::Window & window){
     bool forward = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
     bool backward = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
 
-    cameraPos.y += (up) ? -SPEED : (down) ? SPEED : 0;
+    sf::Vector3f vel;
+    vel.y += (up) ? SPEED : (down) ? -SPEED : 0;
     if (forward){
-        cameraPos.x += -SPEED * sinDeg(cameraRot.y);
-        cameraPos.z += SPEED * cosDeg(cameraRot.y);
+        vel.x += SPEED * sinDeg(cameraRot.y);
+        vel.z += -SPEED * cosDeg(cameraRot.y);
     }
     else if (backward){
-        cameraPos.x -= -SPEED * sinDeg(cameraRot.y);
-        cameraPos.z -= SPEED * cosDeg(cameraRot.y);
+        vel.x -= SPEED * sinDeg(cameraRot.y);
+        vel.z -= -SPEED * cosDeg(cameraRot.y);
     }
     if (left){
-        cameraPos.x += -SPEED * sinDeg(cameraRot.y - 90);
-        cameraPos.z += SPEED * cosDeg(cameraRot.y - 90);
+        vel.x += SPEED * sinDeg(cameraRot.y - 90);
+        vel.z += -SPEED * cosDeg(cameraRot.y - 90);
     }
     else if (right){
-        cameraPos.x += -SPEED * sinDeg(cameraRot.y + 90);
-        cameraPos.z += SPEED * cosDeg(cameraRot.y + 90);
+        vel.x += SPEED * sinDeg(cameraRot.y + 90);
+        vel.z += -SPEED * cosDeg(cameraRot.y + 90);
     }
+
+    cameraPos += p.move(vel);
 }
 
 float sinDeg(float a){
