@@ -1,0 +1,13 @@
+--1. Send off position and desired velocity to calculate a tentative position
+--2. Gather up all blocks that we collide with given the tentative position
+--    a. Put detect collision function back to boolean
+--3. For each colliding block, get a vector from its center to our center
+--4. Normalize these vectors so it's always +/- 1 in any direction
+--5. Add the vectors up so that they cancel each other out except in directions that matter
+
+  6. For every direction that is now non-zero, shrink velocity towards 0 so it brings us exactly to a block boundary
+
+--    a. If we are not moving in a direction, ignore what we get
+--    b. Only pay attention if we are being pushed away from where we're moving. If it's pushing us the same way we're moving
+--       (which will happen in a certain edge case), ignore it
+--7. Apply new velocity
