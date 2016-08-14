@@ -91,6 +91,11 @@ int doMain(){
                 focused = true;
                 sf::Mouse::setPosition(screenMiddle, *window);
             }
+            else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::F3) {
+                    p.setRendered(!p.getRendered());
+                }
+            }
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
             running = false;

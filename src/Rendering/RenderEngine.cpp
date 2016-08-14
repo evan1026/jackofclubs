@@ -5,6 +5,7 @@
 #include "Exception/NullptrException.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/IRenderable.h"
+#include "Utils/AABB.h"
 
 #define PI 3.1415926535897932384626433832795
 
@@ -83,7 +84,7 @@ void RenderEngine::render(const sf::Vector3f& rotation, const sf::Vector3f& posi
     glRotatef(rotation.x, 1.f, 0.f, 0.f);
     glRotatef(rotation.y, 0.f, 1.f, 0.f);
     glRotatef(rotation.z, 0.f, 0.f, 1.f);
-    glTranslatef(-position.x * 30, -(position.y + 2)  * 30, -position.z * 30);
+    glTranslatef(-position.x * 30, -(position.y + 1.75)  * 30, -position.z * 30);
 
     for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
         (*i)->render(*this);
@@ -103,6 +104,58 @@ void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+
+    glPopMatrix();
+}
+
+void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
+    sf::Vector3f p = box.getPosition();
+    sf::Vector3f s = box.getSize();
+
+    s = s * 30.f;
+    p = p * 30.f;
+
+    glPushMatrix();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    glBegin(GL_QUADS);
+
+    glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
+
+    glVertex3f(p.x,       p.y, p.z);
+    glVertex3f(p.x + s.x, p.y, p.z);
+    glVertex3f(p.x + s.x, p.y, p.z + s.z);
+    glVertex3f(p.x,       p.y, p.z + s.z);
+
+    glVertex3f(p.x,       p.y,       p.z);
+    glVertex3f(p.x + s.x, p.y,       p.z);
+    glVertex3f(p.x + s.x, p.y + s.y, p.z);
+    glVertex3f(p.x,       p.y + s.y, p.z);
+
+    glVertex3f(p.x, p.y,       p.z);
+    glVertex3f(p.x, p.y + s.y, p.z);
+    glVertex3f(p.x, p.y + s.y, p.z + s.z);
+    glVertex3f(p.x, p.y,       p.z + s.z);
+
+    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
+    glVertex3f(p.x,       p.y + s.y, p.z + s.z);
+    glVertex3f(p.x,       p.y + s.y, p.z);
+    glVertex3f(p.x + s.x, p.y + s.y, p.z);
+
+    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
+    glVertex3f(p.x,       p.y + s.y, p.z + s.z);
+    glVertex3f(p.x,       p.y,       p.z + s.z);
+    glVertex3f(p.x + s.x, p.y,       p.z + s.z);
+
+    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
+    glVertex3f(p.x + s.x, p.y,       p.z + s.z);
+    glVertex3f(p.x + s.x, p.y,       p.z);
+    glVertex3f(p.x + s.x, p.y + s.y, p.z);
+
+    glEnd();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glPopMatrix();
 }

@@ -4,7 +4,6 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
 #include <unordered_map>
-#include <vector>
 
 #include "Player.h"
 #include "Rendering/IRenderable.h"
@@ -42,7 +41,7 @@ class World : public IRenderable {
         sf::Color getBlockColor(const sf::Vector3i& pos) const;
         void setBlockColor(const sf::Vector3i& pos, const sf::Color& color);
 
-        std::vector<Block> checkCollision(const Player& player);
+        bool checkCollision(const Player& player);
 };
 
 #endif

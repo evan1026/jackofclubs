@@ -32,7 +32,7 @@ void Player::setRotation(const sf::Vector3f& rotation) {
 float Player::shrinkVelocity(const float startVel, const float endPos) const {
     if (Math::signum(startVel) > 0) {
         return startVel - (endPos - std::floor(endPos));
-    } else if (Math::signum(startVel) > 0) {
+    } else if (Math::signum(startVel) < 0) {
         return startVel + (std::ceil(endPos) - endPos);
     } else {
         return 0;
@@ -40,39 +40,57 @@ float Player::shrinkVelocity(const float startVel, const float endPos) const {
 }
 
 sf::Vector3f Player::move(const sf::Vector3f& velocity) {
-    std::vector<Block> collidingBlocks;
     sf::Vector3f startPos = _position;
-    sf::Vector3f ourCenter;
     sf::Vector3f finalVelocity = velocity;
-    sf::Vector3f collisionSum;
 
-    _position += velocity;
-    ourCenter = getBoundingBox().getCenter();
+    // Algorithm is fairly simple. Just try each direction and see if there's a collision.
+    // If there is, shrink the velocity to put us right up against a block.
+    // The reason for doing this instead of doing them all at once is that it can cause
+    // collsions in one direction that cancel out velocity in a direction that is perfectly
+    // fine. For instance, if you have gravity pulling you down and you try to move forward,
+    // the forward movement will be cancelled due to collision with the ground
+    // The order in which these are done is to have y done first so that movement doesn't
+    // interfere with gravity, and then the rest of the order is arbitrary
 
-    collidingBlocks = World::getInst().checkCollision(*this);
-
-    for (Block block : collidingBlocks) {
-        sf::Vector3f theirCenter = block.getBoundingBox().getCenter();
-        sf::Vector3f collision = ourCenter - theirCenter;
-
-        collision.x = Math::signum(collision.x);
-        collision.y = Math::signum(collision.y);
-        collision.z = Math::signum(collision.z);
-
-        collisionSum += collision;
-    }
-
-    if (Math::signum(collisionSum.x) == -Math::signum(velocity.x)) {
-        finalVelocity.x = shrinkVelocity(velocity.x, _position.x);
-    }
-    if (Math::signum(collisionSum.y) == -Math::signum(velocity.y)) {
+    _position.y += velocity.y;
+    if (World::getInst().checkCollision(*this)) {
         finalVelocity.y = shrinkVelocity(velocity.y, _position.y);
+        _position.y = startPos.y + finalVelocity.y;
     }
-    if (Math::signum(collisionSum.z) == -Math::signum(velocity.z)) {
+
+    _position.x += velocity.x;
+    if (World::getInst().checkCollision(*this)) {
+        finalVelocity.x = shrinkVelocity(velocity.x, _position.x);
+        _position.x = startPos.x + finalVelocity.x;
+    }
+
+    _position.z += velocity.z;
+    if (World::getInst().checkCollision(*this)) {
         finalVelocity.z = shrinkVelocity(velocity.z, _position.z);
+        _position.z = startPos.z + finalVelocity.z;
     }
 
-    _position = startPos + finalVelocity;
-
+    // Return the final veloctity we achieved
+    // Really shouldn't be here but is needed to adjust the camera (which should be
+    // in this class)
+    // TODO remove once camera is moved to where it should be
     return finalVelocity;
+}
+
+void Player::setRendered(const bool render) {
+    _rendered = render;
+
+    if (render) {
+        addToEngine();
+    } else {
+        removeFromEngine();
+    }
+}
+
+bool Player::getRendered() const {
+    return _rendered;
+}
+
+void Player::render(RenderEngine& e) {
+    e.renderAABB(getBoundingBox(), sf::Color::White);
 }

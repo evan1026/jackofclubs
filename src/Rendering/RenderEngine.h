@@ -9,6 +9,7 @@
 
 #include "Rendering/IRenderable.h"
 #include "Rendering/Vertex.h"
+#include "Utils/AABB.h"
 
 class RenderEngine {
 
@@ -35,6 +36,7 @@ class RenderEngine {
         void render(const sf::Vector3f& rotation, const sf::Vector3f& position); //TODO temp parameters because they are in main still
 
         void renderVertexArray(const std::vector<Vertex>& vertices);
+        void renderAABB(const AABB& box, const sf::Color& color);
 };
 
 #endif

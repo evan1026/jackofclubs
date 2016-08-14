@@ -1,5 +1,4 @@
 #include <SFML/System.hpp>
-#include <vector>
 
 #include "Exception/NullptrException.h"
 #include "Exception/OutOfRangeException.h"
@@ -139,7 +138,7 @@ void World::notifyChangedSingle(const sf::Vector3i& pos) {
     }
 }
 
-std::vector<Block> World::checkCollision(const Player& player) {
+bool World::checkCollision(const Player& player) {
     auto& position = player.getPosition();
     std::vector<Block> collision;
 
@@ -154,25 +153,14 @@ std::vector<Block> World::checkCollision(const Player& player) {
                 if (blockExists(blockPos)) {
 
                     if (player.checkCollision(getBlock(blockPos))) {
-
-                        if (bottom == sf::Vector3i(0,0,0)) {
-                            bottom = blockPos;
-                        } else {
-                            top = blockPos;
-                        } // if (bottom uninit)
-
-                    } //if (checkCollision)
+                        return true;
+                    }
 
                 } // if block exists
 
             } //for y
-
-            if (top != sf::Vector3i(0,0,0))
-                collision.push_back(getBlock(top));
-            if (bottom != sf::Vector3i(0,0,0))
-                collision.push_back(getBlock(bottom));
-
         } //for z
     } // for x
-    return collision;
+
+    return false;
 }
