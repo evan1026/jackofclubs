@@ -7,15 +7,13 @@
 #include "World/Chunk.h"
 #include "World/World.h"
 
-World* World::inst = nullptr;
-
 World::World() {
     for (int x = -2; x < 2; ++x) {
         for (int y = 0; y < 8; ++y) {
             for (int z = -2; z < 2; ++z) {
                 sf::Vector3i pos(x, y, z);
                 std::tuple<int, int, int> posTup = std::make_tuple(pos.x, pos.y, pos.z);
-                _chunks[posTup] = Chunk(pos);
+                _chunks[posTup] = Chunk(pos, this);
             }
         }
     }
@@ -25,25 +23,6 @@ World::World() {
 
 World::~World() {
     removeFromEngine();
-}
-
-void World::init() {
-    if (inst == nullptr) {
-        inst = new World();
-    }
-}
-
-void World::end() {
-    if (inst != nullptr) {
-        delete inst;
-    }
-}
-
-World& World::getInst() {
-    if (inst == nullptr) {
-        throw NullptrException();
-    }
-    return *inst;
 }
 
 void World::render(RenderEngine& e) {
@@ -138,7 +117,7 @@ void World::notifyChangedSingle(const sf::Vector3i& pos) {
     }
 }
 
-bool World::checkCollision(const Player& player) {
+bool World::checkCollision(const Player& player) const {
     auto& position = player.getPosition();
     std::vector<Block> collision;
 

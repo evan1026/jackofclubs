@@ -13,11 +13,7 @@
 
 class World : public IRenderable {
 
-    static World* inst;
-
     std::unordered_map<std::tuple<int, int, int>, Chunk> _chunks; //Tuple because I found code to hash it online
-
-    World();
 
     std::tuple<int, int, int> getChunkPos(const sf::Vector3i& pos) const;
 
@@ -25,11 +21,8 @@ class World : public IRenderable {
     void notifyChanged(const sf::Vector3i& pos);
 
     public:
+        World();
         virtual ~World(); //virtual just to silence warnings; doesn't make an actual difference here
-
-        static void init();
-        static void end();
-        static World& getInst();
 
         void render(RenderEngine& e);
 
@@ -41,7 +34,7 @@ class World : public IRenderable {
         sf::Color getBlockColor(const sf::Vector3i& pos) const;
         void setBlockColor(const sf::Vector3i& pos, const sf::Color& color);
 
-        bool checkCollision(const Player& player);
+        bool checkCollision(const Player& player) const;
 };
 
 #endif

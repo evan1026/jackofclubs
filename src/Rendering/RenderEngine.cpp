@@ -1,20 +1,24 @@
-#include <cmath>
-#include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include <vector>
 
-#include "Exception/NullptrException.h"
-#include "Rendering/RenderEngine.h"
+#include "Exception/AlreadyInitializedException.h"
+#include "Exception/NotYetInitializedException.h"
 #include "Rendering/IRenderable.h"
+#include "Rendering/RenderEngine.h"
+#include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
-
-#define PI 3.1415926535897932384626433832795
+#include "Utils/Math.h"
 
 RenderEngine* RenderEngine::inst = nullptr;
 
-RenderEngine::RenderEngine(int width, int height) {
-    sf::ContextSettings settings(24);
-    window = std::shared_ptr<sf::Window>(new sf::Window(sf::VideoMode(width, height), "jack o' clubs", sf::Style::Default, settings));
-    window->setVerticalSyncEnabled(true);
+RenderEngine::RenderEngine(int width, int height)
+        : _window(sf::VideoMode(width, height),
+                  "jack o' clubs",
+                  sf::Style::Default,
+                  sf::ContextSettings(24))
+{
+    _window.setVerticalSyncEnabled(true);
 
     glClearDepth(1.f);
     glClearColor(0.f, 0.f, 0.f, 0.f);
@@ -22,19 +26,20 @@ RenderEngine::RenderEngine(int width, int height) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
-    setPerspective(60.f, window->getSize().x, window->getSize().y, 1.f, 10000.f);
-}
+    setPerspective(60.f, _window.getSize().x, _window.getSize().y, 1.f, 10000.f);
 
-void RenderEngine::init(int width, int height) {
-    if (inst == nullptr) {
-        inst = new RenderEngine(width, height);
-    }
-}
-
-void RenderEngine::end() {
     if (inst != nullptr) {
-        delete inst;
+        throw AlreadyInitializedException();
+    } else {
+        inst = this;
     }
+}
+
+RenderEngine& RenderEngine::getInst() {
+    if (inst == nullptr) {
+        throw NotYetInitializedException();
+    }
+    return *inst;
 }
 
 //Code from stackoverflow
@@ -43,21 +48,14 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, window->getSize().x, window->getSize().y);
+    glViewport(0, 0, _window.getSize().x, _window.getSize().y);
 
     GLdouble fW, fH;
 
-    fH = tan( fovY / 360 * PI ) * zNear;
+    fH = tan( fovY / 360 * Math::PI ) * zNear;
     fW = fH * aspect;
 
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
-}
-
-RenderEngine& RenderEngine::getInst() {
-    if (inst == nullptr) {
-        throw NullptrException();
-    }
-    return *inst;
 }
 
 void RenderEngine::addRenderable(IRenderable& object) {
@@ -76,19 +74,27 @@ void RenderEngine::handleResize(int width, int height) {
     setPerspective(60.f, width, height, 1.f, 10000.f);
 }
 
-void RenderEngine::render(const sf::Vector3f& rotation, const sf::Vector3f& position) {
+void RenderEngine::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(rotation.x, 1.f, 0.f, 0.f);
-    glRotatef(rotation.y, 0.f, 1.f, 0.f);
-    glRotatef(rotation.z, 0.f, 0.f, 1.f);
-    glTranslatef(-(position.x + 0.5) * 30, -(position.y + 1.75)  * 30, -(position.z + 0.5) * 30);
 
     for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
         (*i)->render(*this);
     }
+
+    _window.display();
+}
+
+void RenderEngine::translatePlayer(const sf::Vector3f& position) {
+    glTranslatef(-(position.x + 0.5) * 30, -(position.y + 1.75)  * 30, -(position.z + 0.5) * 30);
+}
+
+void RenderEngine::rotatePlayer(const sf::Vector3f& rotation) {
+    glRotatef(rotation.x, 1.f, 0.f, 0.f);
+    glRotatef(rotation.y, 0.f, 1.f, 0.f);
+    glRotatef(rotation.z, 0.f, 0.f, 1.f);
 }
 
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
@@ -158,4 +164,8 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glPopMatrix();
+}
+
+sf::Window& RenderEngine::getWindow() {
+    return _window;
 }

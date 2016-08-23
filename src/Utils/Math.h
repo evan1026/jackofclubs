@@ -5,6 +5,8 @@
 #include <type_traits>
 
 namespace Math {
+    constexpr static double PI = 3.1415926535897932384626433832795;
+
     // Template signum implementation from
     // http://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c
     template <typename T> inline constexpr
@@ -37,6 +39,26 @@ namespace Math {
     template <typename T> inline constexpr
     static bool similar(T x, T y, int places) {
         return trunc(abs(x - y), places) == T(0);
+    }
+
+    template <typename T> inline constexpr
+    static double sin(T x) {
+        return std::sin(x);
+    }
+
+    template <typename T> inline constexpr
+    static double cos(T x) {
+        return std::cos(x);
+    }
+
+    template <typename T> inline constexpr
+    static double sinDeg(T x) {
+        return std::sin(x * PI / 180.f);
+    }
+
+    template <typename T> inline constexpr
+    static double cosDeg(T x) {
+        return std::cos(x * PI / 180.f);
     }
 };
 

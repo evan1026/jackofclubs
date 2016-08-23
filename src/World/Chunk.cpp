@@ -10,7 +10,7 @@ constexpr float COLOR_SCALE = 256.f / Chunk::BLOCK_COUNT;
 
 Chunk::Chunk() {}
 
-Chunk::Chunk(const sf::Vector3i& p) : _position(p), _changed(true) {
+Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true), _world(world) {
     for (int x = 0; x < BLOCK_COUNT; ++x) {
         for (int y = 0; y < BLOCK_COUNT; ++y) {
             for (int z = 0; z < BLOCK_COUNT; ++z) {
@@ -33,13 +33,12 @@ Chunk::Chunk(const sf::Vector3i& p) : _position(p), _changed(true) {
 
 void Chunk::rebuildVertArray() {
     _vertArray.clear();
-    World& world = World::getInst();
 
     for (int x = -1; x <= BLOCK_COUNT; ++x) {
         for (int y = -1; y <= BLOCK_COUNT; ++y) {
             for (int z = -1; z <= BLOCK_COUNT; ++z) {
                 sf::Vector3i globalPos = localToGlobalBlockPos(sf::Vector3i(x,y,z));
-                if (world.getBlockType(globalPos) != Block::Type::AIR)
+                if (_world->getBlockType(globalPos) != Block::Type::AIR)
                     continue;
 
                 sf::Vector3i target(globalPos.x + 1, globalPos.y, globalPos.z);

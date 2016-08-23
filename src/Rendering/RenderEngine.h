@@ -13,18 +13,15 @@
 
 class RenderEngine {
 
-    static RenderEngine* inst;
-
+    sf::Window _window;
     std::unordered_set<IRenderable*> _renderables; //Needs to be pointers (not references) because of hashing
 
-    RenderEngine(int width, int height);
+    static RenderEngine* inst;
 
     public:
-        std::shared_ptr<sf::Window> window; //TODO move after having made control classes
-
-        static void init(int width, int height);
-        static void end();
         static RenderEngine& getInst();
+
+        RenderEngine(int width, int height);
 
         void setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar);
 
@@ -33,10 +30,15 @@ class RenderEngine {
 
         void handleResize(int width, int height);
 
-        void render(const sf::Vector3f& rotation, const sf::Vector3f& position); //TODO temp parameters because they are in main still
+        void render();
 
         void renderVertexArray(const std::vector<Vertex>& vertices);
         void renderAABB(const AABB& box, const sf::Color& color);
+
+        sf::Window& getWindow();
+
+        void translatePlayer(const sf::Vector3f& position);
+        void rotatePlayer(const sf::Vector3f& rotation);
 };
 
 #endif

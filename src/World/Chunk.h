@@ -12,6 +12,8 @@
 
 #define BLOCK_COUNT_DEF 16
 
+class World;
+
 typedef std::array<Block, BLOCK_COUNT_DEF>   __line;
 typedef std::array<__line, BLOCK_COUNT_DEF>  __plane;
 typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
@@ -22,6 +24,7 @@ class Chunk {
     sf::Vector3i _position;
     std::vector<Vertex> _vertArray;
     bool _changed;
+    World* _world;
 
     sf::Vector3i globalToLocalBlockPos(const sf::Vector3i& worldPos) const;
     sf::Vector3i localToGlobalBlockPos(const sf::Vector3i& localPos) const;
@@ -33,7 +36,7 @@ class Chunk {
         static constexpr int BLOCK_COUNT = BLOCK_COUNT_DEF;
         static constexpr float RENDER_WIDTH = BLOCK_COUNT * Block::SIZE;
 
-        Chunk(const sf::Vector3i& position);
+        Chunk(const sf::Vector3i& position, World* world);
         Chunk();
 
         void render(RenderEngine& e);

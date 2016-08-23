@@ -1,14 +1,18 @@
 #include <SFML/System.hpp>
-#include <vector>
 
 #include "Player.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
-#include "World/Block.h"
 #include "World/World.h"
 
 Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation)
-    : _type(type), _position(position), _rotation(rotation) {}
+        : _type(type), _position(position), _rotation(rotation) {
+    addToEngine();
+}
+
+Player::~Player() {
+    removeFromEngine();
+}
 
 AABB Player::getBoundingBox() const {
     if (_type == Type::SELF) { //Done to silence warnings. TODO remove later
@@ -39,7 +43,7 @@ float Player::shrinkVelocity(const float startVel, const float endPos) const {
     }
 }
 
-sf::Vector3f Player::move(const sf::Vector3f& velocity) {
+void Player::move(const sf::Vector3f& velocity, const World& world) {
     sf::Vector3f startPos = _position;
     sf::Vector3f finalVelocity = velocity;
 
@@ -53,38 +57,26 @@ sf::Vector3f Player::move(const sf::Vector3f& velocity) {
     // interfere with gravity, and then the rest of the order is arbitrary
 
     _position.y += velocity.y;
-    if (World::getInst().checkCollision(*this)) {
+    if (world.checkCollision(*this)) {
         finalVelocity.y = shrinkVelocity(velocity.y, _position.y);
         _position.y = startPos.y + finalVelocity.y;
     }
 
     _position.x += velocity.x;
-    if (World::getInst().checkCollision(*this)) {
+    if (world.checkCollision(*this)) {
         finalVelocity.x = shrinkVelocity(velocity.x, _position.x);
         _position.x = startPos.x + finalVelocity.x;
     }
 
     _position.z += velocity.z;
-    if (World::getInst().checkCollision(*this)) {
+    if (world.checkCollision(*this)) {
         finalVelocity.z = shrinkVelocity(velocity.z, _position.z);
         _position.z = startPos.z + finalVelocity.z;
     }
-
-    // Return the final veloctity we achieved
-    // Really shouldn't be here but is needed to adjust the camera (which should be
-    // in this class)
-    // TODO remove once camera is moved to where it should be
-    return finalVelocity;
 }
 
 void Player::setRendered(const bool render) {
     _rendered = render;
-
-    if (render) {
-        addToEngine();
-    } else {
-        removeFromEngine();
-    }
 }
 
 bool Player::getRendered() const {
@@ -92,5 +84,9 @@ bool Player::getRendered() const {
 }
 
 void Player::render(RenderEngine& e) {
-    e.renderAABB(getBoundingBox(), sf::Color::White);
+    e.rotatePlayer(_rotation);
+    e.translatePlayer(_position);
+
+    if (_rendered)
+        e.renderAABB(getBoundingBox(), sf::Color::White);
 }

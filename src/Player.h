@@ -4,8 +4,11 @@
 #include <SFML/System.hpp>
 
 #include "Rendering/IRenderable.h"
+#include "Rendering/RenderEngine.h"
 #include "Utils/AABB.h"
 #include "Utils/ICollidable.h"
+
+class World;
 
 class Player : public ICollidable, public IRenderable {
     public:
@@ -18,12 +21,14 @@ class Player : public ICollidable, public IRenderable {
         Type _type;
         sf::Vector3f _position;
         sf::Vector3f _rotation;
-        bool _rendered;
+        bool _rendered = false;
 
         float shrinkVelocity(const float startVel, const float endPos) const;
 
     public:
         Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation);
+        ~Player();
+
         AABB getBoundingBox() const;
 
         const sf::Vector3f& getPosition() const;
@@ -34,7 +39,7 @@ class Player : public ICollidable, public IRenderable {
         void render(RenderEngine& e);
 
         void setRotation(const sf::Vector3f& rotation);
-        sf::Vector3f move(const sf::Vector3f& velocity);
+        void move(const sf::Vector3f& velocity, const World& world);
 };
 
 #endif
