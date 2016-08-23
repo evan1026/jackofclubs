@@ -7,11 +7,9 @@
 #include "Rendering/RenderEngine.h"
 #include "World/World.h"
 
-sf::Vector3f cameraPos = sf::Vector3f(0.f, 140.f, 0.f);
-sf::Vector3f cameraRot = sf::Vector3f(0.f, 0.f, 0.f);
 sf::Vector2i screenMiddle;
-bool focused = true;
-Player p(Player::Type::SELF, cameraPos, cameraRot);
+bool captured = true;
+Player p(Player::Type::SELF, sf::Vector3f(0.f, 140.f, 0.f), sf::Vector3f(0.f, 0.f, 0.f));
 
 void doTranslations(sf::Window & window);
 float sinDeg(float a);
@@ -44,8 +42,6 @@ void throwException(char * no, RenderEngine* yes) {
 
 int doMain(){
 
-    cameraPos += sf::Vector3f(0.5f, 0.f, 0.5f);
-
     //throwException(nullptr, nullptr);
 
     RenderEngine::init(1920, 1080);
@@ -55,25 +51,9 @@ int doMain(){
 
     screenMiddle = sf::Vector2i(window->getSize().x / 2, window->getSize().y / 2);
     sf::Mouse::setPosition(screenMiddle, *window);
-    window->setMouseCursorVisible(false);
-
-    int x = -32, y = 0, z = -32;
 
     bool running = true;
     while (running){
-        sf::Vector3i pos(x, y, z);
-
-        if (++x == 32) {
-            x = -32;
-            if (++y == 128) {
-                y = 0;
-                if (++z == 32) {
-                    z = -32;
-                }
-            }
-        }
-
-        World::getInst().setBlockType(pos, Block::Type::AIR);
 
         sf::Event event;
         while (window->pollEvent(event)){
@@ -85,27 +65,32 @@ int doMain(){
                 screenMiddle = sf::Vector2i(window->getSize().x / 2, window->getSize().y / 2);
             }
             else if (event.type == sf::Event::LostFocus){
-                focused = false;
+                captured = false;
             }
-            else if (event.type == sf::Event::GainedFocus){
-                focused = true;
-                sf::Mouse::setPosition(screenMiddle, *window);
+            else if (event.type == sf::Event::MouseButtonPressed){
+                if (event.mouseButton.button == sf::Mouse::Button::Left && !captured) {
+                    captured = true;
+                    sf::Mouse::setPosition(screenMiddle, *window);
+                }
             }
             else if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::F3) {
                     p.setRendered(!p.getRendered());
+                } else if (event.key.code == sf::Keyboard::Escape) {
+                    captured = false;
                 }
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
             running = false;
         }
-        if (focused){
+        if (captured){
+            window->setMouseCursorVisible(false);
             doTranslations(*window);
-
-            e.render(cameraRot, cameraPos);
+        } else {
+            window->setMouseCursorVisible(true);
         }
-
+        e.render(p.getRotation(), p.getPosition());
         window->display();
     }
 
@@ -120,9 +105,11 @@ void doTranslations(sf::Window & window){
 
     sf::Vector2f diff = sf::Vector2f(diffi.x * SENSITIVITY, diffi.y * SENSITIVITY);
 
-    cameraRot += sf::Vector3f(diff.y, diff.x, 0.f);
-    if (cameraRot.x > 90) cameraRot.x = 90;
-    else if (cameraRot.x < -90) cameraRot.x = -90;
+    sf::Vector3f rotation = p.getRotation();
+    rotation += sf::Vector3f(diff.y, diff.x, 0.f);
+    if (rotation.x > 90) rotation.x = 90;
+    else if (rotation.x < -90) rotation.x = -90;
+    p.setRotation(rotation);
 
     sf::Mouse::setPosition(screenMiddle, window);
 
@@ -136,23 +123,23 @@ void doTranslations(sf::Window & window){
     sf::Vector3f vel;
     vel.y += (up) ? SPEED : (down) ? -SPEED : 0;
     if (forward){
-        vel.x += SPEED * sinDeg(cameraRot.y);
-        vel.z += -SPEED * cosDeg(cameraRot.y);
+        vel.x += SPEED * sinDeg(rotation.y);
+        vel.z += -SPEED * cosDeg(rotation.y);
     }
     else if (backward){
-        vel.x -= SPEED * sinDeg(cameraRot.y);
-        vel.z -= -SPEED * cosDeg(cameraRot.y);
+        vel.x -= SPEED * sinDeg(rotation.y);
+        vel.z -= -SPEED * cosDeg(rotation.y);
     }
     if (left){
-        vel.x += SPEED * sinDeg(cameraRot.y - 90);
-        vel.z += -SPEED * cosDeg(cameraRot.y - 90);
+        vel.x += SPEED * sinDeg(rotation.y - 90);
+        vel.z += -SPEED * cosDeg(rotation.y - 90);
     }
     else if (right){
-        vel.x += SPEED * sinDeg(cameraRot.y + 90);
-        vel.z += -SPEED * cosDeg(cameraRot.y + 90);
+        vel.x += SPEED * sinDeg(rotation.y + 90);
+        vel.z += -SPEED * cosDeg(rotation.y + 90);
     }
 
-    cameraPos += p.move(vel);
+    p.move(vel);
 }
 
 float sinDeg(float a){
