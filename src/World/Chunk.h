@@ -6,6 +6,7 @@
 #include <SFML/System.hpp>
 #include <vector>
 
+#include "Rendering/IRenderable.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "World/Block.h"
@@ -18,7 +19,7 @@ typedef std::array<Block, BLOCK_COUNT_DEF>   __line;
 typedef std::array<__line, BLOCK_COUNT_DEF>  __plane;
 typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
 
-class Chunk {
+class Chunk : public IRenderable {
 
     __chunk _blocks;
     sf::Vector3i _position;
@@ -39,7 +40,7 @@ class Chunk {
         Chunk(const sf::Vector3i& position, World* world);
         Chunk();
 
-        void render(RenderEngine& e);
+        void render(RenderEngine& e, sf::RenderWindow& w) override;
 
         Block& getBlock(const sf::Vector3i& pos);
         const Block& getBlock(const sf::Vector3i& pos) const;

@@ -11,7 +11,7 @@
 
 class RenderEngine {
 
-    sf::Window _window;
+    sf::RenderWindow _window;
 
     public:
         RenderEngine(int width, int height);
@@ -26,7 +26,7 @@ class RenderEngine {
         void renderVertexArray(const std::vector<Vertex>& vertices);
         void renderAABB(const AABB& box, const sf::Color& color);
 
-        sf::Window& getWindow();
+        sf::RenderWindow& getWindow();
 
         void translatePlayer(const sf::Vector3f& position);
         void rotatePlayer(const sf::Vector3f& rotation);

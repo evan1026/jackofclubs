@@ -23,7 +23,7 @@ class World : public IRenderable {
     public:
         World();
 
-        void render(RenderEngine& e);
+        void render(RenderEngine& e, sf::RenderWindow& w) override;
 
         const Block& getBlock(const sf::Vector3i& pos) const;
         bool blockExists(const sf::Vector3i& pos) const;

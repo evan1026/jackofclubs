@@ -9,7 +9,7 @@ Game::Game() :
 
 void Game::run() {
     _screen = std::unique_ptr<Screen>(new WorldScreen(_re.getWindow(), *this));
-    sf::Window& window = _re.getWindow();
+    sf::RenderWindow& window = _re.getWindow();
 
     while (_running) {
         sf::Event event;
@@ -20,7 +20,7 @@ void Game::run() {
         }
         _screen->tick();
         _re.beginRender();
-        _screen->render(_re);
+        _screen->render(_re, window);
         _re.endRender();
     }
 }

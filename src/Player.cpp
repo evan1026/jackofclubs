@@ -1,5 +1,6 @@
 #include <SFML/System.hpp>
 
+#include "Debug/DebugOptions.h"
 #include "Player.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
@@ -70,18 +71,10 @@ void Player::move(const sf::Vector3f& velocity, const World& world) {
     }
 }
 
-void Player::setRendered(const bool render) {
-    _rendered = render;
-}
-
-bool Player::getRendered() const {
-    return _rendered;
-}
-
-void Player::render(RenderEngine& e) {
+void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     e.rotatePlayer(_rotation);
     e.translatePlayer(_position);
 
-    if (_rendered)
+    if (DebugOptions::playerHitboxRendered())
         e.renderAABB(getBoundingBox(), sf::Color::White);
 }

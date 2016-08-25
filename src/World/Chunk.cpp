@@ -96,7 +96,7 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
     _vertArray.push_back(Vertex(fp,fc));
 }
 
-void Chunk::render(RenderEngine& e) {
+void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_changed) {
         rebuildVertArray();
     }

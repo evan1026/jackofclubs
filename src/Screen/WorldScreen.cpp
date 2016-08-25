@@ -1,17 +1,20 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include "Debug/DebugOptions.h"
 #include "Game.h"
-#include "Utils/Math.h"
-#include "WorldScreen.h"
 #include "Rendering/RenderEngine.h"
+#include "Utils/Math.h"
+#include "Utils/Utils.h"
+#include "WorldScreen.h"
 
 #define MOUSE_SENSITIVITY 0.1
 #define MOVEMENT_SPEED 0.6
 
-WorldScreen::WorldScreen(sf::Window& window, Game& game) :
+WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _world(),
     _player(Player::Type::SELF, sf::Vector3f(0.f, 140.f, 0.f), sf::Vector3f(0.f, 0.f, 0.f)),
+    _fpsCounter(sf::Vector2i(5, 0)),
     _mouseCaptured(true),
     _screenMiddle(window.getSize().x / 2, window.getSize().y / 2),
     _window(window),
@@ -53,7 +56,7 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
 void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     switch (event.code) {
         case sf::Keyboard::F3:
-            _player.setRendered(!_player.getRendered());
+            DebugOptions::setShowDebugOptions(!DebugOptions::showDebugOptions());
             break;
         case sf::Keyboard::Escape:
             _mouseCaptured = false;
@@ -109,9 +112,12 @@ void WorldScreen::tick() {
     }
 
     _player.move(vel, _world);
+
+    _fpsCounter.update();
 }
 
-void WorldScreen::render(RenderEngine& re) {
-    _player.render(re);
-    _world.render(re);
+void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
+    _player.render(re, w);
+    _world.render(re, w);
+    _fpsCounter.render(re, w);
 }

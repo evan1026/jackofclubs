@@ -135,6 +135,6 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     glPopMatrix();
 }
 
-sf::Window& RenderEngine::getWindow() {
+sf::RenderWindow& RenderEngine::getWindow() {
     return _window;
 }

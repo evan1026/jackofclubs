@@ -19,9 +19,9 @@ World::World() {
     }
 }
 
-void World::render(RenderEngine& e) {
+void World::render(RenderEngine& e, sf::RenderWindow& w) {
     for (auto i = _chunks.begin(); i != _chunks.end(); ++i) {
-        i->second.render(e);
+        i->second.render(e, w);
     }
 }
 
