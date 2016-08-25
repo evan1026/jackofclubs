@@ -6,13 +6,8 @@
 #include "World/World.h"
 
 Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation)
-        : _type(type), _position(position), _rotation(rotation) {
-    addToEngine();
-}
-
-Player::~Player() {
-    removeFromEngine();
-}
+        : _type(type), _position(position), _rotation(rotation)
+{}
 
 AABB Player::getBoundingBox() const {
     if (_type == Type::SELF) { //Done to silence warnings. TODO remove later

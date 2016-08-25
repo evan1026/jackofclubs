@@ -7,9 +7,6 @@ class RenderEngine;
 class IRenderable {
     public:
         virtual void render(RenderEngine&) = 0;
-
-        void addToEngine();
-        void removeFromEngine();
 };
 
 #endif

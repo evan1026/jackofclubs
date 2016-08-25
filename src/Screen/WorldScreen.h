@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Screen/Screen.h"
 #include "World/World.h"
+#include "Rendering/RenderEngine.h"
 
 class Game;
 
@@ -16,6 +17,10 @@ class WorldScreen : public Screen {
     Player _player;
     bool _mouseCaptured;
     sf::Vector2i _screenMiddle;
+
+    // References to other objects we need to work with
+    // I'm sure there's a better way to do this, but this is easier and
+    // shouldn't cause any issues
     sf::Window& _window;
     Game& _game;
 
@@ -27,6 +32,8 @@ class WorldScreen : public Screen {
 
         void handleEvent(const sf::Event& event) override;
         void tick() override;
+
+        void render(RenderEngine& re) override;
 };
 
 #endif

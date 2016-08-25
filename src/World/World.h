@@ -22,7 +22,6 @@ class World : public IRenderable {
 
     public:
         World();
-        virtual ~World(); //virtual just to silence warnings; doesn't make an actual difference here
 
         void render(RenderEngine& e);
 

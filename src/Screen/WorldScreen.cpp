@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Utils/Math.h"
 #include "WorldScreen.h"
+#include "Rendering/RenderEngine.h"
 
 #define MOUSE_SENSITIVITY 0.1
 #define MOVEMENT_SPEED 0.6
@@ -66,17 +67,20 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
 }
 
 void WorldScreen::tick() {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
-
-    sf::Vector2f diff((mousePos.x - _screenMiddle.x) * MOUSE_SENSITIVITY, (mousePos.y - _screenMiddle.y) * MOUSE_SENSITIVITY);
     sf::Vector3f rotation(_player.getRotation());
 
-    rotation += sf::Vector3f(diff.y, diff.x, 0.f);
-    if (rotation.x > 90) rotation.x = 90;
-    else if (rotation.x < -90) rotation.x = -90;
-    _player.setRotation(rotation);
+    if (_mouseCaptured) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
 
-    sf::Mouse::setPosition(_screenMiddle, _window);
+        sf::Vector2f diff((mousePos.x - _screenMiddle.x) * MOUSE_SENSITIVITY, (mousePos.y - _screenMiddle.y) * MOUSE_SENSITIVITY);
+
+        rotation += sf::Vector3f(diff.y, diff.x, 0.f);
+        if (rotation.x > 90) rotation.x = 90;
+        else if (rotation.x < -90) rotation.x = -90;
+        _player.setRotation(rotation);
+
+        sf::Mouse::setPosition(_screenMiddle, _window);
+    }
 
     _window.setMouseCursorVisible(!_mouseCaptured);
 
@@ -105,4 +109,9 @@ void WorldScreen::tick() {
     }
 
     _player.move(vel, _world);
+}
+
+void WorldScreen::render(RenderEngine& re) {
+    _player.render(re);
+    _world.render(re);
 }

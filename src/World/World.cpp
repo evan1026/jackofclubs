@@ -17,12 +17,6 @@ World::World() {
             }
         }
     }
-
-    addToEngine();
-}
-
-World::~World() {
-    removeFromEngine();
 }
 
 void World::render(RenderEngine& e) {

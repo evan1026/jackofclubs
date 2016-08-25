@@ -2,15 +2,10 @@
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
-#include "Exception/AlreadyInitializedException.h"
-#include "Exception/NotYetInitializedException.h"
-#include "Rendering/IRenderable.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
-
-RenderEngine* RenderEngine::inst = nullptr;
 
 RenderEngine::RenderEngine(int width, int height)
         : _window(sf::VideoMode(width, height),
@@ -27,19 +22,6 @@ RenderEngine::RenderEngine(int width, int height)
     glDepthMask(GL_TRUE);
 
     setPerspective(60.f, _window.getSize().x, _window.getSize().y, 1.f, 10000.f);
-
-    if (inst != nullptr) {
-        throw AlreadyInitializedException();
-    } else {
-        inst = this;
-    }
-}
-
-RenderEngine& RenderEngine::getInst() {
-    if (inst == nullptr) {
-        throw NotYetInitializedException();
-    }
-    return *inst;
 }
 
 //Code from stackoverflow
@@ -58,32 +40,19 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
-void RenderEngine::addRenderable(IRenderable& object) {
-    _renderables.insert(&object);
-}
-
-void RenderEngine::removeRenderable(IRenderable& object) {
-    auto search = _renderables.find(&object);
-    if (search != _renderables.end()) {
-        _renderables.erase(search);
-    }
-}
-
 void RenderEngine::handleResize(int width, int height) {
     glViewport(0, 0, width, height);
     setPerspective(60.f, width, height, 1.f, 10000.f);
 }
 
-void RenderEngine::render() {
+void RenderEngine::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+}
 
-    for (auto i = _renderables.begin(); i != _renderables.end(); i++) {
-        (*i)->render(*this);
-    }
-
+void RenderEngine::endRender() {
     _window.display();
 }
 

@@ -19,7 +19,9 @@ void Game::run() {
             }
         }
         _screen->tick();
-        _re.render();
+        _re.beginRender();
+        _screen->render(_re);
+        _re.endRender();
     }
 }
 

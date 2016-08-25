@@ -27,7 +27,6 @@ class Player : public ICollidable, public IRenderable {
 
     public:
         Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation);
-        ~Player();
 
         AABB getBoundingBox() const;
 
