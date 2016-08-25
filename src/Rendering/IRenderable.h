@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class RenderEngine;
+#include "RenderEngine.h"
 
 // Interface for renderable objects. Used by RenderEngine.
 class IRenderable {

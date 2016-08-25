@@ -5,7 +5,6 @@
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
-#include "Rendering/IRenderable.h"
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 

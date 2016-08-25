@@ -34,7 +34,7 @@ class Block : public ICollidable {
         Type getType() const;
         void setType(const Type& t);
 
-        AABB getBoundingBox() const;
+        AABB getBoundingBox() const override;
 };
 
 #endif
