@@ -43,12 +43,12 @@ void Chunk::rebuildVertArray() {
 
                 sf::Vector3i target(globalPos.x + 1, globalPos.y, globalPos.z);
                 if (isInChunk(target) && getBlockType(target) == Block::Type::SOLID) {
-                    addFace(target, -1, getBlock(target).getColor(), sf::Vector2i(2,1));
+                    addFace(target, -1, getBlock(target).getColor(), sf::Vector2i(1,2));
                 }
 
                 target = sf::Vector3i(globalPos.x - 1, globalPos.y, globalPos.z);
                 if (isInChunk(target) && getBlockType(target) == Block::Type::SOLID) {
-                    addFace(target, 0, getBlock(target).getColor(), sf::Vector2i(1,2));
+                    addFace(target, 0, getBlock(target).getColor(), sf::Vector2i(2,1));
                 }
 
                 target = sf::Vector3i(globalPos.x, globalPos.y + 1, globalPos.z);

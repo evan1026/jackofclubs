@@ -21,6 +21,9 @@ RenderEngine::RenderEngine(int width, int height)
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
+    glFrontFace(GL_CW);
+    glEnable(GL_CULL_FACE);
+
     setPerspective(60.f, _window.getSize().x, _window.getSize().y, 1.f, 10000.f);
 }
 
