@@ -12,6 +12,10 @@ class RenderEngine {
 
     sf::RenderWindow _window;
 
+    static float lightPos[4];
+    static float lightAmbient[4];
+    static float lightDiffuse[4];
+
     public:
         RenderEngine(int width, int height);
 

@@ -7,7 +7,7 @@ set(SOURCES "${SOURCES} ${CURR_DIR}/main.cpp
 
 add_subdirectory("Debug")
 add_subdirectory("Exception")
+add_subdirectory("Graphics")
 add_subdirectory("Rendering")
-add_subdirectory("Screen")
 add_subdirectory("Utils")
 add_subdirectory("World")

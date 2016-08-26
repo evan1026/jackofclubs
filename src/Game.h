@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Screen/Screen.h"
+#include "Graphics/Screen.h"
 #include "Rendering/RenderEngine.h"
 
 class Game {

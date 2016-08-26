@@ -6,6 +6,11 @@
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
+#include "World/Block.h"
+
+float RenderEngine::lightPos[] =     { -0.1f, -1.0f, 0.2f, 0.f  };
+float RenderEngine::lightAmbient[] = {  0.5f,  0.5f, 0.5f, 1.0f };
+float RenderEngine::lightDiffuse[] = {  0.7f,  0.7f, 0.7f, 1.0f};
 
 RenderEngine::RenderEngine(int width, int height)
         : _window(sf::VideoMode(width, height),
@@ -16,13 +21,21 @@ RenderEngine::RenderEngine(int width, int height)
     _window.setVerticalSyncEnabled(true);
 
     glClearDepth(1.f);
-    glClearColor(0.f, 0.f, 0.f, 0.f);
+    glClearColor(217.f / 256.f, 233.f / 256.f, 255.f / 256.f, 1.f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
     glFrontFace(GL_CW);
     glEnable(GL_CULL_FACE);
+
+    glEnable(GL_LIGHTING);
+
+    glEnable(GL_COLOR_MATERIAL);
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glEnable(GL_LIGHT0);
 
     setPerspective(60.f, _window.getSize().x, _window.getSize().y, 1.f, 10000.f);
 }
@@ -60,7 +73,7 @@ void RenderEngine::endRender() {
 }
 
 void RenderEngine::translatePlayer(const sf::Vector3f& position) {
-    glTranslatef(-(position.x + 0.5) * 30, -(position.y + 1.75)  * 30, -(position.z + 0.5) * 30);
+    glTranslatef(-(position.x + 0.5) * Block::SIZE, -(position.y + 1.75)  * Block::SIZE, -(position.z + 0.5) * Block::SIZE);
 }
 
 void RenderEngine::rotatePlayer(const sf::Vector3f& rotation) {
@@ -70,32 +83,35 @@ void RenderEngine::rotatePlayer(const sf::Vector3f& rotation) {
 }
 
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
-    glPushMatrix();
-
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].pos[0]);
     glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].color[0]);
+    glNormalPointer(GL_FLOAT, sizeof(Vertex), &vertices[0].normal[0]);
 
     glDrawArrays(GL_QUADS, 0, vertices.size());
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-
-    glPopMatrix();
+    glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
 
-    s = s * 30.f;
-    p = p * 30.f;
+    s = s * Block::SIZE;
+    p = p * Block::SIZE;
 
     glPushMatrix();
 
+    glDisable(GL_CULL_FACE);
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(5);
 
     glBegin(GL_QUADS);
 
@@ -134,6 +150,8 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     glEnd();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    glEnable(GL_CULL_FACE);
 
     glPopMatrix();
 }

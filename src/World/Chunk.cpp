@@ -80,6 +80,7 @@ void Chunk::rebuildVertArray() {
 void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::Color& c, const sf::Vector2i& order) {
     float fc[3];
     float fp[3];
+    float fn[3];
     static constexpr int oneblock = Block::SIZE;
 
     fp[0] = target.x * oneblock; fp[1] = target.y * oneblock; fp[2] = target.z * oneblock;
@@ -87,13 +88,33 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
 
     fc[0] = c.r / 256.f; fc[1] = c.g / 256.f; fc[2] = c.b / 256.f;
 
-    _vertArray.push_back(Vertex(fp,fc));
+    // Okay so this seems a little weird but I can explain
+    // So... order contains the order to go around by indexing the dimensions
+    // So if the order is (1,0) then we first move in the y, then in the x, then
+    // back in the y, and that constitutes the face.
+    // The normal needs to point away from the face, so it will point in whatever
+    // direction we didn't move in at all. But then you have to also make sure it
+    // points in the right direction along that axis, so we also need to handle the
+    // last direction.... as for how it works, just remember that the faces are clockwise
+    // and think it through...... it works I promise
+    fn[order.x] = 0;
+    fn[order.y] = 0;
+
+    if (order.x - order.y == 2) {
+        fn[3 - order.x - order.y] = 1;
+    } else if (order.x - order.y == -2) {
+        fn[3 - order.x - order.y] = -1;
+    } else {
+        fn[3 - order.x - order.y] = order.x - order.y;
+    }
+
+    _vertArray.push_back(Vertex(fp,fc,fn));
     fp[order.x] = fp[order.x] + Block::SIZE;
-    _vertArray.push_back(Vertex(fp,fc));
+    _vertArray.push_back(Vertex(fp,fc,fn));
     fp[order.y] = fp[order.y] + Block::SIZE;
-    _vertArray.push_back(Vertex(fp,fc));
+    _vertArray.push_back(Vertex(fp,fc,fn));
     fp[order.x] = fp[order.x] - Block::SIZE;
-    _vertArray.push_back(Vertex(fp,fc));
+    _vertArray.push_back(Vertex(fp,fc,fn));
 }
 
 void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {

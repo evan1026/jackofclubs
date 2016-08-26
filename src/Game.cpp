@@ -1,7 +1,7 @@
 #include <SFML/Window.hpp>
 
 #include "Game.h"
-#include "Screen/WorldScreen.h"
+#include "Graphics/WorldScreen.h"
 
 Game::Game() :
     _re(1920, 1080) //TODO detect screen size or select a default

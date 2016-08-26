@@ -76,5 +76,5 @@ void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     e.translatePlayer(_position);
 
     if (DebugOptions::playerHitboxRendered())
-        e.renderAABB(getBoundingBox(), sf::Color::White);
+        e.renderAABB(getBoundingBox(), sf::Color::Black);
 }

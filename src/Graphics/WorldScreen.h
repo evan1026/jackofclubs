@@ -8,7 +8,7 @@
 #include "Debug/Graphics/FPSCounter.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
-#include "Screen/Screen.h"
+#include "Graphics/Screen.h"
 #include "World/World.h"
 
 class Game;

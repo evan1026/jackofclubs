@@ -20,7 +20,7 @@ class Block : public ICollidable {
         Type _type;
 
     public:
-        static constexpr float SIZE = 30;
+        static constexpr float SIZE = 5;
 
         Block(const sf::Vector3i& position, const sf::Color& color, const Type& type);
         Block();
