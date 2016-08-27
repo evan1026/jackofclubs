@@ -1,5 +1,6 @@
 #include <SFML/Window.hpp>
 
+#include "Debug/DebugOptions.h"
 #include "Game.h"
 #include "Graphics/WorldScreen.h"
 
@@ -36,6 +37,12 @@ bool Game::handleEvent(const sf::Event& e) {
             return true;
         case sf::Event::Resized:
             _re.handleResize(e.size.width, e.size.height);
+            return false;
+        case sf::Event::KeyPressed:
+            if (e.key.code == sf::Keyboard::F3) {
+                DebugOptions::setShowDebugOptions(!DebugOptions::showDebugOptions());
+                return true;
+            }
             return false;
         default:
             return false;

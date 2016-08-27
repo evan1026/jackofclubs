@@ -1,7 +1,6 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include "Debug/DebugOptions.h"
 #include "Game.h"
 #include "Rendering/RenderEngine.h"
 #include "Utils/Math.h"
@@ -55,9 +54,6 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
 
 void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     switch (event.code) {
-        case sf::Keyboard::F3:
-            DebugOptions::setShowDebugOptions(!DebugOptions::showDebugOptions());
-            break;
         case sf::Keyboard::Escape:
             _mouseCaptured = false;
             break;
