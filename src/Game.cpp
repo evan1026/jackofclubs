@@ -2,7 +2,7 @@
 
 #include "Debug/DebugOptions.h"
 #include "Game.h"
-#include "Graphics/WorldScreen.h"
+#include "Graphics/Screen/WorldScreen.h"
 
 Game::Game() :
     _re(1920, 1080) //TODO detect screen size or select a default

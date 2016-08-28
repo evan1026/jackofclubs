@@ -2,13 +2,15 @@
 #define WORLD_SCREEN_H
 
 #include <chrono>
+#include <memory>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
 #include "Debug/Graphics/FPSCounter.h"
+#include "Graphics/Menu/Menu.h"
+#include "Graphics/Screen/Screen.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
-#include "Graphics/Screen.h"
 #include "World/World.h"
 
 class Game;
@@ -19,10 +21,13 @@ class WorldScreen : public Screen {
     World _world;
     Player _player;
     FPSCounter _fpsCounter;
+    std::unique_ptr<Menu> _activeMenu;
+    sf::RectangleShape _colorRect;
 
     //Other data
     bool _mouseCaptured;
     sf::Vector2i _screenMiddle;
+    sf::Color _selectedColor;
 
     // References to other objects we need to work with
     // I'm sure there's a better way to do this, but this is easier and
@@ -32,6 +37,13 @@ class WorldScreen : public Screen {
 
     void handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event);
     void handleKeyPressed(const sf::Event::KeyEvent& event);
+    void handleMouseMoved(const sf::Event::MouseMoveEvent& event);
+    void handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e);
+
+    void toggleColorSelectorMenu();
+    void removeMenu();
+
+    void handlePlayerMovement();
 
     public:
         WorldScreen(sf::RenderWindow& window, Game& game);
