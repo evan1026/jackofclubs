@@ -6,6 +6,7 @@
 #include "Rendering/RenderEngine.h"
 #include "Utils/Math.h"
 #include "Utils/Utils.h"
+#include "World/BlockFace.h"
 #include "WorldScreen.h"
 
 #define MOUSE_SENSITIVITY 0.1
@@ -63,7 +64,12 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
         case sf::Mouse::Button::Left:
             if (!_mouseCaptured) {
                 removeMenu();
+            } else {
+                removeBlock();
             }
+            break;
+        case sf::Mouse::Button::Right:
+            placeBlock();
             break;
         default:
             break;
@@ -100,6 +106,30 @@ void WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseMoved(event)) {
         return;
     }
+}
+
+void WorldScreen::placeBlock() {
+    if (!_selectedBlock)
+        return;
+
+    sf::Vector3f position = _selectedBlock().getPosition() + _selectedBlock().getNormal();
+    sf::Vector3i blockPosition(position.x, position.y, position.z);
+
+    _world.setBlockType(blockPosition, Block::Type::SOLID);
+    _world.setBlockColor(blockPosition, _selectedColor);
+
+    if (_world.checkCollision(_player))
+        _world.setBlockType(blockPosition, Block::Type::AIR);
+}
+
+void WorldScreen::removeBlock() {
+    if (!_selectedBlock)
+        return;
+
+    sf::Vector3f position = _selectedBlock().getPosition();
+    sf::Vector3i blockPosition(position.x, position.y, position.z);
+
+    _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
 void WorldScreen::toggleColorSelectorMenu() {
@@ -187,9 +217,11 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
     _player.render(re, w);
     _world.render(re, w);
     if (_selectedBlock) {
-        AABB blockBox = _world.getBlock(_selectedBlock()).getBoundingBox();
+        sf::Vector3f blockPosition = _selectedBlock().getPosition();
+        sf::Vector3i blockPositioni = sf::Vector3i(blockPosition.x, blockPosition.y, blockPosition.z);
+        AABB blockBox = _world.getBlock(blockPositioni).getBoundingBox();
         sf::Color outlineColor = sf::Color::Black;
-        sf::Color blockColor = _world.getBlockColor(_selectedBlock());
+        sf::Color blockColor = _world.getBlockColor(blockPositioni);
         if (blockColor.r < 128 && blockColor.g < 128 && blockColor.b < 128) {
             outlineColor = sf::Color::White;
         }

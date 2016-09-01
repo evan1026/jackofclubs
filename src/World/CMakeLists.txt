@@ -3,4 +3,5 @@ MESSAGE("Adding ${CURR_DIR}")
 
 set(SOURCES "${SOURCES} ${CURR_DIR}/Block.cpp
                         ${CURR_DIR}/Chunk.cpp
-                        ${CURR_DIR}/World.cpp" CACHE STRING "Sources for project" FORCE)
+                        ${CURR_DIR}/World.cpp
+                        ${CURR_DIR}/BlockFace.cpp" CACHE STRING "Sources for project" FORCE)

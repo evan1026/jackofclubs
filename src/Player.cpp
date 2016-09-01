@@ -5,6 +5,7 @@
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
 #include "Utils/Maybe.h"
+#include "World/BlockFace.h"
 #include "World/World.h"
 
 Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation)
@@ -89,13 +90,14 @@ float Player::getTMax(float origin, float direction) const {
 }
 
 // Implementation of the algorithm described at http://www.cse.chalmers.se/edu/year/2011/course/TDA361/grid.pdf
-Maybe<sf::Vector3i> Player::getSelection(World& world, float range) const {
+Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x), -Math::sinDeg(_rotation.x), -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
     sf::Vector3f origin = _position + sf::Vector3f(0.5, 1.75, 0.5);
     sf::Vector3f pos(Math::floor(origin.x), Math::floor(origin.y), Math::floor(origin.z));
     sf::Vector3f step(Math::signum(direction.x), Math::signum(direction.y), Math::signum(direction.z));
     sf::Vector3f tMax(getTMax(origin.x, direction.x), getTMax(origin.y, direction.y), getTMax(origin.z, direction.z));
     sf::Vector3f tDelta(step.x / direction.x, step.y / direction.y, step.z / direction.z);
+    sf::Vector3f normal;
 
     range /= Math::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
 
@@ -105,28 +107,32 @@ Maybe<sf::Vector3i> Player::getSelection(World& world, float range) const {
                 if (tMax.x > range) break;
                 pos.x += step.x;
                 tMax.x += tDelta.x;
+                normal = sf::Vector3f(-step.x, 0, 0);
             } else {
                 if (tMax.z > range) break;
                 pos.z += step.z;
                 tMax.z += tDelta.z;
+                normal = sf::Vector3f(0, 0, -step.z);
             }
         } else {
             if (tMax.y < tMax.z) {
                 if (tMax.y > range) break;
                 pos.y += step.y;
                 tMax.y += tDelta.y;
+                normal = sf::Vector3f(0, -step.y, 0);
             } else {
                 if (tMax.z > range) break;
                 pos.z += step.z;
                 tMax.z += tDelta.z;
+                normal = sf::Vector3f(0, 0, -step.z);
             }
         }
     }
 
     sf::Vector3i finalPosition(pos.x, pos.y, pos.z);
     if (world.getBlockType(finalPosition) == Block::Type::SOLID) {
-        return Maybe<sf::Vector3i>(finalPosition);
+        return Maybe<BlockFace>(BlockFace(pos, normal));
     } else {
-        return Maybe<sf::Vector3i>();
+        return Maybe<BlockFace>();
     }
 }

@@ -67,7 +67,7 @@ Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     }
 }
 
-void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
+void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) { //TODO Create new chunk if block does not exist and is being make solid
     if (blockExists(pos)) {
         Chunk& chunk = _chunks.at(getChunkPos(pos));
         chunk.getBlock(pos).setType(type);

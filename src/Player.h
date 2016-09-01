@@ -8,6 +8,7 @@
 #include "Utils/AABB.h"
 #include "Utils/ICollidable.h"
 #include "Utils/Maybe.h"
+#include "World/BlockFace.h"
 
 class World;
 
@@ -39,7 +40,7 @@ class Player : public ICollidable, public IRenderable {
         void setRotation(const sf::Vector3f& rotation);
         void move(const sf::Vector3f& velocity, const World& world);
 
-        Maybe<sf::Vector3i> getSelection(World& world, float range) const;
+        Maybe<BlockFace> getSelection(World& world, float range) const;
 };
 
 #endif

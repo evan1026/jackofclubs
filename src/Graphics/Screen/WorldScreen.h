@@ -11,6 +11,7 @@
 #include "Graphics/Screen/Screen.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
+#include "World/BlockFace.h"
 #include "World/World.h"
 
 class Game;
@@ -29,7 +30,7 @@ class WorldScreen : public Screen {
     bool _mouseCaptured;
     sf::Vector2i _screenMiddle;
     sf::Color _selectedColor;
-    Maybe<sf::Vector3i> _selectedBlock;
+    Maybe<BlockFace> _selectedBlock;
 
     // References to other objects we need to work with
     // I'm sure there's a better way to do this, but this is easier and
@@ -41,6 +42,9 @@ class WorldScreen : public Screen {
     void handleKeyPressed(const sf::Event::KeyEvent& event);
     void handleMouseMoved(const sf::Event::MouseMoveEvent& event);
     void handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e);
+
+    void placeBlock();
+    void removeBlock();
 
     void toggleColorSelectorMenu();
     void removeMenu();

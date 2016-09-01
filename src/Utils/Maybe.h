@@ -2,6 +2,7 @@
 #define MAYBE_H
 
 #include <stdexcept>
+#include <type_traits>
 
 #include "Exception/NullMaybeException.h"
 
@@ -52,6 +53,9 @@
  *********************************************************************/
 template <typename T>
 class Maybe {
+
+    static_assert(std::is_default_constructible<T>::value, "Maybe<T> requires T to be default constructable.");
+
     T* value;
 
 public:
