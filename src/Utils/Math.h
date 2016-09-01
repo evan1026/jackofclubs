@@ -36,6 +36,27 @@ namespace Math {
         return std::floor(x * std::pow(10, places)) / pow(10, places);
     }
 
+    //Just to keep all math functions used in one common place
+    template <typename T> inline constexpr
+    T floor(T x) {
+        return std::floor(x);
+    }
+
+    template <typename T> inline constexpr
+    T ceil(T x) {
+        return std::ceil(x);
+    }
+
+    template <typename T> inline constexpr
+    T round(T x) {
+        return std::round(x);
+    }
+
+    template <typename T> inline constexpr
+    T sqrt(T x) {
+        return std::sqrt(x);
+    }
+
     template <typename T> inline constexpr
     bool similar(T x, T y, int places) {
         return trunc(abs(x - y), places) == T(0);
@@ -59,6 +80,28 @@ namespace Math {
     template <typename T> inline constexpr
     double cosDeg(T x) {
         return std::cos(x * PI / 180.f);
+    }
+
+    template <typename T> inline constexpr
+    T min(T x, T y) {
+        return (x < y) ? x : y;
+    }
+
+    template <typename T, typename... Ts> inline
+    T min(T x, T y, Ts... rest) {
+        T minOfRest = min(y, rest...);
+        return (x < minOfRest) ? x : minOfRest;
+    }
+
+    template <typename T> inline constexpr
+    T max(T x, T y) {
+        return (x > y) ? x : y;
+    }
+
+    template <typename T, typename... Ts> inline
+    T max(T x, T y, Ts... rest) {
+        T maxOfRest = max(y, rest...);
+        return (x > maxOfRest) ? x : maxOfRest;
     }
 };
 

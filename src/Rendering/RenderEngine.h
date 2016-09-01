@@ -16,6 +16,8 @@ class RenderEngine {
     static float lightAmbient[4];
     static float lightDiffuse[4];
 
+    void pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s);
+
     public:
         RenderEngine(int width, int height);
 
@@ -28,6 +30,7 @@ class RenderEngine {
 
         void renderVertexArray(const std::vector<Vertex>& vertices);
         void renderAABB(const AABB& box, const sf::Color& color);
+        void renderBlockSelection(const AABB& box, const sf::Color& color);
 
         sf::RenderWindow& getWindow();
 

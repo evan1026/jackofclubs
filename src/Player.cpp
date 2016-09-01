@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
+#include "Utils/Maybe.h"
 #include "World/World.h"
 
 Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation)
@@ -77,4 +78,55 @@ void Player::render(RenderEngine& e, sf::RenderWindow& w) {
 
     if (DebugOptions::playerHitboxRendered())
         e.renderAABB(getBoundingBox(), sf::Color::Black);
+}
+
+float Player::getTMax(float origin, float direction) const {
+    if (direction > 0) {
+        return (Math::ceil(origin) - origin) / Math::abs(direction);
+    } else {
+        return (origin - Math::floor(origin)) / Math::abs(direction);
+    }
+}
+
+// Implementation of the algorithm described at http://www.cse.chalmers.se/edu/year/2011/course/TDA361/grid.pdf
+Maybe<sf::Vector3i> Player::getSelection(World& world, float range) const {
+    sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x), -Math::sinDeg(_rotation.x), -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
+    sf::Vector3f origin = _position + sf::Vector3f(0.5, 1.75, 0.5);
+    sf::Vector3f pos(Math::floor(origin.x), Math::floor(origin.y), Math::floor(origin.z));
+    sf::Vector3f step(Math::signum(direction.x), Math::signum(direction.y), Math::signum(direction.z));
+    sf::Vector3f tMax(getTMax(origin.x, direction.x), getTMax(origin.y, direction.y), getTMax(origin.z, direction.z));
+    sf::Vector3f tDelta(step.x / direction.x, step.y / direction.y, step.z / direction.z);
+
+    range /= Math::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+
+    while (world.getBlockType(sf::Vector3i(pos.x, pos.y, pos.z)) != Block::Type::SOLID) {
+        if (tMax.x < tMax.y) {
+            if (tMax.x < tMax.z) {
+                if (tMax.x > range) break;
+                pos.x += step.x;
+                tMax.x += tDelta.x;
+            } else {
+                if (tMax.z > range) break;
+                pos.z += step.z;
+                tMax.z += tDelta.z;
+            }
+        } else {
+            if (tMax.y < tMax.z) {
+                if (tMax.y > range) break;
+                pos.y += step.y;
+                tMax.y += tDelta.y;
+            } else {
+                if (tMax.z > range) break;
+                pos.z += step.z;
+                tMax.z += tDelta.z;
+            }
+        }
+    }
+
+    sf::Vector3i finalPosition(pos.x, pos.y, pos.z);
+    if (world.getBlockType(finalPosition) == Block::Type::SOLID) {
+        return Maybe<sf::Vector3i>(finalPosition);
+    } else {
+        return Maybe<sf::Vector3i>();
+    }
 }

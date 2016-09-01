@@ -17,9 +17,11 @@ WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _fpsCounter(sf::Vector2i(5, 0)),
     _activeMenu(nullptr),
     _colorRect(sf::Vector2f(100, 100)),
+    _centerRect(sf::Vector2f(4, 4)),
     _mouseCaptured(true),
     _screenMiddle(window.getSize().x / 2, window.getSize().y / 2),
     _selectedColor(sf::Color::White),
+    _selectedBlock(),
     _window(window),
     _game(game)
 {
@@ -165,6 +167,8 @@ void WorldScreen::tick() {
     _fpsCounter.update();
 
     if (_activeMenu == nullptr) handlePlayerMovement();
+
+    _selectedBlock = _player.getSelection(_world, 5);
 }
 
 void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
@@ -176,12 +180,26 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
     _colorRect.setPosition(size.x - rectSize.x - lineThickness, size.y - rectSize.y - lineThickness);
     _colorRect.setFillColor(_selectedColor);
 
+    rectSize = _centerRect.getSize();
+    _centerRect.setPosition(size.x / 2 - rectSize.x / 2, size.y / 2 - rectSize.y / 2);
+    _centerRect.setFillColor(sf::Color::Black);
+
     _player.render(re, w);
     _world.render(re, w);
+    if (_selectedBlock) {
+        AABB blockBox = _world.getBlock(_selectedBlock()).getBoundingBox();
+        sf::Color outlineColor = sf::Color::Black;
+        sf::Color blockColor = _world.getBlockColor(_selectedBlock());
+        if (blockColor.r < 128 && blockColor.g < 128 && blockColor.b < 128) {
+            outlineColor = sf::Color::White;
+        }
+        re.renderBlockSelection(blockBox, outlineColor);
+    }
     _fpsCounter.render(re, w);
 
     w.pushGLStates();
     w.draw(_colorRect);
+    w.draw(_centerRect);
     w.popGLStates();
 
     if (_activeMenu != nullptr) {

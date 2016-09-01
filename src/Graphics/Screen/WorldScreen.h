@@ -23,11 +23,13 @@ class WorldScreen : public Screen {
     FPSCounter _fpsCounter;
     std::unique_ptr<Menu> _activeMenu;
     sf::RectangleShape _colorRect;
+    sf::RectangleShape _centerRect;
 
     //Other data
     bool _mouseCaptured;
     sf::Vector2i _screenMiddle;
     sf::Color _selectedColor;
+    Maybe<sf::Vector3i> _selectedBlock;
 
     // References to other objects we need to work with
     // I'm sure there's a better way to do this, but this is easier and
