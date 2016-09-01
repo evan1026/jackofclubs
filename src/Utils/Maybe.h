@@ -3,20 +3,7 @@
 
 #include <stdexcept>
 
-/*************************************************************
- * ~~~~~~~~~~~~~~~~~~~~~~~~                                  *
- * ~ null_maybe_exception ~                                  *
- * ~~~~~~~~~~~~~~~~~~~~~~~~                                  *
- *                                                           *
- * This is the exception thrown if someone tries to grab the *
- * value out of a null Maybe.                                *
- *************************************************************/
-
-class null_maybe_exception : public std::runtime_error { //TODO fit into currect exception system
-public:
-    null_maybe_exception() : runtime_error("Atempt to turn a null Maybe into a value.") {}
-};
-
+#include "Exception/NullMaybeException.h"
 
 /*********************************************************************
  * ~~~~~~~~~~~~                                                      *
@@ -44,7 +31,7 @@ public:
  *     if (maybeWithoutValue) {                                      *
  *         //will not get here, since it has no data                 *
  *     } else {                                                      *
- *         //this will throw a null_maybe_exception                  *
+ *         //this will throw a NullMaybeException                    *
  *         a = maybeWithoutValue();                                  *
  *     }                                                             *
  *                                                                   *
@@ -130,7 +117,7 @@ public:
 
     T operator()() const {
         if (*this) return *value;
-        else throw null_maybe_exception();
+        else throw NullMaybeException();
     }
 };
 
