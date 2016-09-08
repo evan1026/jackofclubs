@@ -1,9 +1,6 @@
 #ifndef MAYBE_H
 #define MAYBE_H
 
-#include <stdexcept>
-#include <type_traits>
-
 #include "Exception/NullMaybeException.h"
 
 /*********************************************************************
@@ -54,62 +51,77 @@
 template <typename T>
 class Maybe {
 
-    static_assert(std::is_default_constructible<T>::value, "Maybe<T> requires T to be default constructable.");
-
     T* value;
+    std::allocator<T> alloc;
 
 public:
-    Maybe<T>(const T val) {
-        value = new T;
-        *value = val;
+    // Automatically handles things like copy and move constructors (for T),
+    // because it just forwards things along
+    template <typename... Ts>
+    Maybe<T>(const Ts&... args) {
+        value = alloc.allocate(1);
+        alloc.construct(value, args...);
     }
+
     Maybe<T>() {
         value = nullptr;
     }
 
     ~Maybe<T>() {
         if (value != nullptr) {
-            delete value;
+            alloc.destroy(value);
         }
     }
+
     Maybe<T>(const Maybe<T>& other) {
-        value = new T;
-        *value = *other.value;
+        value = alloc.allocate(1);
+        if (other.value != nullptr) {
+            *value = *other.value;
+        } else {
+            value = nullptr;
+        }
     }
+
     Maybe<T>(Maybe<T>&& other) {
         value = other.value;
         other.value = nullptr;
     }
 
-    Maybe<T>& operator=(const Maybe<T>& other) {
+    template <typename... Ts>
+    Maybe<T>& operator=(const Ts&... args) {
         if (value != nullptr) {
-            delete value;
+            alloc.destroy(value);
         }
-        value = new T;
-        *value = *other.value;
+        value = alloc.allocate(1);
+        alloc.construct(value, args...);
         return *this;
     }
+
+    Maybe<T>& operator=(const Maybe<T>& other) {
+        if (value != nullptr) {
+            alloc.destroy(value);
+        }
+        value = alloc.allocate(1);
+        if (other.value != nullptr) {
+            *value = *other.value;
+        } else {
+            value = nullptr;
+        }
+        return *this;
+    }
+
     Maybe<T>& operator=(Maybe<T>&& other) {
         if (value != nullptr){
-            delete value;
+            alloc.destroy(value);
         }
         value = other.value;
         other.value = nullptr;
         return *this;
     }
 
-    Maybe<T>& operator=(const T& val) {
-        if (value != nullptr) {
-            delete value;
-        }
-        value = new T;
-        *value = val;
-        return *this;
-    }
-
     Maybe<T>& operator=(const std::nullptr_t& null_p) {
         if (value != nullptr) {
-            delete value;
+            alloc.destroy(value);
         }
         value = null_p;
         return *this;
@@ -119,7 +131,7 @@ public:
         return value != nullptr;
     }
 
-    T operator()() const {
+    T& operator()() const {
         if (*this) return *value;
         else throw NullMaybeException();
     }

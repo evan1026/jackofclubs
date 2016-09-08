@@ -131,7 +131,7 @@ Maybe<BlockFace> Player::getSelection(World& world, float range) const {
 
     sf::Vector3i finalPosition(pos.x, pos.y, pos.z);
     if (world.getBlockType(finalPosition) == Block::Type::SOLID) {
-        return Maybe<BlockFace>(BlockFace(pos, normal));
+        return Maybe<BlockFace>(pos, normal);
     } else {
         return Maybe<BlockFace>();
     }

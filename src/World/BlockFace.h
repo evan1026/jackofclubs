@@ -29,7 +29,6 @@ class BlockFace {
     public:
         BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal);
         BlockFace(const sf::Vector3f& position, Face face);
-        BlockFace();
 
         sf::Vector3f getPosition() const;
         sf::Vector3f getNormal() const;

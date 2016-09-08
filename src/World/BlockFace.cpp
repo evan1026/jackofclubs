@@ -24,12 +24,6 @@ BlockFace::BlockFace(const sf::Vector3f& position, BlockFace::Face face) :
     _normal(faceNormals[face])
 {}
 
-BlockFace::BlockFace() :
-    _position(0, 0, 0),
-    _face(BlockFace::Face::NORTH),
-    _normal(faceNormals[_face])
-{}
-
 sf::Vector3f BlockFace::getPosition() const {
     return _position;
 }
