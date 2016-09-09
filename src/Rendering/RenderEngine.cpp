@@ -12,11 +12,11 @@ float RenderEngine::lightPos[] =     { -0.1f, -1.0f, 0.2f, 0.f  };
 float RenderEngine::lightAmbient[] = {  0.5f,  0.5f, 0.5f, 1.0f };
 float RenderEngine::lightDiffuse[] = {  0.7f,  0.7f, 0.7f, 1.0f};
 
-RenderEngine::RenderEngine(int width, int height)
-        : _window(sf::VideoMode(width, height),
-                  "jack o' clubs",
-                  sf::Style::Default,
-                  sf::ContextSettings(24))
+RenderEngine::RenderEngine() :
+    _window(getVideoMode(),
+            "jack o' clubs",
+            sf::Style::Default,
+            sf::ContextSettings(24))
 {
     _window.setVerticalSyncEnabled(true);
 
@@ -37,7 +37,23 @@ RenderEngine::RenderEngine(int width, int height)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
     glEnable(GL_LIGHT0);
 
-    setPerspective(60.f, _window.getSize().x, _window.getSize().y, 1.f, 10000.f);
+    sf::Vector2u windowSize = _window.getSize();
+
+    setPerspective(windowSize.x, windowSize.y);
+
+    // This code centers the window on the screen
+    sf::VideoMode defaultVideoMode = sf::VideoMode::getDesktopMode();
+    _window.setPosition(sf::Vector2i(defaultVideoMode.width / 2 - windowSize.x / 2, defaultVideoMode.height / 2 - windowSize.y / 2));
+}
+
+// Returns a video mode where the window takes up 1/4 of the screen
+sf::VideoMode RenderEngine::getVideoMode() {
+    sf::VideoMode defaultVideoMode = sf::VideoMode::getDesktopMode();
+    return sf::VideoMode(defaultVideoMode.width / 2, defaultVideoMode.height / 2, defaultVideoMode.bitsPerPixel);
+}
+
+void RenderEngine::setPerspective(int width, int height) {
+    setPerspective(60.f, width, height, 1.f, 10000.f);
 }
 
 //Code from stackoverflow
@@ -58,7 +74,10 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
 
 void RenderEngine::handleResize(int width, int height) {
     glViewport(0, 0, width, height);
-    setPerspective(60.f, width, height, 1.f, 10000.f);
+    setPerspective(width, height);
+
+    // Update's the window's internal GL states to match the resize
+    _window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
 }
 
 void RenderEngine::beginRender() {

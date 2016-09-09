@@ -17,10 +17,12 @@ class RenderEngine {
     static float lightDiffuse[4];
 
     void pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s);
+    sf::VideoMode getVideoMode();
 
     public:
-        RenderEngine(int width, int height);
+        RenderEngine();
 
+        void setPerspective(int width, int height);
         void setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar);
 
         void handleResize(int width, int height);

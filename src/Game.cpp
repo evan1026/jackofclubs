@@ -5,7 +5,7 @@
 #include "Graphics/Screen/WorldScreen.h"
 
 Game::Game() :
-    _re(1920, 1080) //TODO detect screen size or select a default
+    _re()
     {}
 
 void Game::run() {
