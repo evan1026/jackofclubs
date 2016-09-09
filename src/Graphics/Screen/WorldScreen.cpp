@@ -69,7 +69,11 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
             }
             break;
         case sf::Mouse::Button::Right:
-            placeBlock();
+            if (!_mouseCaptured) {
+                removeMenu();
+            } else {
+                placeBlock();
+            }
             break;
         default:
             break;
