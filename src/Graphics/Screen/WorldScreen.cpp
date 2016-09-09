@@ -101,6 +101,9 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
         case sf::Keyboard::C:
             toggleColorSelectorMenu();
             break;
+        case sf::Keyboard::E:
+            copySelectionColor();
+            break;
         default:
             break;
     }
@@ -194,6 +197,14 @@ void WorldScreen::handlePlayerMovement() {
     }
 
     _player.move(vel, _world);
+}
+
+void WorldScreen::copySelectionColor() {
+    if (_selectedBlock) {
+        sf::Vector3f posf = _selectedBlock().getPosition();
+        sf::Vector3i posi(posf.x, posf.y, posf.z);
+        _selectedColor = _world.getBlockColor(posi);
+    }
 }
 
 void WorldScreen::tick() {

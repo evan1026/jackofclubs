@@ -51,6 +51,8 @@ class WorldScreen : public Screen {
 
     void handlePlayerMovement();
 
+    void copySelectionColor();
+
     public:
         WorldScreen(sf::RenderWindow& window, Game& game);
 
