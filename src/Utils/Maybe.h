@@ -74,9 +74,9 @@ public:
     }
 
     Maybe<T>(const Maybe<T>& other) {
-        value = alloc.allocate(1);
         if (other.value != nullptr) {
-            *value = *other.value;
+            value = alloc.allocate(1);
+            alloc.construct(value, *other);
         } else {
             value = nullptr;
         }
@@ -87,26 +87,18 @@ public:
         other.value = nullptr;
     }
 
-    template <typename... Ts>
-    Maybe<T>& operator=(const Ts&... args) {
-        if (value != nullptr) {
-            alloc.destroy(value);
-        }
-        value = alloc.allocate(1);
-        alloc.construct(value, args...);
-        return *this;
-    }
-
     Maybe<T>& operator=(const Maybe<T>& other) {
         if (value != nullptr) {
             alloc.destroy(value);
         }
-        value = alloc.allocate(1);
+
         if (other.value != nullptr) {
-            *value = *other.value;
+            value = alloc.allocate(1);
+            alloc.construct(value, *other);
         } else {
             value = nullptr;
         }
+
         return *this;
     }
 
@@ -114,8 +106,10 @@ public:
         if (value != nullptr){
             alloc.destroy(value);
         }
+
         value = other.value;
         other.value = nullptr;
+
         return *this;
     }
 
@@ -123,7 +117,9 @@ public:
         if (value != nullptr) {
             alloc.destroy(value);
         }
+
         value = null_p;
+
         return *this;
     }
 
