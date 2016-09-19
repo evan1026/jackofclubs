@@ -2,6 +2,7 @@
 #define EXCEPTION_H
 
 #include <sstream>
+#include <stdexcept>
 
 #define STACK_TRACE_MAX_SIZE 500
 
