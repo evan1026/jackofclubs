@@ -4,6 +4,7 @@ project(jackofclubs)
 
 set(SOURCE_DIR "src")
 set(INCLUDE_DIR "src")
+set(RESOURCES_DIR "resources")
 set(EXECUTABLE_NAME "jackofclubs")
 set(DEBUG true)
 
@@ -36,3 +37,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
+
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR} $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)

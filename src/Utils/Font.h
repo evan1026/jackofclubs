@@ -9,7 +9,7 @@ class Font : public sf::Font {
         static Font defaultFont;
 
         Font() {
-            loadFromFile("/usr/share/fonts/truetype/msttcorefonts/arial.ttf"); //TODO temp location... should be moved into project
+            loadFromFile("resources/arial.ttf");
         }
 
         Font(std::string file) {
