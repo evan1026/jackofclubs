@@ -3,6 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
+/*
+ * My own font class which is the same as sf::Font
+ * except that it defines a default font
+ */
+
 class Font : public sf::Font {
 
     public:

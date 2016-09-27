@@ -6,6 +6,11 @@
 #include "Graphics/Screen/Screen.h"
 #include "Rendering/RenderEngine.h"
 
+/*
+ * Represents the game as a while.
+ * Mostly just handles dispatching events and invoking rendering.
+ */
+
 class Game {
 
     std::unique_ptr<Screen> _screen;

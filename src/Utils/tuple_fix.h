@@ -1,7 +1,11 @@
 #ifndef TUPLE_FIX_H
 #define TUPLE_FIX_H
 
-//This code comes entirely from http://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
+/*
+ * Code to allow tuples to be used as the key in a map/set
+ *
+ * This code comes entirely from http://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
+ */
 
 #include <tuple>
 namespace std{

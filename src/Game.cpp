@@ -4,10 +4,17 @@
 #include "Game.h"
 #include "Graphics/Screen/WorldScreen.h"
 
+/*
+ * Constructs the game and initializes the render engine
+ */
 Game::Game() :
     _re()
     {}
 
+/*
+ * Starts the game and runs the main loop, which polls events
+ * and dispatches them to the appropriate handler.
+ */
 void Game::run() {
     _screen = std::unique_ptr<Screen>(new WorldScreen(_re.getWindow(), *this));
     sf::RenderWindow& window = _re.getWindow();
@@ -26,14 +33,27 @@ void Game::run() {
     }
 }
 
+/*
+ * Ends the game by signalling the main loop should terminate
+ */
 void Game::end() {
     _running = false;
 }
 
+/*
+ * Handles a portion of the possible events.
+ *
+ * Currently handled events:
+ *     1) Window Closed  - Ends the main loop
+ *     2) Window Resized - Notifies the render engine
+ *     3) F3 Pressed     - Marks debug options as available to be shown (screen handles actually showing them)
+ *
+ * Returns true if the event has been sufficiently handled (i.e. should not be forwarded along) and false otherwise
+ */
 bool Game::handleEvent(const sf::Event& e) {
     switch (e.type) {
         case sf::Event::Closed:
-            _running = false;
+            end();
             return true;
         case sf::Event::Resized:
             _re.handleResize(e.size.width, e.size.height);

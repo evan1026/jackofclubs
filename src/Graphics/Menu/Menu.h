@@ -5,9 +5,19 @@
 
 #include "Rendering/IRenderable.h"
 
+/*
+ * Base class for all menus. Handles bounds checking and centering
+ * on the screen and defines an interface for the derived classes.
+ * Also keeps track of the previous menu to allow for menu chaining
+ * (e.g. opening a settings menu which opens a graphics settings menu
+ * which opens a resolution menu, and you can go backwards through the
+ * whole thing when done with the current menu).
+ */
+
 class Menu : public IRenderable {
 
     public:
+        // Somewhat restrictive, but useful enough that it makes up for it
         enum class Type {
             ColorSelector
         };

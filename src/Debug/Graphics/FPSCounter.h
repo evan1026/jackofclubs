@@ -6,13 +6,24 @@
 
 #include "Rendering/IRenderable.h"
 
+/*
+ * This class represents the FPS counter that is displayed in the top
+ * left of the screen when F3 is pressed. It will automatically handle
+ * figuring out the framerate as long as update() is called every frame.
+ * It will also handle updating the text at a shorter refresh rate (default
+ * is every half second) to ensure readability.
+ */
+
+typedef std::chrono::milliseconds Milliseconds;
+typedef std::chrono::high_resolution_clock::time_point TimePoint;
+
 class FPSCounter : public sf::Text, public IRenderable {
 
-    long _refreshRate;
-    long _count;
-    std::chrono::milliseconds _accumulator;
-    std::chrono::high_resolution_clock::time_point _lastCall,
-                                                   _lastUpdate;
+    long _refreshRate;         // How often (in millis) to update the text
+    long _count;               // Counts how many frames have gone by
+    Milliseconds _accumulator; // Counts how much time has gone by
+    TimePoint _lastCall,       // Last time update() was called
+              _lastUpdate;     // Last time text was updated
 
     public:
         FPSCounter(sf::Vector2i position, long refreshRate = 500); //refresh rate in millis
@@ -21,6 +32,7 @@ class FPSCounter : public sf::Text, public IRenderable {
         // and update the text every time the refresh time goes by
         void update();
 
+        // Overrides method from IRenderable
         void render(RenderEngine& e, sf::RenderWindow& w) override;
 
         long getRefreshRate();

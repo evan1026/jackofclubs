@@ -3,6 +3,15 @@
 
 #include <SFML/Graphics.hpp>
 
+/*
+ * Base class for a menu component. Things that would extend this would be buttons,
+ * sliders, etc. Anything that is a single item that can be used in multiple places.
+ * Handles calculating the component's global position based on its parent's position
+ * and its position relative to the parent. Also restricts rendering to work only
+ * with an sf::Window (as opposed to also including the render engine, like IRenderable).
+ * This just makes orthogonal rendering easier.
+ */
+
 class Component {
 
     protected:

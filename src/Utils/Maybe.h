@@ -55,24 +55,35 @@ class Maybe {
     std::allocator<T> alloc;
 
 public:
-    // Automatically handles things like copy and move constructors (for T),
-    // because it just forwards things along
+    /*
+     * Constructs a non-empty Maybe by forwarding the args to the
+     * templated type's constructor.
+     */
     template <typename... Ts>
     Maybe<T>(const Ts&... args) {
         value = alloc.allocate(1);
         alloc.construct(value, args...);
     }
 
+    /*
+     * Constructs an empty maybe
+     */
     Maybe<T>() {
         value = nullptr;
     }
 
+    /*
+     * Frees up the contained value, if there is one
+     */
     ~Maybe<T>() {
         if (value != nullptr) {
             alloc.destroy(value);
         }
     }
 
+    /*
+     * Copy constructor
+     */
     Maybe<T>(const Maybe<T>& other) {
         if (other.value != nullptr) {
             value = alloc.allocate(1);
@@ -82,11 +93,17 @@ public:
         }
     }
 
+    /*
+     * Move constructor
+     */
     Maybe<T>(Maybe<T>&& other) {
         value = other.value;
         other.value = nullptr;
     }
 
+    /*
+     * Copy assignment operator
+     */
     Maybe<T>& operator=(const Maybe<T>& other) {
         if (value != nullptr) {
             alloc.destroy(value);
@@ -102,6 +119,9 @@ public:
         return *this;
     }
 
+    /*
+     * Move assignment operator
+     */
     Maybe<T>& operator=(Maybe<T>&& other) {
         if (value != nullptr){
             alloc.destroy(value);
@@ -113,6 +133,23 @@ public:
         return *this;
     }
 
+    /*
+     * Assign to Maybe based on anything T can be assigned by
+     */
+    template <typename O>
+    Maybe<T>& operator=(const O& other) {
+        if (value == nullptr) {
+            value = alloc.allocate(1);
+        }
+
+        *value = other;
+
+        return *this;
+    }
+
+    /*
+     * Assign will null pointer
+     */
     Maybe<T>& operator=(const std::nullptr_t& null_p) {
         if (value != nullptr) {
             alloc.destroy(value);
@@ -123,10 +160,16 @@ public:
         return *this;
     }
 
+    /*
+     * Checks if value can be extracted from this Maybe
+     */
     operator bool() const {
         return value != nullptr;
     }
 
+    /*
+     * Extracts the value from this Maybe, and throws and exception if we can't
+     */
     T& operator()() const {
         if (*this) return *value;
         else throw NullMaybeException();

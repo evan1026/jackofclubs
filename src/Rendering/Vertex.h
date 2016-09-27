@@ -1,6 +1,12 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+/*
+ * Simple data structure defining a vertex that gets pushed
+ * to OpenGL. Each vertex has a position, a color, and a normal
+ * vector (normal is used for lighting calculations)
+ */
+
 struct Vertex {
     float pos[3];
     float color[3];

@@ -16,15 +16,22 @@
 
 class Game;
 
+/*
+ * This is the big class that does most of the work for displaying the world
+ * to the user and letting them interact with it.
+ *
+ * For docs on each function, see WorldScreen.cpp
+ */
+
 class WorldScreen : public Screen {
 
     //Rendered objects
     World _world;
-    Player _player;
-    FPSCounter _fpsCounter;
+    Player _player; // Not *rendered* in the traditional sense, but we call render() on it to handle translation
+    FPSCounter _fpsCounter; // Only displayed in debug mode
     std::unique_ptr<Menu> _activeMenu;
     sf::RectangleShape _colorRect;
-    sf::RectangleShape _centerRect;
+    sf::RectangleShape _centerRect; // Basically a mouse cursor for the user
 
     //Other data
     bool _mouseCaptured;

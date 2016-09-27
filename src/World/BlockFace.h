@@ -6,6 +6,12 @@
 
 #include "Utils/EnumClassHash.h"
 
+/*
+ * Represents one particular face of a block
+ * Only keeps track of the block's position, rather
+ * than keeping a reference to it
+ */
+
 class BlockFace {
 
     public:
@@ -19,6 +25,8 @@ class BlockFace {
         };
 
     private:
+        // Makes it a little easier to interface between BlockFace::Face's and
+        // the normal vectors associated with them
         static std::unordered_map<Face, sf::Vector3f, EnumClassHash> faceNormals;
         void setFaceFromNormal(const sf::Vector3f& normal);
 

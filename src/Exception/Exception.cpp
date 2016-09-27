@@ -7,6 +7,27 @@
 
 #define STRING_BUFFER_SIZE 1024
 
+/*
+ * "Demangles" stack trace item names.
+ * Code from https://panthema.net/2008/0901-stacktrace-demangled/
+ *
+ * When C++ code is translated into assembly, each function has to be given
+ * a label to jump to. With C code, that label can just be the function name.
+ * However, with C++, the full function name would be something like
+ * Exception::demangle (and that doesn't even take function overloading into account,
+ * but I have no idea how they handle that). Since the colon (:) isn't a valid
+ * character to be part of a label, they have to "mangle" the name into a format
+ * that is valid. The format it turns into is pretty much unreadable. For instance,
+ * this function becomes:
+ *     _ZNK9Exception8demangleERNSt7__cxx1118basic_stringstreamIcSt11char_traitsIcESaIcEEEPPcm
+ *
+ * Which is a lot less readable than the header below. So, this function takes that
+ * mess and translates it back using a provided function abi::__cxa_demangle
+ *
+ * ss         - The string stream representing the final output that we'll write into
+ * symbollist - array of strings containing the mangled names
+ * addrlen    - number of entries to process (name is a carry-over from where I got this code)
+ */
 void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrlen) const {
     size_t funcnamesize = STRING_BUFFER_SIZE;
     char funcname[STRING_BUFFER_SIZE];
@@ -75,22 +96,54 @@ void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrle
     }
 }
 
+/*
+ * Prints the stacktrace saved in the exception into the stringstream.
+ *
+ * ss - the stringstream to print the data into
+ */
 void Exception::printStackTrace(std::stringstream& ss) const {
     char** lines = backtrace_symbols(_stackTrace, _stackSize);
     demangle(ss, lines, _stackSize);
     delete[] lines;
 }
 
+/*
+ * Uses linux-specific library function to save the stacktrace for this function call.
+ * The fact that it will include everything up to this function is why we have the
+ * stack skip later. There's no point in printing stuff for the Exception library itself.
+ */
 void Exception::saveStackTrace() {
     _stackSize = backtrace(_stackTrace, STACK_TRACE_MAX_SIZE);
 }
 
+/*
+ * Constructs a new Exception.
+ *
+ * The stack skip should be essentially how many function calls exist between the original
+ * exception constructor and this one, which basically boils down to the class's level in the
+ * heirarchy (i.e., direct descendants of this class should give 1, their children give 2, etc.).
+ * As such, it probably makes sense to have each guy take an optional stack skip and call this
+ * constructor with that value plus 1.
+ *
+ * reason    - The issue that caused the exception itself. Mostly in the format "ExceptionName: Cause of exception."
+ * stackSkip - explained above
+ */
 Exception::Exception(std::string reason, int stackSkip) :
-            std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 3) { //+3 because of the 3 extra functions we add
+            std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2) { //+2 because of the 2 extra functions we add (constructor and printStackTrace())
     _out = new char*;
     saveStackTrace();
 }
 
+/*
+ * Returns a readable explaination of the exception.
+ * Overrides std::runtime_error::what().
+ *
+ * This is where the backtrace is translated into text.
+ * I delay it like that because creating a string representation involves
+ * getting line numbers, which involves calling /usr/bin/addr2line a bunch
+ * of times. If an exception is thrown and later caught without printing
+ * anything, there's no reason to invoke multiple instances of another process.
+ */
 const char* Exception::what() const noexcept {
     std::stringstream ss;
     ss << _reason << std::endl;

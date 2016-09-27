@@ -8,10 +8,16 @@
 #include "Utils/Math.h"
 #include "World/Block.h"
 
+//TODO UPgrade to modern OpenGL
+
+// RGBA values for different lights
 float RenderEngine::lightPos[] =     { -0.1f, -1.0f, 0.2f, 0.f  };
 float RenderEngine::lightAmbient[] = {  0.5f,  0.5f, 0.5f, 1.0f };
 float RenderEngine::lightDiffuse[] = {  0.7f,  0.7f, 0.7f, 1.0f};
 
+/*
+ * Creates a rendering window and sets up OpenGL
+ */
 RenderEngine::RenderEngine() :
     _window(getVideoMode(),
             "jack o' clubs",
@@ -20,25 +26,32 @@ RenderEngine::RenderEngine() :
 {
     _window.setVerticalSyncEnabled(true);
 
+    // Set background color
     glClearDepth(1.f);
     glClearColor(217.f / 256.f, 233.f / 256.f, 255.f / 256.f, 1.f);
 
+    // Make sure things in front get drawn in front
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
+    // Don't draw both sides of the face (more efficient)
     glFrontFace(GL_CW);
     glEnable(GL_CULL_FACE);
 
+    // Turn on lighting and make a vertexes color based on
+    // glColor rather than glMaterial
     glEnable(GL_LIGHTING);
-
     glEnable(GL_COLOR_MATERIAL);
 
+    // TODO attempt 2 light system so all faces are different
+
+    // Set up our "sun"
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
     glEnable(GL_LIGHT0);
 
+    // Make sure the perspective matches the window
     sf::Vector2u windowSize = _window.getSize();
-
     setPerspective(windowSize.x, windowSize.y);
 
     // This code centers the window on the screen
@@ -46,17 +59,34 @@ RenderEngine::RenderEngine() :
     _window.setPosition(sf::Vector2i(defaultVideoMode.width / 2 - windowSize.x / 2, defaultVideoMode.height / 2 - windowSize.y / 2));
 }
 
-// Returns a video mode where the window takes up 1/4 of the screen
+/*
+ * Returns a video mode where the window takes up 1/4 of the screen
+ */
 sf::VideoMode RenderEngine::getVideoMode() {
     sf::VideoMode defaultVideoMode = sf::VideoMode::getDesktopMode();
     return sf::VideoMode(defaultVideoMode.width / 2, defaultVideoMode.height / 2, defaultVideoMode.bitsPerPixel);
 }
 
+/*
+ * Defines default values for the other setPerspective
+ *
+ * width  - width of the window
+ * height - height of the window
+ */
 void RenderEngine::setPerspective(int width, int height) {
     setPerspective(60.f, width, height, 1.f, 10000.f);
 }
 
-//Code from stackoverflow
+/*
+ * Calls glFustrum with the appropriate values give the input parameters.
+ * idk how glFustrum works, but this code is from StackOverflow, so it's probably right.
+ *
+ * fovY   - Desired field of view
+ * width  - Window width
+ * height - Window height
+ * zNear  - How close something has to be to be clipped
+ * zFar   - How far something has to be to be clipped
+ */
 void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar) {
     GLdouble aspect = (double) width / height;
 
@@ -72,6 +102,13 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
+/*
+ * Handles notifying OpenGL and SFML's OpenGL that the screen has
+ * been resized.
+ *
+ * width  - new window width
+ * height - new window height
+ */
 void RenderEngine::handleResize(int width, int height) {
     glViewport(0, 0, width, height);
     setPerspective(width, height);
@@ -80,6 +117,9 @@ void RenderEngine::handleResize(int width, int height) {
     _window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
 }
 
+/*
+ * Called before doing a full render. Sets OpenGL up to do rendering.
+ */
 void RenderEngine::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -87,20 +127,39 @@ void RenderEngine::beginRender() {
     glLoadIdentity();
 }
 
+/*
+ * Called after doing a full render. Flushes the buffer to the screen.
+ */
 void RenderEngine::endRender() {
     _window.display();
 }
 
+/*
+ * Moves the camera based on the player's position. Automatically handles
+ * moving the camera to the player's head (whereas their position is in their feet).
+ *
+ * position - Player's position
+ */
 void RenderEngine::translatePlayer(const sf::Vector3f& position) {
     glTranslatef(-(position.x + 0.5) * Block::SIZE, -(position.y + 1.75)  * Block::SIZE, -(position.z + 0.5) * Block::SIZE);
 }
 
+/*
+ * Rotates the camera based on the direction the player is looking
+ *
+ * rotation - Player's look direction
+ */
 void RenderEngine::rotatePlayer(const sf::Vector3f& rotation) {
     glRotatef(rotation.x, 1.f, 0.f, 0.f);
     glRotatef(rotation.y, 0.f, 1.f, 0.f);
     glRotatef(rotation.z, 0.f, 0.f, 1.f);
 }
 
+/*
+ * Renders an entire array of vertices, all at once
+ *
+ * vertices - The vertices to render
+ */
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -118,6 +177,13 @@ void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
     glDisableClientState(GL_NORMAL_ARRAY);
 }
 
+/*
+ * Given a top left front point, pushes all of the vertices needed to render a
+ * block.
+ *
+ * p - Starting position
+ * s - Size (in each direction)
+ */
 void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s) {
     glVertex3f(p.x,       p.y, p.z);
     glVertex3f(p.x + s.x, p.y, p.z);
@@ -150,6 +216,16 @@ void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& 
     glVertex3f(p.x + s.x, p.y + s.y, p.z);
 }
 
+/*
+ * Renders an axis aligned bounding box. Simply turns off culling
+ * and makes rendering use lines instead of fill, then calls
+ * pushBlockVertcies() (gotta turn off culling because pushBlockVerticies()
+ * is designed so that it renders only the outside of the block,
+ * but you can be inside the AABB)
+ *
+ * box   - The AABB to render
+ * color - The color to render the AABB
+ */
 void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
@@ -157,45 +233,72 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     s = s * Block::SIZE;
     p = p * Block::SIZE;
 
+    // Save state
     glPushMatrix();
 
+    // Turn off culling
     glDisable(GL_CULL_FACE);
 
+    // Make it line mode
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(5);
 
+    // Interpret vertices in 4's
     glBegin(GL_QUADS);
 
+    // Set the color
     glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
 
+    // Push the vertices
     pushBlockVertices(p, s);
 
+    // Done pushing vertices
     glEnd();
 
+    // Turn fill back on
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+    // Turn culling back on
     glEnable(GL_CULL_FACE);
 
+    // Pop old state
     glPopMatrix();
 }
 
 #define LINE_WIDTH 0.05
+
+/*
+ * Render the box around a block selection. Similar to renderAABB()
+ * except that it renders 1 block for each edge instead of lines, where
+ * each rendered block is LINE_WIDTH x LINE_WIDTH x 1. Essentially, it looks
+ * like a line, but it won't get completely cut off when blocks are next to
+ * each other (which was the observed behavior when using lines)
+ *
+ * box   - The AABB to render
+ * color - The color to use in rendering
+ */
 void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
     sf::Vector3f linePos;
     sf::Vector3f lineSize;
 
+    // Scale to GL coords
     s = s * Block::SIZE;
     p = p * Block::SIZE;
 
     glPushMatrix();
 
+        // Turning off culling again, not sure why
+        // TODO Shouldn't this be culled?
         glDisable(GL_CULL_FACE);
 
         glBegin(GL_QUADS);
 
             glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
+
+            // Now, we go through the points on the block and render the edges that haven't been taken care of
+            // Each block is one point, whereas each call to pushBlockVertices is an edge that ends at that point
 
             linePos = p - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
             lineSize = sf::Vector3f(LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
@@ -239,6 +342,9 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
     glPopMatrix();
 }
 
+/*
+ * Returns the render window. Useful for making SFML calls.
+ */
 sf::RenderWindow& RenderEngine::getWindow() {
     return _window;
 }

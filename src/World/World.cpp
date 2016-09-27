@@ -7,6 +7,9 @@
 #include "World/Chunk.h"
 #include "World/World.h"
 
+/*
+ * Creates a new world which is 4 chunks by 4 chunks by 8 chunks
+ */
 World::World() {
     for (int x = -2; x < 2; ++x) {
         for (int y = 0; y < 8; ++y) {
@@ -19,12 +22,23 @@ World::World() {
     }
 }
 
+/*
+ * Overrides IRenderable::render. Forwards the rendering on to each chunk.
+ *
+ * e - Render engine (used for OpenGL calls)
+ * w - Window (for SFML calls)
+ */
 void World::render(RenderEngine& e, sf::RenderWindow& w) {
     for (auto i = _chunks.begin(); i != _chunks.end(); ++i) {
         i->second.render(e, w);
     }
 }
 
+/*
+ * Gets the position of the chunk a particular position is in
+ *
+ * pos - global position
+ */
 std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) const {
     int x = pos.x;
     int y = pos.y;
@@ -45,6 +59,11 @@ std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) const {
     return std::make_tuple(x, y, z);
 }
 
+/*
+ * Returns the block at a sepcified position
+ *
+ * pos - global position
+ */
 const Block& World::getBlock(const sf::Vector3i& pos) const {
     if (!blockExists(pos)) {
         throw OutOfRangeException();
@@ -53,12 +72,22 @@ const Block& World::getBlock(const sf::Vector3i& pos) const {
     return _chunks.at(getChunkPos(pos)).getBlock(pos);
 }
 
+/*
+ * Basically checks if a position is in one of the chunks that actually exist.
+ *
+ * pos - global position
+ */
 bool World::blockExists(const sf::Vector3i& pos) const {
     std::tuple<int, int, int> chunkPos = getChunkPos(pos);
     auto iter = _chunks.find(chunkPos);
     return iter != _chunks.end(); //If the block is in a valid chunk, it must exist
 }
 
+/*
+ * Gets the type of a block, if it exists, and returns air if not
+ *
+ * pos - global position
+ */
 Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     if (blockExists(pos)) {
         return _chunks.at(getChunkPos(pos)).getBlockType(pos);
@@ -67,6 +96,12 @@ Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     }
 }
 
+/*
+ * Sets the type of a block at a given position
+ *
+ * pos  - global position
+ * type - new type for that block
+ */
 void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
     if (blockExists(pos)) {
         Chunk& chunk = _chunks.at(getChunkPos(pos));
@@ -75,6 +110,12 @@ void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
     }
 }
 
+/*
+ * Gets the color of a block at a specific position
+ * Returns black if it doesn't exist
+ *
+ * pos - global position
+ */
 sf::Color World::getBlockColor(const sf::Vector3i& pos) const {
     if (blockExists(pos)) {
         return _chunks.at(getChunkPos(pos)).getBlock(pos).getColor();
@@ -83,6 +124,12 @@ sf::Color World::getBlockColor(const sf::Vector3i& pos) const {
     }
 }
 
+/*
+ * Sets the color of a block
+ *
+ * pos   - global position
+ * color - new color
+ */
 void World::setBlockColor(const sf::Vector3i& pos, const sf::Color& color) {
     if (blockExists(pos)) {
         Chunk& chunk = _chunks.at(getChunkPos(pos));
@@ -91,6 +138,13 @@ void World::setBlockColor(const sf::Vector3i& pos, const sf::Color& color) {
     }
 }
 
+/*
+ * Notifys the chunk that contains a changed block that a block has been changed,
+ * and also notifies the chunks that touch that block (otherwise changing blocks
+ * that are next to a chunk border could cause you to see through the world)
+ *
+ * pos - global position of changed block
+ */
 void World::notifyChanged(const sf::Vector3i& pos) {
         notifyChangedSingle(pos);
 
@@ -105,12 +159,27 @@ void World::notifyChanged(const sf::Vector3i& pos) {
         notifyChangedSingle(sf::Vector3i(pos.x, pos.y, pos.z - 1));
 }
 
+/*
+ * Base function for notifyChanged that doesn't notify the
+ * chunks around the given block
+ *
+ * pos - global position of changed block
+ */
 void World::notifyChangedSingle(const sf::Vector3i& pos) {
     if (blockExists(pos)) {
         _chunks.at(getChunkPos(pos)).notifyChanged();
     }
 }
 
+/*
+ * Checks if player is colliding with a block
+ * Goes through all blocks in a range slightly
+ * larger than the player and checks if there's
+ * a collision with that block. If no collisions,
+ * return false, else true.
+ *
+ * player - The player to check for a collision
+ */
 bool World::checkCollision(const Player& player) const {
     auto& position = player.getPosition();
     std::vector<Block> collision;

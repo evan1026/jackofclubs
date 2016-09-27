@@ -2,6 +2,11 @@
 
 #include "Game.h"
 
+/*
+ * Program starts here.
+ * All it does is create the game object and catch any uncaught exceptions.
+ */
+
 int doMain(){
 
     Game g;

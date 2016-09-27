@@ -12,6 +12,14 @@
 #define MOUSE_SENSITIVITY 0.1
 #define MOVEMENT_SPEED 0.1
 
+/*
+ * Construct a new WorldScreen and give it some info about the
+ * environment it's running in (window and game). Sets up player's
+ * initial position and constructs GUI elements.
+ *
+ * window - The window we're running in (used to help interface with the mouse)
+ * game   - The Game being run (used to end the game)
+ */
 WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _world(),
     _player(Player::Type::SELF, sf::Vector3f(0.f, 140.f, 0.f), sf::Vector3f(0.f, 0.f, 0.f)),
@@ -30,6 +38,11 @@ WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _colorRect.setOutlineThickness(2);
 }
 
+/*
+ * Dispatches events to their appropriate handlers
+ *
+ * event - Event to be handled
+ */
 void WorldScreen::handleEvent(const sf::Event& event) {
     switch (event.type) {
         case sf::Event::Resized:
@@ -55,11 +68,21 @@ void WorldScreen::handleEvent(const sf::Event& event) {
     }
 }
 
+/*
+ * Handles placing/removing blocks if there's no menu or forwarding the
+ * mouse click to the menu if there is one.
+ *
+ * event - The mouse click event to handle
+ */
 void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonPressed(event)) {
         return;
     }
 
+    // If the mouse isn't captured at this point, it means there is an
+    // active menu which didn't handle the click or we lost focus and
+    // just got it back. Either way, calling removeMenu() will do
+    // what we want. If it is captured, start adding/removing blocks
     switch (event.button) {
         case sf::Mouse::Button::Left:
             if (!_mouseCaptured) {
@@ -80,12 +103,26 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     }
 }
 
+/*
+ * Simply forwards the release event on to the menu. We don't actually
+ * care about it.
+ * (Done in a format similar to the other functions so that if we do want
+ * to handle it in the future, there's less chance of messing it up)
+ *
+ * event - The mouse button release event to handle
+ */
 void WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonReleased(event)) {
         return;
     }
 }
 
+/*
+ * Forwards the key press on to the children, and, if they don't handle it,
+ * handles Escape, Q, C, and E.
+ *
+ * event - The key event to handle
+ */
 void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleKeyPressed(event)) {
         return;
@@ -109,12 +146,27 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     }
 }
 
+/*
+ * Forwards mouse movement on to the menu, if there is one.
+ * I tried to have this also handle looking around, but the problem
+ * is that re-centering the mouse generates an event in itself, which
+ * causes the camera to swing wildly around. The current implementation
+ * works much better.
+ *
+ * event - The mouse movement to forward
+ */
 void WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseMoved(event)) {
         return;
     }
 }
 
+/*
+ * Gets the position of the block space next to the block we're looking at
+ * (where we should place a block) and then tells the world to make that
+ * block solid. Removes the block if it intersected with us. This function
+ * may have to be changed slightly when moving to the client-server model.
+ */
 void WorldScreen::placeBlock() {
     if (!_selectedBlock)
         return;
@@ -129,6 +181,9 @@ void WorldScreen::placeBlock() {
         _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
+/*
+ * Gets the position of the block we're looking at and sets it to air
+ */
 void WorldScreen::removeBlock() {
     if (!_selectedBlock)
         return;
@@ -139,36 +194,53 @@ void WorldScreen::removeBlock() {
     _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
+/*
+ * Shows or hides the color selection menu
+ */
 void WorldScreen::toggleColorSelectorMenu() {
     if (_activeMenu == nullptr) {
         _mouseCaptured = false;
-        std::unique_ptr<Menu> prev = std::move(_activeMenu);
         _activeMenu = std::unique_ptr<Menu>(new ColorSelectorMenu(_selectedColor));
-        _activeMenu->prevMenu = std::move(prev);
+        _activeMenu->prevMenu = nullptr;
     } else if (_activeMenu->getType() == Menu::Type::ColorSelector) {
         removeMenu();
     }
 }
 
+/*
+ * Removes any menu that may exists and captures the mouse
+ *
+ * TODO should probably have a function to go to the previous menu when menu chaining actually starts to happen
+ */
 void WorldScreen::removeMenu() {
-    if (_activeMenu != nullptr) _activeMenu = std::move(_activeMenu->prevMenu);
+    _activeMenu = nullptr;
     _mouseCaptured = true;
     sf::Mouse::setPosition(_screenMiddle, _window);
 }
 
+/*
+ * Moves the player and handles the rotation
+ *
+ * TODO movement should only happen if the mouse is captured (I'd do it now but it doesn't make sense in this commit)
+ */
 void WorldScreen::handlePlayerMovement() {
     sf::Vector3f rotation(_player.getRotation());
 
     if (_mouseCaptured) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
 
+        // Calculate how far the mouse has moved
         sf::Vector2f diff((mousePos.x - _screenMiddle.x) * MOUSE_SENSITIVITY, (mousePos.y - _screenMiddle.y) * MOUSE_SENSITIVITY);
 
+        // Use that distance to create a rotation
+        // Also make sure it stays within bounds
         rotation += sf::Vector3f(diff.y, diff.x, 0.f);
         if (rotation.x > 90) rotation.x = 90;
         else if (rotation.x < -90) rotation.x = -90;
+
         _player.setRotation(rotation);
 
+        // Recenter the mouse
         sf::Mouse::setPosition(_screenMiddle, _window);
     }
 
@@ -199,6 +271,10 @@ void WorldScreen::handlePlayerMovement() {
     _player.move(vel, _world);
 }
 
+/*
+ * Makes the selected color equal the color of the selected block
+ * (called when the user presses E)
+ */
 void WorldScreen::copySelectionColor() {
     if (_selectedBlock) {
         sf::Vector3f posf = _selectedBlock().getPosition();
@@ -207,6 +283,10 @@ void WorldScreen::copySelectionColor() {
     }
 }
 
+/*
+ * Called every frame. Updates FPSCounter, handles player movement, and
+ * recalculates selected block.
+ */
 void WorldScreen::tick() {
     _window.setMouseCursorVisible(!_mouseCaptured);
     _fpsCounter.update();
@@ -216,39 +296,62 @@ void WorldScreen::tick() {
     _selectedBlock = _player.getSelection(_world, 5);
 }
 
+/*
+ * Handles rendering all of the components
+ *
+ * re - Rendering engine used for OpenGL calls
+ * w  - Window used for SFML calls
+ */
 void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
 
-    sf::Vector2u size = w.getSize();
-    sf::Vector2f rectSize = _colorRect.getSize();
-    float lineThickness = _colorRect.getOutlineThickness();
+    // First we calculate the positions for the color and center rectangles
+    {
+        sf::Vector2u size = w.getSize();
+        sf::Vector2f rectSize = _colorRect.getSize();
+        float lineThickness = _colorRect.getOutlineThickness();
 
-    _colorRect.setPosition(size.x - rectSize.x - lineThickness, size.y - rectSize.y - lineThickness);
-    _colorRect.setFillColor(_selectedColor);
+        _colorRect.setPosition(size.x - rectSize.x - lineThickness, size.y - rectSize.y - lineThickness);
+        _colorRect.setFillColor(_selectedColor);
 
-    rectSize = _centerRect.getSize();
-    _centerRect.setPosition(size.x / 2 - rectSize.x / 2, size.y / 2 - rectSize.y / 2);
-    _centerRect.setFillColor(sf::Color::Black);
+        rectSize = _centerRect.getSize();
+        _centerRect.setPosition(size.x / 2 - rectSize.x / 2, size.y / 2 - rectSize.y / 2);
+        _centerRect.setFillColor(sf::Color::Black);
+    }
 
+    // Next we call render on the renderables
     _player.render(re, w);
     _world.render(re, w);
+
+    // If we've selected a block, draw its outline
     if (_selectedBlock) {
         sf::Vector3f blockPosition = _selectedBlock().getPosition();
         sf::Vector3i blockPositioni = sf::Vector3i(blockPosition.x, blockPosition.y, blockPosition.z);
         AABB blockBox = _world.getBlock(blockPositioni).getBoundingBox();
+
+        // Default outline color is black
         sf::Color outlineColor = sf::Color::Black;
+
+        // But for darker blocks, make it white to improve visibility
         sf::Color blockColor = _world.getBlockColor(blockPositioni);
         if (blockColor.r < 128 && blockColor.g < 128 && blockColor.b < 128) {
             outlineColor = sf::Color::White;
         }
+
+        // And then render the outline
         re.renderBlockSelection(blockBox, outlineColor);
     }
+
+    // Render the FPSCounter (it will check if it should be rendered at all)
     _fpsCounter.render(re, w);
 
+    // Draw our other GUI components
+    // TODO probably shouldn't do this if there's a menu up
     w.pushGLStates();
     w.draw(_colorRect);
     w.draw(_centerRect);
     w.popGLStates();
 
+    // And draw the menu if there is one
     if (_activeMenu != nullptr) {
         _activeMenu->render(re, w);
     }

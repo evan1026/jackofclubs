@@ -5,7 +5,10 @@
 
 #include "RenderEngine.h"
 
-// Interface for renderable objects. Used by RenderEngine.
+/*
+ * Defines a rendering function so there is a common interface for rendered objects.
+ */
+
 class IRenderable {
     public:
         virtual void render(RenderEngine&, sf::RenderWindow&) = 0;

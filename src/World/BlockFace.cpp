@@ -1,6 +1,9 @@
 #include "BlockFace.h"
 #include "Utils/EnumClassHash.h"
 
+/*
+ * Defines normal vectors for each of the possible faces
+ */
 std::unordered_map<BlockFace::Face, sf::Vector3f, EnumClassHash> BlockFace::faceNormals =
     {
         { BlockFace::Face::NORTH,  sf::Vector3f( 0,  0,  1) },
@@ -11,6 +14,12 @@ std::unordered_map<BlockFace::Face, sf::Vector3f, EnumClassHash> BlockFace::face
         { BlockFace::Face::BOTTOM, sf::Vector3f( 0, -1,  0) }
     };
 
+/*
+ * Creates a BlockFace based on its normal vector
+ *
+ * position - Block's position
+ * normal   - Normal vector pointing away from the face
+ */
 BlockFace::BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal) :
     _position(position),
     _normal(normal)
@@ -18,38 +27,67 @@ BlockFace::BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal) :
     setFaceFromNormal(_normal);
 }
 
+/*
+ * Creates a BlockFace based on the face name
+ *
+ * position - Block's position
+ * face     - Name of the face
+ */
 BlockFace::BlockFace(const sf::Vector3f& position, BlockFace::Face face) :
     _position(position),
     _face(face),
     _normal(faceNormals[face])
 {}
 
+/*
+ * Returns the position of the block this face is on
+ */
 sf::Vector3f BlockFace::getPosition() const {
     return _position;
 }
 
+/*
+ * Returns the normal vector pointing away from this face
+ */
 sf::Vector3f BlockFace::getNormal() const {
     return _normal;
 }
 
+/*
+ * Returns the BlockFace::Face associated with this face
+ */
 BlockFace::Face BlockFace::getFace() const {
     return _face;
 }
 
+/*
+ * Sets the block this face is on
+ */
 void BlockFace::setPosition(const sf::Vector3f& position) {
     _position = position;
 }
 
+/*
+ * Sets the normal pointing away from this face
+ */
 void BlockFace::setNormal(const sf::Vector3f& normal) {
     _normal = normal;
     setFaceFromNormal(normal);
 }
 
+/*
+ * Sets the face for this face
+ */
 void BlockFace::setFace(BlockFace::Face face) {
     _face = face;
     _normal = faceNormals[face];
 }
 
+/*
+ * Utility function to get the BlockFace::Face from the normal vector.
+ * Goes through all of them and returns the one that matches. Not a
+ * big deal since there's only 6
+ */
 void BlockFace::setFaceFromNormal(const sf::Vector3f& normal) {
     for (auto i = faceNormals.begin(); i != faceNormals.end(); i++) {
         if (i->second == normal) {

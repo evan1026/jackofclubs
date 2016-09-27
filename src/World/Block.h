@@ -7,6 +7,10 @@
 #include "Utils/ICollidable.h"
 #include "Utils/AABB.h"
 
+/*
+ * It's a block. Seems pretty obvious.
+ */
+
 class Block : public ICollidable {
     public:
         enum class Type {
@@ -20,6 +24,8 @@ class Block : public ICollidable {
         Type _type;
 
     public:
+        // Defines the conversion between game coords and OpenGL coords
+        // TODO should this be in render engine?
         static constexpr float SIZE = 5;
 
         Block(const sf::Vector3i& position, const sf::Color& color, const Type& type);

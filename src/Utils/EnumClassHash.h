@@ -3,6 +3,11 @@
 
 #include <cstdlib>
 
+/*
+ * Hashing class so that enums can be used as
+ * a key for various stl containers (e.g. map)
+ */
+
 struct EnumClassHash {
     template <typename T>
     std::size_t operator()(T t) const {
