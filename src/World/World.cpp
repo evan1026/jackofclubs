@@ -181,7 +181,7 @@ void World::notifyChangedSingle(const sf::Vector3i& pos) {
  * player - The player to check for a collision
  */
 bool World::checkCollision(const Player& player) const {
-    auto& position = player.getPosition();
+    auto position = player.getPosition();
     std::vector<Block> collision;
 
     for (int x = std::floor(position.x); x <= std::ceil(position.x + 1); ++x) {

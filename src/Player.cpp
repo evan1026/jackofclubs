@@ -23,27 +23,20 @@ Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3
  * TODO Adjust size to allow player to fit into gaps that are their size
  */
 AABB Player::getBoundingBox() const {
-    if (_type == Type::SELF) { //Done to silence warnings. TODO remove later
-        AABB(_position, sf::Vector3f(1, 2, 1));
-    }
     return AABB(_position, sf::Vector3f(1, 2, 1));
 }
 
 /*
  * Returns the player's current position
- *
- * TODO Why is this a const reference instead of just a copy?
  */
-const sf::Vector3f& Player::getPosition() const {
+sf::Vector3f Player::getPosition() const {
     return _position;
 }
 
 /*
  * Returns the player's current look direction
- *
- * TODO Why is this a const reference instead of just a copy?
  */
-const sf::Vector3f& Player::getRotation() const {
+sf::Vector3f Player::getRotation() const {
     return _rotation;
 }
 
@@ -123,14 +116,15 @@ void Player::move(const sf::Vector3f& velocity, const World& world) {
  * Handles applying camera rotation and translation, as well as
  * rendering the hitbox if that debug option is enabled.
  *
- * TODO Rotation and translation should only occur if type == Player::Type::SELF, otherwise, render other player
- *
  * e - The rendering engine (used for OpenGL calls, like rotate and translate)
  * w - The window (used for SFML calls; unused here)
  */
 void Player::render(RenderEngine& e, sf::RenderWindow& w) {
-    e.rotatePlayer(_rotation);
-    e.translatePlayer(_position);
+    if (_type == Type::SELF) {
+        e.rotatePlayer(_rotation);
+        e.translatePlayer(_position);
+    }
+    // TODO else render other player
 
     if (DebugOptions::playerHitboxRendered())
         e.renderAABB(getBoundingBox(), sf::Color::Black);

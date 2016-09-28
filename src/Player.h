@@ -42,8 +42,8 @@ class Player : public ICollidable, public IRenderable {
 
         AABB getBoundingBox() const override;
 
-        const sf::Vector3f& getPosition() const;
-        const sf::Vector3f& getRotation() const;
+        sf::Vector3f getPosition() const;
+        sf::Vector3f getRotation() const;
 
         void render(RenderEngine& e, sf::RenderWindow& w) override;
 
