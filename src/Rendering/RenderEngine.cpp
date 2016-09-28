@@ -185,35 +185,51 @@ void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
  * s - Size (in each direction)
  */
 void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s) {
-    glVertex3f(p.x,       p.y, p.z);
-    glVertex3f(p.x + s.x, p.y, p.z);
-    glVertex3f(p.x + s.x, p.y, p.z + s.z);
-    glVertex3f(p.x,       p.y, p.z + s.z);
+    sf::Vector3f position = p;
+    sf::Vector3f size = s;
 
-    glVertex3f(p.x,       p.y,       p.z);
-    glVertex3f(p.x + s.x, p.y,       p.z);
-    glVertex3f(p.x + s.x, p.y + s.y, p.z);
-    glVertex3f(p.x,       p.y + s.y, p.z);
+    if (size.x < 0) {
+        position.x += size.x; // Position will get smaller since size is negative
+        size.x = -size.x;
+    }
+    if (size.y < 0) {
+        position.y += size.y; // Position will get smaller since size is negative
+        size.y = -size.y;
+    }
+    if (size.z < 0) {
+        position.z += size.z; // Position will get smaller since size is negative
+        size.z = -size.z;
+    }
 
-    glVertex3f(p.x, p.y,       p.z);
-    glVertex3f(p.x, p.y + s.y, p.z);
-    glVertex3f(p.x, p.y + s.y, p.z + s.z);
-    glVertex3f(p.x, p.y,       p.z + s.z);
+    glVertex3f(position.x,          position.y, position.z);
+    glVertex3f(position.x,          position.y, position.z + size.z);
+    glVertex3f(position.x + size.x, position.y, position.z + size.z);
+    glVertex3f(position.x + size.x, position.y, position.z);
 
-    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
-    glVertex3f(p.x,       p.y + s.y, p.z + s.z);
-    glVertex3f(p.x,       p.y + s.y, p.z);
-    glVertex3f(p.x + s.x, p.y + s.y, p.z);
+    glVertex3f(position.x,          position.y,          position.z);
+    glVertex3f(position.x + size.x, position.y,          position.z);
+    glVertex3f(position.x + size.x, position.y + size.y, position.z);
+    glVertex3f(position.x,          position.y + size.y, position.z);
 
-    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
-    glVertex3f(p.x,       p.y + s.y, p.z + s.z);
-    glVertex3f(p.x,       p.y,       p.z + s.z);
-    glVertex3f(p.x + s.x, p.y,       p.z + s.z);
+    glVertex3f(position.x, position.y,          position.z);
+    glVertex3f(position.x, position.y + size.y, position.z);
+    glVertex3f(position.x, position.y + size.y, position.z + size.z);
+    glVertex3f(position.x, position.y,          position.z + size.z);
 
-    glVertex3f(p.x + s.x, p.y + s.y, p.z + s.z);
-    glVertex3f(p.x + s.x, p.y,       p.z + s.z);
-    glVertex3f(p.x + s.x, p.y,       p.z);
-    glVertex3f(p.x + s.x, p.y + s.y, p.z);
+    glVertex3f(position.x + size.x, position.y + size.y, position.z + size.z);
+    glVertex3f(position.x,          position.y + size.y, position.z + size.z);
+    glVertex3f(position.x,          position.y + size.y, position.z);
+    glVertex3f(position.x + size.x, position.y + size.y, position.z);
+
+    glVertex3f(position.x + size.x, position.y + size.y, position.z + size.z);
+    glVertex3f(position.x + size.x, position.y,          position.z + size.z);
+    glVertex3f(position.x,          position.y,          position.z + size.z);
+    glVertex3f(position.x,          position.y + size.y, position.z + size.z);
+
+    glVertex3f(position.x + size.x, position.y + size.y, position.z + size.z);
+    glVertex3f(position.x + size.x, position.y + size.y, position.z);
+    glVertex3f(position.x + size.x, position.y,          position.z);
+    glVertex3f(position.x + size.x, position.y,          position.z + size.z);
 }
 
 /*
@@ -289,10 +305,6 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
 
     glPushMatrix();
 
-        // Turning off culling again, not sure why
-        // TODO Shouldn't this be culled?
-        glDisable(GL_CULL_FACE);
-
         glBegin(GL_QUADS);
 
             glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
@@ -336,8 +348,6 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
             pushBlockVertices(linePos, lineSize);
 
         glEnd();
-
-        glEnable(GL_CULL_FACE);
 
     glPopMatrix();
 }
