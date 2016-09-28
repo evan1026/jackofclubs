@@ -220,10 +220,11 @@ void WorldScreen::removeMenu() {
 
 /*
  * Moves the player and handles the rotation
- *
- * TODO movement should only happen if the mouse is captured (I'd do it now but it doesn't make sense in this commit)
  */
 void WorldScreen::handlePlayerMovement() {
+    if (!_mouseCaptured)
+        return;
+
     sf::Vector3f rotation(_player.getRotation());
 
     if (_mouseCaptured) {
