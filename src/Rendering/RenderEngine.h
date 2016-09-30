@@ -8,6 +8,8 @@
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 
+class Player;
+
 /*
  * Handles interfacing with OpenGL. All OpenGL calls must be made through this class.
  */
@@ -49,8 +51,8 @@ class RenderEngine {
         sf::RenderWindow& getWindow();
 
         // Moves and rotates the camera based on player position/rotation
-        void translatePlayer(const sf::Vector3f& position);
-        void rotatePlayer(const sf::Vector3f& rotation);
+        void translatePlayer(const Player& player);
+        void rotatePlayer(const Player& player);
 };
 
 #endif

@@ -8,6 +8,11 @@
 #include "World/BlockFace.h"
 #include "World/World.h"
 
+#define AABB_INSET 0.1
+#define AABB_INSET_SCALED AABB_INSET * 99 / 100 // Needed because floating point is inexact, and when we
+                                                // use the "exact" value to adust the velocity, it rounds
+                                                // to put us inside of a block
+
 /*
  * type     - The Player::Type of this player (either SELF or OTHER)
  * position - The player's initial position
@@ -19,11 +24,10 @@ Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3
 
 /*
  * Returns the AABB (axis-aligned bounding box) that surrounds the player
- *
- * TODO Adjust size to allow player to fit into gaps that are their size
+ * Player is almost 1x2x1 (actually 0.9x1.9x0.9)
  */
 AABB Player::getBoundingBox() const {
-    return AABB(_position, sf::Vector3f(1, 2, 1));
+    return AABB(_position, sf::Vector3f(1 - AABB_INSET, 2 - AABB_INSET, 1 - AABB_INSET));
 }
 
 /*
@@ -59,9 +63,9 @@ void Player::setRotation(const sf::Vector3f& rotation) {
  */
 float Player::shrinkVelocity(const float startVel, const float endPos) const {
     if (Math::signum(startVel) > 0) {
-        return startVel - (endPos - std::floor(endPos));
+        return startVel - (endPos - std::floor(endPos)) + AABB_INSET_SCALED;
     } else if (Math::signum(startVel) < 0) {
-        return startVel + (std::ceil(endPos) - endPos);
+        return startVel + (std::ceil(endPos) - endPos); // No adjustment, since _position already represents the lower edge of our hitbox
     } else {
         return 0;
     }
@@ -121,8 +125,8 @@ void Player::move(const sf::Vector3f& velocity, const World& world) {
  */
 void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_type == Type::SELF) {
-        e.rotatePlayer(_rotation);
-        e.translatePlayer(_position);
+        e.rotatePlayer(*this);
+        e.translatePlayer(*this);
     }
     // TODO else render other player
 

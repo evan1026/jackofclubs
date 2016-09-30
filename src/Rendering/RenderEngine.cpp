@@ -2,6 +2,7 @@
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
+#include "Player.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
@@ -140,8 +141,10 @@ void RenderEngine::endRender() {
  *
  * position - Player's position
  */
-void RenderEngine::translatePlayer(const sf::Vector3f& position) {
-    glTranslatef(-(position.x + 0.5) * Block::SIZE, -(position.y + 1.75)  * Block::SIZE, -(position.z + 0.5) * Block::SIZE);
+void RenderEngine::translatePlayer(const Player& player) {
+    sf::Vector3f position = player.getPosition();
+    sf::Vector3f size = player.getBoundingBox().getSize();
+    glTranslatef(-(position.x + size.x / 2) * Block::SIZE, -(position.y + size.y * 7 / 8)  * Block::SIZE, -(position.z + size.z / 2) * Block::SIZE);
 }
 
 /*
@@ -149,7 +152,8 @@ void RenderEngine::translatePlayer(const sf::Vector3f& position) {
  *
  * rotation - Player's look direction
  */
-void RenderEngine::rotatePlayer(const sf::Vector3f& rotation) {
+void RenderEngine::rotatePlayer(const Player& player) {
+    sf::Vector3f rotation = player.getRotation();
     glRotatef(rotation.x, 1.f, 0.f, 0.f);
     glRotatef(rotation.y, 0.f, 1.f, 0.f);
     glRotatef(rotation.z, 0.f, 0.f, 1.f);
