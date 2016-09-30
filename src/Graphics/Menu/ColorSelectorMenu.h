@@ -24,18 +24,13 @@ class ColorSelectorMenu : public Menu {
     // ints is that the sliders misbehave when the min and max correspond
     // to the min and max of the datatype, and this is easier than coming
     // up with a fix
-    // TODO fix slider so I don't have to keep 2 copies
     sf::Uint8& _redRef;
     sf::Uint8& _greenRef;
     sf::Uint8& _blueRef;
 
-    int _red;
-    int _green;
-    int _blue;
-
-    Slider<int> _redSlider;
-    Slider<int> _greenSlider;
-    Slider<int> _blueSlider;
+    Slider<sf::Uint8> _redSlider;
+    Slider<sf::Uint8> _greenSlider;
+    Slider<sf::Uint8> _blueSlider;
 
     sf::RectangleShape _colorRect;
 

@@ -22,12 +22,9 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     _redRef(color.r),   // These three keep references to the original data
     _greenRef(color.g),
     _blueRef(color.b),
-    _red(color.r),      // Whereas these three are internal to this menu
-    _green(color.g),
-    _blue(color.b),
-    _redSlider  (0, 255, _red,   sf::Vector2i(START_X, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
-    _greenSlider(0, 255, _green, sf::Vector2i(START_X + SPACER + SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
-    _blueSlider (0, 255, _blue,  sf::Vector2i(START_X + 2 * SPACER + 2 * SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
+    _redSlider  (0, 255, _redRef,   sf::Vector2i(START_X, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
+    _greenSlider(0, 255, _greenRef, sf::Vector2i(START_X + SPACER + SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
+    _blueSlider (0, 255, _blueRef,  sf::Vector2i(START_X + 2 * SPACER + 2 * SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
     _colorRect(sf::Vector2f(COLOR_RECT_SIZE, COLOR_RECT_SIZE)),
     _redText  ("Red",   Font::defaultFont),
     _greenText("Green", Font::defaultFont),
@@ -49,11 +46,6 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
  * w - the window to draw to
  */
 void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
-    // Quick cheeky little write-back
-    // Takes our internal data and puts it back in the variable we're modifying
-    _redRef = _red;
-    _greenRef = _green;
-    _blueRef = _blue;
 
     // Get our position...
     sf::FloatRect bounds = getBounds();
@@ -70,7 +62,7 @@ void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
         sf::Vector2i blueSliderPos = _blueSlider.getGlobalPosition();
         _colorRect.setPosition(sf::Vector2f(blueSliderPos.x, blueSliderPos.y)
                 + sf::Vector2f(SLIDER_WIDTH + 3 * SPACER, SLIDER_HEIGHT / 2 - COLOR_RECT_SIZE / 2));
-        _colorRect.setFillColor(sf::Color(_red, _green, _blue)); // Gotta make sure the preview has the right color
+        _colorRect.setFillColor(sf::Color(_redRef, _greenRef, _blueRef)); // Gotta make sure the preview has the right color
     }
 
     {

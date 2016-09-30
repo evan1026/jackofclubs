@@ -67,14 +67,19 @@ class Slider : public Component {
             // however there are notable cases where that might not apply.
             // Fix this if the issue arises.
             int charSize = 30;
-            _text.setString(Utils::toString(_max));
+
+            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_max));
+            else                                   _text.setString(Utils::toString(_max));
+
             _text.setCharacterSize(charSize);
             while (Utils::textWidth(_text) > _sliderBar.getSize().x) {
                 charSize--;
                 _text.setCharacterSize(charSize);
             }
 
-            _text.setString(Utils::toString(_min));
+            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_min));
+            else                                   _text.setString(Utils::toString(_min));
+
             _text.setCharacterSize(charSize);
             while (Utils::textWidth(_text) > _sliderBar.getSize().x) {
                 charSize--;
@@ -94,7 +99,8 @@ class Slider : public Component {
          * w - The window to render to
          */
         void render(sf::RenderWindow& w) override {
-            _text.setString(Utils::toString(_value));
+            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_value));
+            else                                   _text.setString(Utils::toString(_value));
 
             float barHeight = float(_value - _min) / (_max - _min) * _boundingBox.height;
 
@@ -157,15 +163,21 @@ class Slider : public Component {
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
             if (_capturedMouse) {
 
-                float scale = (_max - _min) / float(_boundingBox.height);
-                int distFromBottom = ((_boundingBox.top + _boundingBox.height) - e.y);
+                if (e.y < _boundingBox.top) {
+                    _value = _max;
+                } else if (e.y > _boundingBox.top + _boundingBox.height) {
+                    _value = _min;
+                } else {
+                    float scale = (_max - _min) / float(_boundingBox.height);
+                    int distFromBottom = ((_boundingBox.top + _boundingBox.height) - e.y);
 
-                T valueFromMouse =  distFromBottom * scale + _min;
+                    T valueFromMouse =  distFromBottom * scale + _min;
 
-                if (valueFromMouse < _min) valueFromMouse = _min;
-                if (valueFromMouse > _max) valueFromMouse = _max;
+                    if (valueFromMouse < _min) valueFromMouse = _min;
+                    if (valueFromMouse > _max) valueFromMouse = _max;
 
-                _value = valueFromMouse;
+                    _value = valueFromMouse;
+                }
                 return true;
             }
             return false;
