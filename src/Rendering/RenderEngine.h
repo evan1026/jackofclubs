@@ -30,6 +30,11 @@ class RenderEngine {
     sf::VideoMode getVideoMode();
 
     public:
+
+        // Defines the scale between world-coords and gl-coords
+        // If I don't scale it up clipping gets weird
+        static constexpr float SCALE = 5;
+
         RenderEngine();
 
         // These define how a vertex's position gets translated into a pixel position

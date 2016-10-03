@@ -126,7 +126,7 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
     float fc[3];
     float fp[3];
     float fn[3];
-    static constexpr int oneblock = Block::SIZE;
+    static constexpr int oneblock = RenderEngine::SCALE;
 
     fp[0] = target.x * oneblock; fp[1] = target.y * oneblock; fp[2] = target.z * oneblock;
     if (addTarget != -1) fp[addTarget] += oneblock;
@@ -154,11 +154,11 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
     }
 
     _vertArray.push_back(Vertex(fp,fc,fn));
-    fp[order.x] = fp[order.x] + Block::SIZE;
+    fp[order.x] = fp[order.x] + RenderEngine::SCALE;
     _vertArray.push_back(Vertex(fp,fc,fn));
-    fp[order.y] = fp[order.y] + Block::SIZE;
+    fp[order.y] = fp[order.y] + RenderEngine::SCALE;
     _vertArray.push_back(Vertex(fp,fc,fn));
-    fp[order.x] = fp[order.x] - Block::SIZE;
+    fp[order.x] = fp[order.x] - RenderEngine::SCALE;
     _vertArray.push_back(Vertex(fp,fc,fn));
 }
 

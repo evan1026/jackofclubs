@@ -42,10 +42,6 @@ class Chunk : public IRenderable {
 
         static constexpr int BLOCK_COUNT = BLOCK_COUNT_DEF;
 
-        // Full width of this chunk in OpenGL coordinates
-        // TODO should this be in render engine?
-        static constexpr float RENDER_WIDTH = BLOCK_COUNT * Block::SIZE;
-
         Chunk(const sf::Vector3i& position, World* world);
         Chunk();
 

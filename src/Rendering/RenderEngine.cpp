@@ -144,7 +144,7 @@ void RenderEngine::endRender() {
 void RenderEngine::translatePlayer(const Player& player) {
     sf::Vector3f position = player.getPosition();
     sf::Vector3f size = player.getBoundingBox().getSize();
-    glTranslatef(-(position.x + size.x / 2) * Block::SIZE, -(position.y + size.y * 7 / 8)  * Block::SIZE, -(position.z + size.z / 2) * Block::SIZE);
+    glTranslatef(-(position.x + size.x / 2) * SCALE, -(position.y + size.y * 7 / 8)  * SCALE, -(position.z + size.z / 2) * SCALE);
 }
 
 /*
@@ -250,8 +250,8 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
 
-    s = s * Block::SIZE;
-    p = p * Block::SIZE;
+    s = s * SCALE;
+    p = p * SCALE;
 
     // Save state
     glPushMatrix();
@@ -304,8 +304,8 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
     sf::Vector3f lineSize;
 
     // Scale to GL coords
-    s = s * Block::SIZE;
-    p = p * Block::SIZE;
+    s = s * SCALE;
+    p = p * SCALE;
 
     glPushMatrix();
 
@@ -324,25 +324,25 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
             lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x, p.y, p.z + Block::SIZE) - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, -LINE_WIDTH / 2);
+            linePos = sf::Vector3f(p.x, p.y, p.z + SCALE) - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, -LINE_WIDTH / 2);
             lineSize = sf::Vector3f(LINE_WIDTH, s.y + LINE_WIDTH, -LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
             lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, -LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x, p.y + Block::SIZE, p.z) - sf::Vector3f(LINE_WIDTH / 2, -LINE_WIDTH / 2, LINE_WIDTH / 2);
+            linePos = sf::Vector3f(p.x, p.y + SCALE, p.z) - sf::Vector3f(LINE_WIDTH / 2, -LINE_WIDTH / 2, LINE_WIDTH / 2);
             lineSize = sf::Vector3f(LINE_WIDTH, -LINE_WIDTH, s.z + LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
             lineSize = sf::Vector3f(s.x + LINE_WIDTH, -LINE_WIDTH, LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x + Block::SIZE, p.y, p.z) - sf::Vector3f(-LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
+            linePos = sf::Vector3f(p.x + SCALE, p.y, p.z) - sf::Vector3f(-LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
             lineSize = sf::Vector3f(-LINE_WIDTH, s.y + LINE_WIDTH, LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
             lineSize = sf::Vector3f(-LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x + Block::SIZE, p.y + Block::SIZE, p.z + Block::SIZE)
+            linePos = sf::Vector3f(p.x + SCALE, p.y + SCALE, p.z + SCALE)
                         - sf::Vector3f(-LINE_WIDTH / 2, -LINE_WIDTH / 2, -LINE_WIDTH / 2);
             lineSize = sf::Vector3f(-LINE_WIDTH, -LINE_WIDTH, -s.z - LINE_WIDTH);
             pushBlockVertices(linePos, lineSize);
