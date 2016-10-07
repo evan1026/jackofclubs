@@ -230,18 +230,12 @@ Block& Chunk::getBlock(const sf::Vector3i& worldPos) {
 }
 
 /*
- * Returns the type of the block at the given position. To make things a bit easier elsewhere,
- * returns that the block is air if it's not in this chunk
- * TODO Is that actually still needed? Seems kinda dumb...
+ * Returns the type of the block at the given position.
  *
  * worldPos - global position
  */
 Block::Type Chunk::getBlockType(const sf::Vector3i& worldPos) const {
-    if (isInChunk(worldPos)) {
-        return getBlock(worldPos).getType();
-    } else {
-        return Block::Type::AIR;
-    }
+    return getBlock(worldPos).getType();
 }
 
 /*

@@ -7,13 +7,16 @@
 #include "World/Chunk.h"
 #include "World/World.h"
 
+#define NUM_CHUNKS_LENGTH 2   // Actually half the total length
+#define NUM_CHUNKS_HEIGHT 8
+
 /*
  * Creates a new world which is 4 chunks by 4 chunks by 8 chunks
  */
 World::World() {
-    for (int x = -2; x < 2; ++x) {
-        for (int y = 0; y < 8; ++y) {
-            for (int z = -2; z < 2; ++z) {
+    for (int x = -NUM_CHUNKS_LENGTH; x < NUM_CHUNKS_LENGTH; ++x) {
+        for (int y = 0; y < NUM_CHUNKS_HEIGHT; ++y) {
+            for (int z = -NUM_CHUNKS_LENGTH; z < NUM_CHUNKS_LENGTH; ++z) {
                 sf::Vector3i pos(x, y, z);
                 std::tuple<int, int, int> posTup = std::make_tuple(pos.x, pos.y, pos.z);
                 _chunks[posTup] = Chunk(pos, this);
