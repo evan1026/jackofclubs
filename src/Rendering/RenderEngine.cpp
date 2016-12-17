@@ -2,12 +2,15 @@
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
+#include "Logger/GlobalLogger.hpp"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 #include "Utils/Math.h"
 #include "World/Block.h"
+
+using Logger::globalLogger;
 
 //TODO UPgrade to modern OpenGL
 
@@ -25,6 +28,25 @@ RenderEngine::RenderEngine() :
             sf::Style::Default,
             sf::ContextSettings(24))
 {
+    sf::Vector2u windowSize = _window.getSize();
+    sf::ContextSettings windowSettings = _window.getSettings();
+
+    // This code centers the window on the screen
+    sf::VideoMode defaultVideoMode = sf::VideoMode::getDesktopMode();
+    _window.setPosition(sf::Vector2i(defaultVideoMode.width / 2 - windowSize.x / 2, defaultVideoMode.height / 2 - windowSize.y / 2));
+    sf::Vector2i windowPosition = _window.getPosition();
+
+    globalLogger.log("Initialized window:");
+    globalLogger.log("    OS Handle:           ", _window.getSystemHandle());
+    globalLogger.log("    Size:                ", windowSize.x, "x", windowSize.y);
+    globalLogger.log("    Position:            (", windowPosition.x, ", ", windowPosition.y, ")");
+    globalLogger.log("    Depth bits:          ", windowSettings.depthBits);
+    globalLogger.log("    Stencil bits:        ", windowSettings.stencilBits);
+    globalLogger.log("    Antialiasing level:  ", windowSettings.antialiasingLevel);
+    globalLogger.log("    GL version:          ", windowSettings.majorVersion, ".", windowSettings.minorVersion);
+    globalLogger.log("    Attribute flags:     ", windowSettings.attributeFlags);
+    globalLogger.log("    sRGB capable:        ", windowSettings.sRgbCapable ? "true" : "false");
+
     _window.setVerticalSyncEnabled(true);
 
     // Set background color
@@ -52,12 +74,7 @@ RenderEngine::RenderEngine() :
     glEnable(GL_LIGHT0);
 
     // Make sure the perspective matches the window
-    sf::Vector2u windowSize = _window.getSize();
     setPerspective(windowSize.x, windowSize.y);
-
-    // This code centers the window on the screen
-    sf::VideoMode defaultVideoMode = sf::VideoMode::getDesktopMode();
-    _window.setPosition(sf::Vector2i(defaultVideoMode.width / 2 - windowSize.x / 2, defaultVideoMode.height / 2 - windowSize.y / 2));
 }
 
 /*
@@ -93,7 +110,7 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, _window.getSize().x, _window.getSize().y);
+    glViewport(0, 0, width, height);
 
     GLdouble fW, fH;
 
@@ -111,11 +128,12 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
  * height - new window height
  */
 void RenderEngine::handleResize(int width, int height) {
-    glViewport(0, 0, width, height);
     setPerspective(width, height);
 
     // Update's the window's internal GL states to match the resize
     _window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
+
+    globalLogger.log("Window resized to ", width, "x", height);
 }
 
 /*

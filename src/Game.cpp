@@ -3,22 +3,31 @@
 #include "Debug/DebugOptions.h"
 #include "Game.h"
 #include "Graphics/Screen/WorldScreen.h"
+#include "Logger/GlobalLogger.hpp"
+
+using Logger::globalLogger;
 
 /*
  * Constructs the game and initializes the render engine
  */
 Game::Game() :
     _re()
-    {}
+{
+    globalLogger.log("Initializing Game");
+}
 
 /*
  * Starts the game and runs the main loop, which polls events
  * and dispatches them to the appropriate handler.
  */
 void Game::run() {
+    globalLogger.log("Initializing World Screen");
     _screen = std::unique_ptr<Screen>(new WorldScreen(_re.getWindow(), *this));
+
+    globalLogger.log("Getting Render Window");
     sf::RenderWindow& window = _re.getWindow();
 
+    globalLogger.log("Starting main game loop");
     while (_running) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -37,6 +46,7 @@ void Game::run() {
  * Ends the game by signalling the main loop should terminate
  */
 void Game::end() {
+    globalLogger.log("Stopping main game loop");
     _running = false;
 }
 

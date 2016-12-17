@@ -17,6 +17,10 @@ using Logger::globalLogger;
 
 int doMain(){
 
+    globalLogger.log("Welcome to Jack of Clubs!");
+    globalLogger.log("This game is in development, so make sure to send bug reports to the author (evan1026 on github)");
+    globalLogger.log();
+
     Game g;
     g.run();
 
