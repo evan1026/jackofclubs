@@ -135,6 +135,7 @@ Exception::Exception(std::string reason, int stackSkip) :
             std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2) { //+2 because of the 2 extra functions we add (constructor and printStackTrace())
     globalLogger.warn("Exception thrown - ", reason);
     _out = new char*;
+    *_out = nullptr;
     saveStackTrace();
 }
 
