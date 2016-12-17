@@ -8,7 +8,7 @@
 #include "World/BlockFace.h"
 #include "World/World.h"
 
-#define AABB_INSET 0.1
+#define AABB_INSET 0.25
 #define AABB_INSET_SCALED AABB_INSET * 99 / 100 // Needed because floating point is inexact, and when we
                                                 // use the "exact" value to adust the velocity, it rounds
                                                 // to put us inside of a block
