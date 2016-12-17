@@ -1,18 +1,19 @@
 #include <iostream>
 #include <signal.h>
+#include <fstream>
 
 #include "Exception/NullptrException.h"
 #include "Exception/SegmentationFaultException.h"
 #include "Game.h"
-#include "Logger/Logger.hpp"
-
-Logger::Logger _log;
+#include "Logger/GlobalLogger.hpp"
 
 /*
  * Program starts here.
  * Registers signal handlers and starts the game running. Also
  * prints out details about any exceptions left uncaught.
  */
+
+using Logger::globalLogger;
 
 int doMain(){
 
@@ -35,35 +36,38 @@ void segvHandler(int sig, siginfo_t* si, void* unused) {
 
 int main() {
 
+    std::ofstream logFile("log.txt");
+    globalLogger.addStream(logFile, false);
+
     // Registers the segfault handler
     struct sigaction sa;
     sa.sa_flags = SA_SIGINFO;
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = segvHandler;
     if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-        _log.warn("Could not register segfault handler");
-        _log.warn("If a segmentation fault occurs, no stack trace will be available.\n");
+        globalLogger.warn("Could not register segfault handler");
+        globalLogger.warn("If a segmentation fault occurs, no stack trace will be available.\n");
     }
 
     try {
         return doMain();
     } catch (std::exception& e) {
-        _log.error();
-        _log.error("***************************************");
-        _log.error("* Exception uncaught. Must terminate. *");
-        _log.error("*      Exception details follow       *");
-        _log.error("***************************************");
-        _log.error();
+        globalLogger.error();
+        globalLogger.error("***************************************");
+        globalLogger.error("* Exception uncaught. Must terminate. *");
+        globalLogger.error("*      Exception details follow       *");
+        globalLogger.error("***************************************");
+        globalLogger.error();
 
         std::stringstream exceptionDetails(e.what());
         std::string line;
         while(getline(exceptionDetails, line)) {
-            _log.error(line);
+            globalLogger.error(line);
         }
 
-        _log.error();
-        _log.error();
-        _log.error("If you're seeing this in production, please screenshot and send to the developer.");
+        globalLogger.error();
+        globalLogger.error();
+        globalLogger.error("If you're seeing this in production, please screenshot and send to the developer.");
         return 1;
     }
 }

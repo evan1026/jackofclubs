@@ -3,7 +3,8 @@ MESSAGE("Adding ${CURR_DIR}")
 
 set(SOURCES "${SOURCES} ${CURR_DIR}/main.cpp
                         ${CURR_DIR}/Player.cpp
-                        ${CURR_DIR}/Game.cpp" CACHE STRING "Sources for project" FORCE)
+                        ${CURR_DIR}/Game.cpp
+                        ${CURR_DIR}/Logger/Logger.cpp" CACHE STRING "Sources for project" FORCE)
 
 add_subdirectory("Debug")
 add_subdirectory("Exception")
