@@ -4,6 +4,9 @@
 #include "Exception/NullptrException.h"
 #include "Exception/SegmentationFaultException.h"
 #include "Game.h"
+#include "Logger/Logger.hpp"
+
+Logger::Logger _log;
 
 /*
  * Program starts here.
@@ -38,20 +41,29 @@ int main() {
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = segvHandler;
     if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-        std::cout << "Warning: Could not register segfault handler" << std::endl;
-        std::cout << "If a segmentation fault occurs, no stack trace will be available." << std::endl << std::endl;
+        _log.warn("Could not register segfault handler");
+        _log.warn("If a segmentation fault occurs, no stack trace will be available.\n");
     }
 
     try {
         return doMain();
     } catch (std::exception& e) {
-        std::cout << std::endl;
-        std::cout << "***************************************" << std::endl;
-        std::cout << "* Exception uncaught. Must terminate. *" << std::endl;
-        std::cout << "*      Exception details follow       *" << std::endl;
-        std::cout << "***************************************" << std::endl;
-        std::cout << e.what() << std::endl;
-        std::cout << "If you're seeing this in production, please screenshot and send to the developer." << std::endl;
+        _log.error();
+        _log.error("***************************************");
+        _log.error("* Exception uncaught. Must terminate. *");
+        _log.error("*      Exception details follow       *");
+        _log.error("***************************************");
+        _log.error();
+
+        std::stringstream exceptionDetails(e.what());
+        std::string line;
+        while(getline(exceptionDetails, line)) {
+            _log.error(line);
+        }
+
+        _log.error();
+        _log.error();
+        _log.error("If you're seeing this in production, please screenshot and send to the developer.");
         return 1;
     }
 }
