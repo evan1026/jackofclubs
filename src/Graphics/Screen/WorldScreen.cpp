@@ -269,7 +269,7 @@ void WorldScreen::handlePlayerMovement() {
         vel.z += -MOVEMENT_SPEED * Math::cosDeg(rotation.y + 90);
     }
 
-    _player.move(vel, _world);
+    _player.setVelocity(vel);
 }
 
 /*
@@ -293,6 +293,8 @@ void WorldScreen::tick() {
     _fpsCounter.update();
 
     if (_activeMenu == nullptr) handlePlayerMovement();
+
+    _player.tick(_world);
 
     _selectedBlock = _player.getSelection(_world, 5);
 }

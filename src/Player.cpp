@@ -27,7 +27,7 @@ Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3
  * Player is almost 1x2x1 (actually 0.9x1.9x0.9)
  */
 AABB Player::getBoundingBox() const {
-    return AABB(_position, sf::Vector3f(1 - AABB_INSET, 2 - AABB_INSET, 1 - AABB_INSET));
+    return AABB(_position, sf::Vector3f(1 - AABB_INSET, 2, 1 - AABB_INSET));
 }
 
 /*
@@ -45,12 +45,40 @@ sf::Vector3f Player::getRotation() const {
 }
 
 /*
+ * Returns the player's current velocity
+ */
+sf::Vector3f Player::getVelocity() const {
+    return _velocity;
+}
+
+/*
  * Sets the player's rotation (look direction)
  *
  * rotation - The new rotation
  */
 void Player::setRotation(const sf::Vector3f& rotation) {
     _rotation = rotation;
+}
+
+/*
+ * Sets player's position directly
+ * WARNING: Using this instead of the normal velocity system could lead
+ *          to the player getting stuck in a block
+ *
+ * position - The new position
+ */
+void Player::setPosition(const sf::Vector3f& position) {
+    _position = position;
+}
+
+/*
+ * Sets the velocity of the player, which then gets applied when Player::tick
+ * is called
+ *
+ * velocity - The new velocity
+ */
+void Player::setVelocity(const sf::Vector3f& velocity) {
+    _velocity = velocity;
 }
 
 /*
@@ -61,9 +89,9 @@ void Player::setRotation(const sf::Vector3f& rotation) {
  * startVel - The initial velocity they're trying to move with
  * endPos   - Where they would end up if they moved with that velocity
  */
-float Player::shrinkVelocity(const float startVel, const float endPos) const {
+float Player::shrinkVelocity(const float startVel, const float endPos, const float inset) const {
     if (Math::signum(startVel) > 0) {
-        return startVel - (endPos - std::floor(endPos)) + AABB_INSET_SCALED;
+        return startVel - (endPos - std::floor(endPos)) + inset;
     } else if (Math::signum(startVel) < 0) {
         return startVel + (std::ceil(endPos) - endPos); // No adjustment, since _position already represents the lower edge of our hitbox
     } else {
@@ -72,8 +100,8 @@ float Player::shrinkVelocity(const float startVel, const float endPos) const {
 }
 
 /*
- * Attempts to move the player a specified distance (i.e. with a specified velocity)
- * and keeps them from colliding with a block if that velocity would cause a collision.
+ * Applies the player's velocity to their position, also keeping them from colliding with a
+ * block if that velocity would cause a collision.
  *
  * Works by splitting the velocity into its seperate components (x,y,z) and then applying
  * them in order. If the application of one component causes the player to collide with a block,
@@ -88,32 +116,32 @@ float Player::shrinkVelocity(const float startVel, const float endPos) const {
  * WARNING: This assumes the player's velocity will always be < 1. If this ever does not hold,
  * either this or Player::shrinkVelocity (or both) will need to be adjusted.
  *
- * TODO Will need to have velocity be internal to player and have move(world) apply it so that jumping will work properly
- *
  * velocity - Essentially the distance they should move in this tick
  * world    - The world they're moving in (used to check collisions)
  */
-void Player::move(const sf::Vector3f& velocity, const World& world) {
+void Player::tick(const World& world) {
     sf::Vector3f startPos = _position;
-    sf::Vector3f finalVelocity = velocity;
+    sf::Vector3f finalVelocity = _velocity;
 
-    _position.y += velocity.y;
+    _position.y += _velocity.y;
     if (world.checkCollision(*this)) {
-        finalVelocity.y = shrinkVelocity(velocity.y, _position.y);
+        finalVelocity.y = shrinkVelocity(_velocity.y, _position.y, 0);
         _position.y = startPos.y + finalVelocity.y;
     }
 
-    _position.x += velocity.x;
+    _position.x += _velocity.x;
     if (world.checkCollision(*this)) {
-        finalVelocity.x = shrinkVelocity(velocity.x, _position.x);
+        finalVelocity.x = shrinkVelocity(_velocity.x, _position.x, AABB_INSET_SCALED);
         _position.x = startPos.x + finalVelocity.x;
     }
 
-    _position.z += velocity.z;
+    _position.z += _velocity.z;
     if (world.checkCollision(*this)) {
-        finalVelocity.z = shrinkVelocity(velocity.z, _position.z);
+        finalVelocity.z = shrinkVelocity(_velocity.z, _position.z, AABB_INSET_SCALED);
         _position.z = startPos.z + finalVelocity.z;
     }
+
+    _velocity = finalVelocity;
 }
 
 /*
@@ -165,7 +193,8 @@ float Player::getTMax(float origin, float direction) const {
  */
 Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x), -Math::sinDeg(_rotation.x), -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
-    sf::Vector3f origin = _position + sf::Vector3f(0.5, 1.75, 0.5);
+    sf::Vector3f size = getBoundingBox().getSize();
+    sf::Vector3f origin = _position + sf::Vector3f(size.x / 2, size.y * 3 / 4, size.z / 2);
     sf::Vector3f pos(Math::floor(origin.x), Math::floor(origin.y), Math::floor(origin.z));
     sf::Vector3f step(Math::signum(direction.x), Math::signum(direction.y), Math::signum(direction.z));
     sf::Vector3f tMax(getTMax(origin.x, direction.x), getTMax(origin.y, direction.y), getTMax(origin.z, direction.z));

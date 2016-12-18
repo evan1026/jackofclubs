@@ -30,9 +30,10 @@ class Player : public ICollidable, public IRenderable {
         Type _type;
         sf::Vector3f _position;
         sf::Vector3f _rotation;
+        sf::Vector3f _velocity;
 
         // Used by move() to put you right up against a block you're about to collide with
-        float shrinkVelocity(const float startVel, const float endPos) const;
+        float shrinkVelocity(const float startVel, const float endPos, const float inset) const;
 
         // Used by getSelection() to get the first block we'll collide with, see getSelection() for more
         float getTMax(float origin, float direction) const;
@@ -44,11 +45,15 @@ class Player : public ICollidable, public IRenderable {
 
         sf::Vector3f getPosition() const;
         sf::Vector3f getRotation() const;
+        sf::Vector3f getVelocity() const;
 
         void render(RenderEngine& e, sf::RenderWindow& w) override;
 
         void setRotation(const sf::Vector3f& rotation);
-        void move(const sf::Vector3f& velocity, const World& world); // move rather than setPosition so we can do collision checking
+        void setVelocity(const sf::Vector3f& velocity);
+        void setPosition(const sf::Vector3f& position);
+
+        void tick(const World& world);
 
         Maybe<BlockFace> getSelection(World& world, float range) const;
 };
