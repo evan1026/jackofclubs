@@ -160,9 +160,8 @@ void RenderEngine::endRender() {
  * position - Player's position
  */
 void RenderEngine::translatePlayer(const Player& player) {
-    sf::Vector3f position = player.getPosition();
-    sf::Vector3f size = player.getBoundingBox().getSize();
-    glTranslatef(-(position.x + size.x / 2) * SCALE, -(position.y + size.y * 7 / 8)  * SCALE, -(position.z + size.z / 2) * SCALE);
+    sf::Vector3f position = player.getHeadLocation();
+    glTranslatef(-position.x * SCALE, -position.y * SCALE, -position.z * SCALE);
 }
 
 /*

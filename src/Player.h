@@ -60,6 +60,8 @@ class Player : public ICollidable, public IRenderable {
 
         void setJumping(bool jumping);
         bool getJumping() const;
+
+        sf::Vector3f getHeadLocation() const;
 };
 
 #endif

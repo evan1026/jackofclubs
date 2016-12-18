@@ -194,8 +194,7 @@ float Player::getTMax(float origin, float direction) const {
  */
 Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x), -Math::sinDeg(_rotation.x), -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
-    sf::Vector3f size = getBoundingBox().getSize();
-    sf::Vector3f origin = _position + sf::Vector3f(size.x / 2, size.y * 3 / 4, size.z / 2);
+    sf::Vector3f origin = getHeadLocation();
     sf::Vector3f pos(Math::floor(origin.x), Math::floor(origin.y), Math::floor(origin.z));
     sf::Vector3f step(Math::signum(direction.x), Math::signum(direction.y), Math::signum(direction.z));
     sf::Vector3f tMax(getTMax(origin.x, direction.x), getTMax(origin.y, direction.y), getTMax(origin.z, direction.z));
@@ -262,4 +261,14 @@ void Player::setJumping(bool jumping) {
  */
 bool Player::getJumping() const {
     return _jumping;
+}
+
+/*
+ * Gets the position of the player's head
+ * This defines things like raycasting (for getting the selection)
+ * and rendering
+ */
+sf::Vector3f Player::getHeadLocation() const {
+    sf::Vector3f size = getBoundingBox().getSize();
+    return _position + sf::Vector3f(size.x / 2, size.y * 7 / 8, size.z / 2);
 }
