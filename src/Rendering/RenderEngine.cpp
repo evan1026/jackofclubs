@@ -15,9 +15,10 @@ using Logger::globalLogger;
 //TODO UPgrade to modern OpenGL
 
 // RGBA values for different lights
-float RenderEngine::lightPos[] =     { -0.1f, -1.0f, 0.2f, 0.f  };
-float RenderEngine::lightAmbient[] = {  0.5f,  0.5f, 0.5f, 1.0f };
-float RenderEngine::lightDiffuse[] = {  0.7f,  0.7f, 0.7f, 1.0f};
+float RenderEngine::lightPos[] =     { -0.1f,  -1.0f,   0.2f,  0.f  };
+float RenderEngine::light2Pos[] =    {  0.1f,  -1.0f,  -0.2f,  0.f  };
+float RenderEngine::lightAmbient[] = {  0.25f,  0.25f,  0.25f, 1.0f };
+float RenderEngine::lightDiffuse[] = {  0.35f,  0.35f,  0.35f, 1.0f };
 
 /*
  * Creates a rendering window and sets up OpenGL
@@ -66,12 +67,14 @@ RenderEngine::RenderEngine() :
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
-    // TODO attempt 2 light system so all faces are different
-
     // Set up our "sun"
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
     glEnable(GL_LIGHT0);
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+    glEnable(GL_LIGHT1);
 
     // Make sure the perspective matches the window
     setPerspective(windowSize.x, windowSize.y);
@@ -183,6 +186,7 @@ void RenderEngine::rotatePlayer(const Player& player) {
  */
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+    glLightfv(GL_LIGHT1, GL_POSITION, light2Pos);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
