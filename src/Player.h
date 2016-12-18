@@ -31,6 +31,7 @@ class Player : public ICollidable, public IRenderable {
         sf::Vector3f _position;
         sf::Vector3f _rotation;
         sf::Vector3f _velocity;
+        bool _jumping;
 
         // Used by move() to put you right up against a block you're about to collide with
         float shrinkVelocity(const float startVel, const float endPos, const float inset) const;
@@ -56,6 +57,9 @@ class Player : public ICollidable, public IRenderable {
         void tick(const World& world);
 
         Maybe<BlockFace> getSelection(World& world, float range) const;
+
+        void setJumping(bool jumping);
+        bool getJumping() const;
 };
 
 #endif

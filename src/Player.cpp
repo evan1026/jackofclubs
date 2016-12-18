@@ -127,6 +127,7 @@ void Player::tick(const World& world) {
     if (world.checkCollision(*this)) {
         finalVelocity.y = shrinkVelocity(_velocity.y, _position.y, 0);
         _position.y = startPos.y + finalVelocity.y;
+        setJumping(false);
     }
 
     _position.x += _velocity.x;
@@ -243,4 +244,22 @@ Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     } else {
         return Maybe<BlockFace>();
     }
+}
+
+/*
+ * Sets a boolean to indicate the player is jumping
+ * This gets automatically reset in tick() when they
+ * hit the ground
+ *
+ * jumping - Whether the player is jumping
+ */
+void Player::setJumping(bool jumping) {
+    _jumping = jumping;
+}
+
+/*
+ * Returns whether the player is currently jumping or not
+ */
+bool Player::getJumping() const {
+    return _jumping;
 }

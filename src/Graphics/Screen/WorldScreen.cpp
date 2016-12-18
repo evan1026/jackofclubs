@@ -3,14 +3,20 @@
 
 #include "Game.h"
 #include "Graphics/Menu/ColorSelectorMenu.h"
+#include "Logger/GlobalLogger.hpp"
 #include "Rendering/RenderEngine.h"
 #include "Utils/Math.h"
 #include "Utils/Utils.h"
 #include "World/BlockFace.h"
 #include "WorldScreen.h"
 
+using Logger::globalLogger;
+
 #define MOUSE_SENSITIVITY 0.1
-#define MOVEMENT_SPEED 0.1
+#define MOVEMENT_SPEED 0.09
+#define JUMP_SPEED 0.3
+#define GRAVITY_SPEED 0.02
+#define SPRINT_SCALE 1.5
 
 /*
  * Construct a new WorldScreen and give it some info about the
@@ -245,29 +251,40 @@ void WorldScreen::handlePlayerMovement() {
         sf::Mouse::setPosition(_screenMiddle, _window);
     }
 
+    float speed = MOVEMENT_SPEED;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+        speed *= SPRINT_SCALE;
+    }
+
     bool left = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
     bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
     bool up = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
-    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift);
     bool forward = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
     bool backward = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
 
     sf::Vector3f vel;
-    vel.y += (up) ? MOVEMENT_SPEED : (down) ? -MOVEMENT_SPEED : 0;
     if (forward){
-        vel.x += MOVEMENT_SPEED * Math::sinDeg(rotation.y);
-        vel.z += -MOVEMENT_SPEED * Math::cosDeg(rotation.y);
+        vel.x += speed * Math::sinDeg(rotation.y);
+        vel.z += -speed * Math::cosDeg(rotation.y);
     } else if (backward){
-        vel.x -= MOVEMENT_SPEED * Math::sinDeg(rotation.y);
-        vel.z -= -MOVEMENT_SPEED * Math::cosDeg(rotation.y);
+        vel.x -= speed * Math::sinDeg(rotation.y);
+        vel.z -= -speed * Math::cosDeg(rotation.y);
     }
     if (left){
-        vel.x += MOVEMENT_SPEED * Math::sinDeg(rotation.y - 90);
-        vel.z += -MOVEMENT_SPEED * Math::cosDeg(rotation.y - 90);
+        vel.x += speed * Math::sinDeg(rotation.y - 90);
+        vel.z += -speed * Math::cosDeg(rotation.y - 90);
     } else if (right){
-        vel.x += MOVEMENT_SPEED * Math::sinDeg(rotation.y + 90);
-        vel.z += -MOVEMENT_SPEED * Math::cosDeg(rotation.y + 90);
+        vel.x += speed * Math::sinDeg(rotation.y + 90);
+        vel.z += -speed * Math::cosDeg(rotation.y + 90);
     }
+
+    vel.y = _player.getVelocity().y;
+    if (up && !_player.getJumping() && Math::similar(vel.y, 0.0f, 5)) {
+        vel.y = JUMP_SPEED;
+        _player.setJumping(true);
+    }
+
+    vel.y -= GRAVITY_SPEED;
 
     _player.setVelocity(vel);
 }
