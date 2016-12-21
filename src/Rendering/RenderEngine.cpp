@@ -185,6 +185,8 @@ void RenderEngine::rotatePlayer(const Player& player) {
  * vertices - The vertices to render
  */
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
+	if (vertices.size() == 0) return;
+
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
     glLightfv(GL_LIGHT1, GL_POSITION, light2Pos);
     glEnableClientState(GL_VERTEX_ARRAY);

@@ -9,13 +9,22 @@ set(EXECUTABLE_NAME "jackofclubs")
 set(DEBUG true)
 
 if(DEBUG)
-    set(CMAKE_CXX_FLAGS "-g -std=c++11 -Wall -Werror ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "-O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+	if(NOT WIN32)
+		set(CMAKE_CXX_FLAGS "-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wall -Werror ${CMAKE_CXX_FLAGS}")
+	endif()
     #set(CMAKE_CXX_FLAGS "-fsanitize=memory ${CMAKE_CXX_FLAGS}")
     #set(CMAKE_CXX_FLAGS "-fsanitize=address ${CMAKE_CXX_FLAGS}")
 else()
     set(CMAKE_CXX_FLAGS "-O3 -std=c++11 ${CMAKE_CXX_FLAGS}")
 endif(DEBUG)
+
+if(WIN32)
+	#Set this to where you built SFML
+	#Not needed on linux since running make install will put everything where it needs to be
+	set(SFML_ROOT "C:/Users/evana/AppData/Local/CMakeBuild/0d32c7ec-8872-8434-a751-0947328ef528/build/install")
+    set(CMAKE_MODULE_PATH "${SFML_ROOT}/cmake/Modules")
+endif()
 
 set(SOURCES "" CACHE STRING "Sources for project" FORCE)
 get_filename_component(ROOT_DIR_ABS ${SOURCE_DIR} ABSOLUTE)
@@ -41,3 +50,12 @@ target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR} $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)
+
+if(WIN32)
+	string(REGEX MATCH "[^;]*" FIRST_LIBRARY "${SFML_LIBRARIES}")
+	string(REGEX MATCH "(.*/)*" LIBS_DIR "${FIRST_LIBRARY}")
+
+	add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+					   COMMAND ${CMAKE_COMMAND} -E copy_directory
+					   ${LIBS_DIR}/../bin/ $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
+endif()
