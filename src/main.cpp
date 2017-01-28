@@ -45,8 +45,6 @@ int main() {
     registerSegfaultHandler();
 
     try {
-        int *a = (int*)0;
-        int b = *a;
         return doMain();
     } catch (std::exception& e) {
         globalLogger.error();
