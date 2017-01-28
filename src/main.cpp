@@ -1,18 +1,19 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef linux
-#include <signal.h>
-#endif
-
-#ifdef _WIN32
-#include "windows.h"
-#endif
-
 #include "Exception/NullptrException.h"
 #include "Exception/SegmentationFaultException.h"
 #include "Game.h"
 #include "Logger/GlobalLogger.hpp"
+#include "Platforms.h"
+
+#ifdef JOC_LINUX_BUILD
+#include <signal.h>
+#endif
+
+#ifdef JOC_WINDOWS_BUILD
+#include "windows.h"
+#endif
 
 /*
  * Program starts here.
@@ -67,7 +68,7 @@ int main() {
     }
 }
 
-#ifdef linux
+#ifdef JOC_LINUX_BUILD
 void segvHandler(int sig, siginfo_t* si, void* unused) {
 
     // Throw exception. The 2 tells it to skip the top two functions (which are the OS's function
@@ -91,7 +92,7 @@ void registerSegfaultHandler() {
 }
 #endif
 
-#ifdef _WIN32
+#ifdef JOC_WINDOWS_BUILD
 LONG WINAPI segvHandler(EXCEPTION_POINTERS* einfo) {
     void* address = nullptr;
     switch (einfo->ExceptionRecord->ExceptionCode) {

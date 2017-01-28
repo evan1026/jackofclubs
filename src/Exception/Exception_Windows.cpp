@@ -1,4 +1,5 @@
-#ifdef _WIN32
+#include "Platforms.h"
+#ifdef JOC_WINDOWS_BUILD
 
 #include "Exception/Exception.h"
 

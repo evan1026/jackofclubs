@@ -3,6 +3,8 @@
 #include "Exception/Exception_Windows.cpp"
 #include "Exception/Exception_Linux.cpp"
 
+#include <cstring>
+
 #include "Exception/Exception.h"
 #include "Logger/GlobalLogger.hpp"
 

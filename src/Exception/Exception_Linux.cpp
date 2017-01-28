@@ -1,4 +1,6 @@
-#ifdef linux
+#include "Platforms.h"
+#ifdef JOC_LINUX_BUILD
+
 #include <cstring>
 #include <cxxabi.h>
 #include <execinfo.h>
