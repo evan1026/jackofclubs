@@ -10,9 +10,9 @@ set(DEBUG true)
 
 if(DEBUG)
     set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-	if(NOT WIN32)
-		set(CMAKE_CXX_FLAGS "-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wall -Werror ${CMAKE_CXX_FLAGS}")
-	endif()
+    if(NOT WIN32)
+        set(CMAKE_CXX_FLAGS "-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wall -Werror ${CMAKE_CXX_FLAGS}")
+    endif()
     #set(CMAKE_CXX_FLAGS "-fsanitize=memory ${CMAKE_CXX_FLAGS}")
     #set(CMAKE_CXX_FLAGS "-fsanitize=address ${CMAKE_CXX_FLAGS}")
 else()
@@ -20,9 +20,9 @@ else()
 endif(DEBUG)
 
 if(WIN32)
-	#Set this to where you built SFML
-	#Not needed on linux since running make install will put everything where it needs to be
-	set(SFML_ROOT "C:/Users/evana/AppData/Local/CMakeBuild/0d32c7ec-8872-8434-a751-0947328ef528/build/install")
+    #Set this to where you built SFML
+    #Not needed on linux since running make install will put everything where it needs to be
+    set(SFML_ROOT "C:/Users/evana/AppData/Local/CMakeBuild/0d32c7ec-8872-8434-a751-0947328ef528/build/install")
     set(CMAKE_MODULE_PATH "${SFML_ROOT}/cmake/Modules")
 endif()
 
@@ -52,15 +52,15 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
                    ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR} $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)
 
 if(WIN32)
-	string(REGEX MATCH "[^;]*" FIRST_LIBRARY "${SFML_LIBRARIES}")
-	string(REGEX MATCH "(.*/)*" LIBS_DIR "${FIRST_LIBRARY}")
+    string(REGEX MATCH "[^;]*" FIRST_LIBRARY "${SFML_LIBRARIES}")
+    string(REGEX MATCH "(.*/)*" LIBS_DIR "${FIRST_LIBRARY}")
 
-	add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-					   COMMAND ${CMAKE_COMMAND} -E copy_directory
-					   ${LIBS_DIR}/../bin/ $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${LIBS_DIR}/../bin/ $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
 
-	add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-					   COMMAND ${CMAKE_COMMAND} -E copy_directory
-					   "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Redist/MSVC/14.10.24728/" $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Redist/MSVC/14.10.24728/" $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
 
 endif()
