@@ -58,4 +58,9 @@ if(WIN32)
 	add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 					   COMMAND ${CMAKE_COMMAND} -E copy_directory
 					   ${LIBS_DIR}/../bin/ $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
+
+	add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+					   COMMAND ${CMAKE_COMMAND} -E copy_directory
+					   "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Redist/MSVC/14.10.24728/" $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/)
+
 endif()
