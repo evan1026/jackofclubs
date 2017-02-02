@@ -11,11 +11,10 @@
 #include "World/Block.h"
 #include "World/Chunk.h"
 
-/*
+/*!
  * Class for the entire world as a whole. Contains methods for interfacing
  * with the world like changing blocks and getting their state.
  */
-
 class World : public IRenderable {
 
     std::unordered_map<std::tuple<int, int, int>, Chunk> _chunks; //Tuple because I found code to hash it online

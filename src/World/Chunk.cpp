@@ -8,20 +8,21 @@
 
 constexpr float COLOR_SCALE = 256.f / Chunk::BLOCK_COUNT;
 
-/*
+/*! \callergraph
  * Need a default constructor for stl containers
  */
 Chunk::Chunk() {}
 
-/*
+/*! \callergraph
+ *
  * Creates a chunk and initializes the blocks to be solid or air based on
  * some weird-ass formula I just tinkered with until I found something that
  * looked cool. Block color starts at black at the (0,0,0) position in the
  * chunk and goes to white at (15,15,15). One color increases in each direction
  * (x is red, y is green, z is blue).
  *
- * p     - The position of the chunk in chunk coords (chunk coords == block coords / 16)
- * world - reference to the world (gotta be a pointer because of the default constructor)
+ * \p p     - The position of the chunk in chunk coords (chunk coords == block coords / 16)     <br>
+ * \p world - reference to the world (gotta be a pointer because of the default constructor)    <br>
  */
 Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true), _world(world) {
     for (int x = 0; x < BLOCK_COUNT; ++x) {
@@ -44,7 +45,8 @@ Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true)
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Rebuilds the vertex array for this chunk. Works by going through each
  * block (including blocks that are 1 block outside of this chunk), finding
  * the ones that are air, and creating a face at the border of that block
@@ -110,17 +112,18 @@ void Chunk::rebuildVertArray() {
     _changed = false;
 }
 
-/*
+/*! \callergraph
+ *
  * Ok, so I'll admit this function looks really weird.
  * The basic idea of it is to automate adding a face to
  * make rebuildVertArray() not be a thousand lines long.
  * It works, I promise. If you want more description, look
  * at the comment below.
  *
- * target    - Block we're adding a face to
- * addTarget - The dimension to add 1 to initially (used to do faces that don't contain the point at the block's (0,0,0) point)
- * c         - Color of the block
- * order     - Order of dimensions to do move in. Used to make sure the face is always drawn clockwise.
+ * \p target    - Block we're adding a face to                                                                                        <br>
+ * \p addTarget - The dimension to add 1 to initially (used to do faces that don't contain the point at the block's (0,0,0) point)    <br>
+ * \p c         - Color of the block                                                                                                  <br>
+ * \p order     - Order of dimensions to do move in. Used to make sure the face is always drawn clockwise.                            <br>
  */
 void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::Color& c, const sf::Vector2i& order) {
     float fc[3];
@@ -162,12 +165,12 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
     _vertArray.push_back(Vertex(fp,fc,fn));
 }
 
-/*
- * Overrides IRenderable::render
+/*! \callergraph
+ *
  * Rebuilds the vertex array if needed and then sends it out to OpenGL
  *
- * e - Render engine (for OpenGL calls)
- * w - Window (for SFML calls)
+ * \p e - Render engine (for OpenGL calls)    <br>
+ * \p w - Window (for SFML calls)             <br>
  */
 void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_changed) {
@@ -176,10 +179,11 @@ void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
     e.renderVertexArray(_vertArray);
 }
 
-/*
+/*! \callergraph
+ *
  * Converts a global block position to its local position within this chunk
  *
- * worldPos - The global position to convert
+ * \p worldPos - The global position to convert
  */
 sf::Vector3i Chunk::globalToLocalBlockPos(const sf::Vector3i& worldPos) const {
     int x = worldPos.x % BLOCK_COUNT;
@@ -193,10 +197,11 @@ sf::Vector3i Chunk::globalToLocalBlockPos(const sf::Vector3i& worldPos) const {
     return sf::Vector3i(x, y, z);
 }
 
-/*
+/*! \callergraph
+ *
  * Converts a local position within this chunk to a global position
  *
- * localPos - The local position to convert
+ * \p localPos - The local position to convert
  */
 sf::Vector3i Chunk::localToGlobalBlockPos(const sf::Vector3i& localPos) const {
     return sf::Vector3i(localPos.x + BLOCK_COUNT * _position.x,
@@ -204,10 +209,11 @@ sf::Vector3i Chunk::localToGlobalBlockPos(const sf::Vector3i& localPos) const {
                         localPos.z + BLOCK_COUNT * _position.z);
 }
 
-/*
+/*! \callergraph
+ *
  * Returns a constant reference to the block with the given global position
  *
- * worldPos - global position
+ * \p worldPos - global position
  */
 const Block& Chunk::getBlock(const sf::Vector3i& worldPos) const {
     // To avoid code duplication, we just remove the const, get the block, and
@@ -215,10 +221,11 @@ const Block& Chunk::getBlock(const sf::Vector3i& worldPos) const {
     return const_cast<Chunk*>(this)->getBlock(worldPos);
 }
 
-/*
+/*! \callergraph
+ *
  * Returns a reference to the block at a given global position.
  *
- * worldPos - global position
+ * \p worldPos - global position
  */
 Block& Chunk::getBlock(const sf::Vector3i& worldPos) {
     if (!isInChunk(worldPos)) {
@@ -229,19 +236,21 @@ Block& Chunk::getBlock(const sf::Vector3i& worldPos) {
     return _blocks.at(pos.x).at(pos.y).at(pos.z);
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the type of the block at the given position.
  *
- * worldPos - global position
+ * \p worldPos - global position
  */
 Block::Type Chunk::getBlockType(const sf::Vector3i& worldPos) const {
     return getBlock(worldPos).getType();
 }
 
-/*
+/*! \callergraph
+ *
  * Returns whether or not a block is in this chunk
  *
- * pos - global position for the block
+ * \p pos - global position for the block
  */
 bool Chunk::isInChunk(const sf::Vector3i& pos) const {
     return (   pos.x >= _position.x * BLOCK_COUNT && pos.x < _position.x * BLOCK_COUNT + BLOCK_COUNT
@@ -249,7 +258,8 @@ bool Chunk::isInChunk(const sf::Vector3i& pos) const {
             && pos.z >= _position.z * BLOCK_COUNT && pos.z < _position.z * BLOCK_COUNT + BLOCK_COUNT);
 }
 
-/*
+/*! \callergraph
+ *
  * Notifys the chunk that it should rebuild its vertex array
  */
 void Chunk::notifyChanged() {

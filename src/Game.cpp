@@ -7,7 +7,8 @@
 
 using Logger::globalLogger;
 
-/*
+/*! \callergraph
+ *
  * Constructs the game and initializes the render engine
  */
 Game::Game() :
@@ -16,7 +17,8 @@ Game::Game() :
     globalLogger.log("Initializing Game");
 }
 
-/*
+/*! \callergraph
+ *
  * Starts the game and runs the main loop, which polls events
  * and dispatches them to the appropriate handler.
  */
@@ -42,7 +44,8 @@ void Game::run() {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Ends the game by signalling the main loop should terminate
  */
 void Game::end() {
@@ -50,15 +53,18 @@ void Game::end() {
     _running = false;
 }
 
-/*
+/*! \callergraph
+ *
  * Handles a portion of the possible events.
  *
- * Currently handled events:
- *     1) Window Closed  - Ends the main loop
- *     2) Window Resized - Notifies the render engine
- *     3) F3 Pressed     - Marks debug options as available to be shown (screen handles actually showing them)
+ * Currently handled events:                                                                                      <br>
+ *     1) Window Closed  - Ends the main loop                                                                     <br>
+ *     2) Window Resized - Notifies the render engine                                                             <br>
+ *     3) F3 Pressed     - Marks debug options as available to be shown (screen handles actually showing them)    <br>
  *
  * Returns true if the event has been sufficiently handled (i.e. should not be forwarded along) and false otherwise
+ *
+ * \p e - The event to process
  */
 bool Game::handleEvent(const sf::Event& e) {
     switch (e.type) {

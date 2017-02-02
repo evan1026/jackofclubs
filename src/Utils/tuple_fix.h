@@ -1,17 +1,15 @@
 #ifndef TUPLE_FIX_H
 #define TUPLE_FIX_H
 
-/*
+/*!
  * Code to allow tuples to be used as the key in a map/set
  *
  * This code comes entirely from http://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
  */
-
 #include <tuple>
 namespace std{
     namespace
     {
-
         // Code from boost
         // Reciprocal of the golden ratio helps spread entropy
         //     and handles duplicates.
@@ -45,9 +43,15 @@ namespace std{
         };
     }
 
+    /*!
+     * This code comes entirely from http://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
+     */
     template <typename ... TT>
     struct hash<std::tuple<TT...>>
     {
+        /*!
+         * This code comes entirely from http://stackoverflow.com/questions/7110301/generic-hash-for-tuples-in-unordered-map-unordered-set
+         */
         size_t
         operator()(std::tuple<TT...> const& tt) const
         {

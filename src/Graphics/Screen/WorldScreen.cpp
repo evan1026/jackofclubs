@@ -18,13 +18,14 @@ using Logger::globalLogger;
 #define GRAVITY_SPEED 0.02
 #define SPRINT_SCALE 1.5
 
-/*
+/*! \callergraph
+ *
  * Construct a new WorldScreen and give it some info about the
  * environment it's running in (window and game). Sets up player's
  * initial position and constructs GUI elements.
  *
- * window - The window we're running in (used to help interface with the mouse)
- * game   - The Game being run (used to end the game)
+ * \p window - The window we're running in (used to help interface with the mouse)    <br>
+ * \p game   - The Game being run (used to end the game)                              <br>
  */
 WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _world(),
@@ -44,10 +45,11 @@ WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _colorRect.setOutlineThickness(2);
 }
 
-/*
+/*! \callergraph
+ *
  * Dispatches events to their appropriate handlers
  *
- * event - Event to be handled
+ * \p event - Event to be handled
  */
 void WorldScreen::handleEvent(const sf::Event& event) {
     switch (event.type) {
@@ -74,11 +76,12 @@ void WorldScreen::handleEvent(const sf::Event& event) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Handles placing/removing blocks if there's no menu or forwarding the
  * mouse click to the menu if there is one.
  *
- * event - The mouse click event to handle
+ * \p event - The mouse click event to handle
  */
 void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonPressed(event)) {
@@ -109,13 +112,14 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Simply forwards the release event on to the menu. We don't actually
  * care about it.
  * (Done in a format similar to the other functions so that if we do want
  * to handle it in the future, there's less chance of messing it up)
  *
- * event - The mouse button release event to handle
+ * \p event - The mouse button release event to handle
  */
 void WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonReleased(event)) {
@@ -123,11 +127,12 @@ void WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Forwards the key press on to the children, and, if they don't handle it,
  * handles Escape, Q, C, and E.
  *
- * event - The key event to handle
+ * \p event - The key event to handle
  */
 void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleKeyPressed(event)) {
@@ -152,14 +157,15 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Forwards mouse movement on to the menu, if there is one.
  * I tried to have this also handle looking around, but the problem
  * is that re-centering the mouse generates an event in itself, which
  * causes the camera to swing wildly around. The current implementation
  * works much better.
  *
- * event - The mouse movement to forward
+ * \p event - The mouse movement to forward
  */
 void WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseMoved(event)) {
@@ -167,7 +173,8 @@ void WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Gets the position of the block space next to the block we're looking at
  * (where we should place a block) and then tells the world to make that
  * block solid. Removes the block if it intersected with us. This function
@@ -187,7 +194,8 @@ void WorldScreen::placeBlock() {
         _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
-/*
+/*! \callergraph
+ *
  * Gets the position of the block we're looking at and sets it to air
  */
 void WorldScreen::removeBlock() {
@@ -200,7 +208,8 @@ void WorldScreen::removeBlock() {
     _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
-/*
+/*! \callergraph
+ *
  * Shows or hides the color selection menu
  */
 void WorldScreen::toggleColorSelectorMenu() {
@@ -213,7 +222,8 @@ void WorldScreen::toggleColorSelectorMenu() {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Removes any menu that may exists and captures the mouse
  *
  * TODO should probably have a function to go to the previous menu when menu chaining actually starts to happen
@@ -224,7 +234,8 @@ void WorldScreen::removeMenu() {
     sf::Mouse::setPosition(_screenMiddle, _window);
 }
 
-/*
+/*! \callergraph
+ *
  * Moves the player and handles the rotation
  */
 void WorldScreen::handlePlayerMovement() {
@@ -289,7 +300,8 @@ void WorldScreen::handlePlayerMovement() {
     _player.setVelocity(vel);
 }
 
-/*
+/*! \callergraph
+ *
  * Makes the selected color equal the color of the selected block
  * (called when the user presses E)
  */
@@ -301,7 +313,8 @@ void WorldScreen::copySelectionColor() {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Called every frame. Updates FPSCounter, handles player movement, and
  * recalculates selected block.
  */
@@ -316,11 +329,12 @@ void WorldScreen::tick() {
     _selectedBlock = _player.getSelection(_world, 5);
 }
 
-/*
+/*! \callergraph
+ *
  * Handles rendering all of the components
  *
- * re - Rendering engine used for OpenGL calls
- * w  - Window used for SFML calls
+ * \p re - Rendering engine used for OpenGL calls    <br>
+ * \p w  - Window used for SFML calls                <br>
  */
 void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
 

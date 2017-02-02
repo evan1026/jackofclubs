@@ -10,8 +10,8 @@
 #define NUM_CHUNKS_LENGTH 2   // Actually half the total length
 #define NUM_CHUNKS_HEIGHT 8
 
-/*
- * Creates a new world which is 4 chunks by 4 chunks by 8 chunks
+/*! \callergraph
+ * Creates a new world which is 4 chunks by 4 chunks by 8 chunks (size is just for testing purposes)
  */
 World::World() {
     for (int x = -NUM_CHUNKS_LENGTH; x < NUM_CHUNKS_LENGTH; ++x) {
@@ -25,11 +25,12 @@ World::World() {
     }
 }
 
-/*
- * Overrides IRenderable::render. Forwards the rendering on to each chunk.
+/*! \callergraph
  *
- * e - Render engine (used for OpenGL calls)
- * w - Window (for SFML calls)
+ * Forwards the rendering on to each chunk.
+ *
+ * \p e - Render engine (used for OpenGL calls)    <br>
+ * \p w - Window (for SFML calls)                  <br>
  */
 void World::render(RenderEngine& e, sf::RenderWindow& w) {
     for (auto i = _chunks.begin(); i != _chunks.end(); ++i) {
@@ -37,10 +38,11 @@ void World::render(RenderEngine& e, sf::RenderWindow& w) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Gets the position of the chunk a particular position is in
  *
- * pos - global position
+ * \p pos - global position
  */
 std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) const {
     int x = pos.x;
@@ -62,10 +64,11 @@ std::tuple<int, int, int> World::getChunkPos(const sf::Vector3i& pos) const {
     return std::make_tuple(x, y, z);
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the block at a sepcified position
  *
- * pos - global position
+ * \p pos - global position
  */
 const Block& World::getBlock(const sf::Vector3i& pos) const {
     if (!blockExists(pos)) {
@@ -75,10 +78,11 @@ const Block& World::getBlock(const sf::Vector3i& pos) const {
     return _chunks.at(getChunkPos(pos)).getBlock(pos);
 }
 
-/*
+/*! \callergraph
+ *
  * Basically checks if a position is in one of the chunks that actually exist.
  *
- * pos - global position
+ * \p pos - global position
  */
 bool World::blockExists(const sf::Vector3i& pos) const {
     std::tuple<int, int, int> chunkPos = getChunkPos(pos);
@@ -86,10 +90,11 @@ bool World::blockExists(const sf::Vector3i& pos) const {
     return iter != _chunks.end(); //If the block is in a valid chunk, it must exist
 }
 
-/*
+/*! \callergraph
+ *
  * Gets the type of a block, if it exists, and returns air if not
  *
- * pos - global position
+ * \p pos - global position
  */
 Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     if (blockExists(pos)) {
@@ -99,11 +104,12 @@ Block::Type World::getBlockType(const sf::Vector3i& pos) const {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Sets the type of a block at a given position
  *
- * pos  - global position
- * type - new type for that block
+ * \p pos  - global position            <br>
+ * \p type - new type for that block    <br>
  */
 void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
     if (blockExists(pos)) {
@@ -113,11 +119,12 @@ void World::setBlockType(const sf::Vector3i& pos, const Block::Type& type) {
     }
 }
 
-/*
- * Gets the color of a block at a specific position
+/*! \callergraph
+ *
+ * Gets the color of a block at a specific position.
  * Returns black if it doesn't exist
  *
- * pos - global position
+ * \p pos - global position
  */
 sf::Color World::getBlockColor(const sf::Vector3i& pos) const {
     if (blockExists(pos)) {
@@ -127,11 +134,12 @@ sf::Color World::getBlockColor(const sf::Vector3i& pos) const {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Sets the color of a block
  *
- * pos   - global position
- * color - new color
+ * \p pos   - global position    <br>
+ * \p color - new color          <br>
  */
 void World::setBlockColor(const sf::Vector3i& pos, const sf::Color& color) {
     if (blockExists(pos)) {
@@ -141,12 +149,13 @@ void World::setBlockColor(const sf::Vector3i& pos, const sf::Color& color) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Notifys the chunk that contains a changed block that a block has been changed,
  * and also notifies the chunks that touch that block (otherwise changing blocks
  * that are next to a chunk border could cause you to see through the world)
  *
- * pos - global position of changed block
+ * \p pos - global position of changed block
  */
 void World::notifyChanged(const sf::Vector3i& pos) {
         notifyChangedSingle(pos);
@@ -162,11 +171,12 @@ void World::notifyChanged(const sf::Vector3i& pos) {
         notifyChangedSingle(sf::Vector3i(pos.x, pos.y, pos.z - 1));
 }
 
-/*
+/*! \callergraph
+ *
  * Base function for notifyChanged that doesn't notify the
  * chunks around the given block
  *
- * pos - global position of changed block
+ * \p pos - global position of changed block
  */
 void World::notifyChangedSingle(const sf::Vector3i& pos) {
     if (blockExists(pos)) {
@@ -174,14 +184,15 @@ void World::notifyChangedSingle(const sf::Vector3i& pos) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Checks if player is colliding with a block
  * Goes through all blocks in a range slightly
  * larger than the player and checks if there's
  * a collision with that block. If no collisions,
  * return false, else true.
  *
- * player - The player to check for a collision
+ * \p player - The player to check for a collision
  */
 bool World::checkCollision(const Player& player) const {
     auto position = player.getPosition();

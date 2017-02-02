@@ -13,81 +13,91 @@
                                                 // use the "exact" value to adust the velocity, it rounds
                                                 // to put us inside of a block
 
-/*
- * type     - The Player::Type of this player (either SELF or OTHER)
- * position - The player's initial position
- * rotation - The player's initial look direction
+/*! \callergraph
+ *
+ * \p type     - The Player::Type of this player (either SELF or OTHER)     <br>
+ * \p position - The player's initial position                              <br>
+ * \p rotation - The player's initial look direction                        <br>
  */
 Player::Player(const Type& type, const sf::Vector3f& position, const sf::Vector3f& rotation)
         : _type(type), _position(position), _rotation(rotation)
 {}
 
-/*
- * Returns the AABB (axis-aligned bounding box) that surrounds the player
- * Player is almost 1x2x1 (actually 0.9x1.9x0.9)
+/*! \callergraph
+ *
+ * Returns the AABB (axis-aligned bounding box) that surrounds the player    <br>
+ * Player is almost 1x2x1 (actually 0.9x1.9x0.9)                             <br>
  */
 AABB Player::getBoundingBox() const {
     return AABB(_position, sf::Vector3f(1 - AABB_INSET, 2, 1 - AABB_INSET));
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the player's current position
  */
 sf::Vector3f Player::getPosition() const {
     return _position;
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the player's current look direction
  */
 sf::Vector3f Player::getRotation() const {
     return _rotation;
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the player's current velocity
  */
 sf::Vector3f Player::getVelocity() const {
     return _velocity;
 }
 
-/*
+/*! \callergraph
+ *
  * Sets the player's rotation (look direction)
  *
- * rotation - The new rotation
+ * \p rotation - The new rotation
  */
 void Player::setRotation(const sf::Vector3f& rotation) {
     _rotation = rotation;
 }
 
-/*
+/*! \callergraph
+ *
  * Sets player's position directly
+ *
  * WARNING: Using this instead of the normal velocity system could lead
  *          to the player getting stuck in a block
  *
- * position - The new position
+ * \p position - The new position
  */
 void Player::setPosition(const sf::Vector3f& position) {
     _position = position;
 }
 
-/*
+/*! \callergraph
+ *
  * Sets the velocity of the player, which then gets applied when Player::tick
  * is called
  *
- * velocity - The new velocity
+ * \p velocity - The new velocity
  */
 void Player::setVelocity(const sf::Vector3f& velocity) {
     _velocity = velocity;
 }
 
-/*
- * Used by move() to shrink the player's velocity along one axis
+/*! \callergraph
+ *
+ * Used by Player::move to shrink the player's velocity along one axis
  * when they're about to collide with a block so that they end
  * up right on the edge instead.
  *
- * startVel - The initial velocity they're trying to move with
- * endPos   - Where they would end up if they moved with that velocity
+ * \p startVel - The initial velocity they're trying to move with            <br>
+ * \p endPos   - Where they would end up if they moved with that velocity    <br>
  */
 float Player::shrinkVelocity(const float startVel, const float endPos, const float inset) const {
     if (Math::signum(startVel) > 0) {
@@ -99,7 +109,8 @@ float Player::shrinkVelocity(const float startVel, const float endPos, const flo
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Applies the player's velocity to their position, also keeping them from colliding with a
  * block if that velocity would cause a collision.
  *
@@ -108,16 +119,16 @@ float Player::shrinkVelocity(const float startVel, const float endPos, const flo
  * the velocity is adjusted so they are put right up against the nearest block boundary in
  * that direction.
  *
- * The order that they directions is applied is as follows:
- *     y is applied first, to make sure gravity (once implemented) will always be applied
- *     x is applied second, because something needs to go next, and x was selected arbitrarily
- *     z is applied last, because it's the one left
+ * The order that they directions is applied is as follows:                                       <br>
+ *     y is applied first, to make sure gravity (once implemented) will always be applied         <br>
+ *     x is applied second, because something needs to go next, and x was selected arbitrarily    <br>
+ *     z is applied last, because it's the one left                                               <br>
  *
  * WARNING: This assumes the player's velocity will always be < 1. If this ever does not hold,
  * either this or Player::shrinkVelocity (or both) will need to be adjusted.
  *
- * velocity - Essentially the distance they should move in this tick
- * world    - The world they're moving in (used to check collisions)
+ * \p velocity - Essentially the distance they should move in this tick    <br>
+ * \p world    - The world they're moving in (used to check collisions)    <br>
  */
 void Player::tick(const World& world) {
     sf::Vector3f startPos = _position;
@@ -145,12 +156,13 @@ void Player::tick(const World& world) {
     _velocity = finalVelocity;
 }
 
-/*
+/*! \callergraph
+ *
  * Handles applying camera rotation and translation, as well as
  * rendering the hitbox if that debug option is enabled.
  *
- * e - The rendering engine (used for OpenGL calls, like rotate and translate)
- * w - The window (used for SFML calls; unused here)
+ * \p e - The rendering engine (used for OpenGL calls, like rotate and translate)    <br>
+ * \p w - The window (used for SFML calls; unused here)                              <br>
  */
 void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_type == Type::SELF) {
@@ -163,14 +175,15 @@ void Player::render(RenderEngine& e, sf::RenderWindow& w) {
         e.renderAABB(getBoundingBox(), sf::Color::Black);
 }
 
-/*
- * Used by getSelection() to find the smallest initial t value to get us to a block border
+/*! \callergraph
+ *
+ * Used by Player::getSelection to find the smallest initial t value to get us to a block border
  * in a certain direction.
  *
- * See getSelection() for more.
+ * See Player::getSelection for more.
  *
- * origin    - Start position
- * direction - How much we're moving in this direction
+ * \p origin    - Start position                             <br>
+ * \p direction - How much we're moving in this direction    <br>
  */
 float Player::getTMax(float origin, float direction) const {
     if (direction > 0) {
@@ -180,7 +193,8 @@ float Player::getTMax(float origin, float direction) const {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Implementation of the algorithm described at http://www.cse.chalmers.se/edu/year/2011/course/TDA361/grid.pdf
  *
  * Uses ray tracing to find the first block directly in front of the player. Uses the
@@ -189,11 +203,13 @@ float Player::getTMax(float origin, float direction) const {
  * from the block it's currently in to the next block the ray intersects. It keeps following the ray
  * until it finds a block that is solid, or until it goes out of range. See the paper for more information.
  *
- * world - The world to trace through
- * range - The distance (in blocks) when we should say the selection (if there is one) is out of range
+ * \p world - The world to trace through                                                                     <br>
+ * \p range - The distance (in blocks) when we should say the selection (if there is one) is out of range    <br>
  */
 Maybe<BlockFace> Player::getSelection(World& world, float range) const {
-    sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x), -Math::sinDeg(_rotation.x), -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
+    sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x),
+                                         -Math::sinDeg(_rotation.x),
+                                         -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
     sf::Vector3f origin = getHeadLocation();
     sf::Vector3f pos(Math::floor(origin.x), Math::floor(origin.y), Math::floor(origin.z));
     sf::Vector3f step(Math::signum(direction.x), Math::signum(direction.y), Math::signum(direction.z));
@@ -245,26 +261,30 @@ Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Sets a boolean to indicate the player is jumping
- * This gets automatically reset in tick() when they
+ * This gets automatically reset in Player::tick when they
  * hit the ground
  *
- * jumping - Whether the player is jumping
+ * \p jumping - Whether the player is jumping
  */
 void Player::setJumping(bool jumping) {
     _jumping = jumping;
 }
 
-/*
+/*! \callergraph
+ *
  * Returns whether the player is currently jumping or not
  */
 bool Player::getJumping() const {
     return _jumping;
 }
 
-/*
+/*! \callergraph
+ *
  * Gets the position of the player's head
+ *
  * This defines things like raycasting (for getting the selection)
  * and rendering
  */

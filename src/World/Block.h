@@ -7,12 +7,12 @@
 #include "Utils/ICollidable.h"
 #include "Utils/AABB.h"
 
-/*
+/*!
  * It's a block. Seems pretty obvious.
  */
-
 class Block : public ICollidable {
     public:
+        /*! Different states the block can take on */
         enum class Type {
             AIR,
             SOLID

@@ -10,7 +10,8 @@
 
 using Logger::globalLogger;
 
-/*
+/*! \callergraph
+ *
  * Constructs a new Exception.
  *
  * The stack skip should be essentially how many function calls exist between the original
@@ -19,8 +20,8 @@ using Logger::globalLogger;
  * As such, it probably makes sense to have each guy take an optional stack skip and call this
  * constructor with that value plus 1.
  *
- * reason    - The issue that caused the exception itself. Mostly in the format "ExceptionName: Cause of exception."
- * stackSkip - explained above
+ * \p reason    - The issue that caused the exception itself. Mostly in the format "ExceptionName: Cause of exception."    <br>
+ * \p stackSkip - explained above
  */
 Exception::Exception(std::string reason, int stackSkip) :
             std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2) { //+2 because of the 2 extra functions we add (constructor and printStackTrace())
@@ -30,7 +31,8 @@ Exception::Exception(std::string reason, int stackSkip) :
     saveStackTrace();
 }
 
-/*
+/*! \callergraph
+ *
  * Returns a readable explaination of the exception.
  * Overrides std::runtime_error::what().
  *

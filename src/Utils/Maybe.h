@@ -3,51 +3,48 @@
 
 #include "Exception/NullMaybeException.h"
 
-/*********************************************************************
- * ~~~~~~~~~~~~                                                      *
- * ~ Maybe<T> ~                                                      *
- * ~~~~~~~~~~~~                                                      *
- *                                                                   *
- * This class is based off of the class of the same name in Haskell. *
- * It represents a value that may or may not exist. A Maybe of any   *
- * given type holds a pointer to a value, which will either point    *
- * to actual data or to nothing. Care should be taken to ensure      *
- * that the Maybe actually stores a value before trying to use it.   *
- *                                                                   *
- * Example usage:                                                    *
- *     int a;                                                        *
- *     Maybe<int> maybeWithValue(10);                                *
- *     Maybe<int> maybeWithoutValue();                               *
- *                                                                   *
- *     if (maybeWithValue) {                                         *
- *         //there is data, using it is safe                         *
- *         a = maybeWithValue();                                     *
- *     } else {                                                      *
- *         //will not get here, since it has data                    *
- *     }                                                             *
- *                                                                   *
- *     if (maybeWithoutValue) {                                      *
- *         //will not get here, since it has no data                 *
- *     } else {                                                      *
- *         //this will throw a NullMaybeException                    *
- *         a = maybeWithoutValue();                                  *
- *     }                                                             *
- *                                                                   *
- *     //you can also assign directly from a value                   *
- *     maybeWithoutValue = 10;                                       *
- *                                                                   *
- *     //Or from a null pointer                                      *
- *     maybeWithValue = nullptr;                                     *
- *                                                                   *
- *     if (maybeWithValue) {                                         *
- *         //it will no longer make it here, since it no longer      *
- *         //has a value                                             *
- *     }                                                             *
- *                                                                   *
- *     if(maybeWithoutValue) {                                       *
- *         //It will now make it in here, since it now has a value   *
- *     }                                                             *
- *********************************************************************/
+/*!
+ * This class is based off of the class of the same name in Haskell.
+ * It represents a value that may or may not exist. A Maybe of any
+ * given type holds a pointer to a value, which will either point
+ * to actual data or to nothing. Care should be taken to ensure
+ * that the Maybe actually stores a value before trying to use it.
+ *
+ * Example usage:
+ *
+ *     int a;
+ *     Maybe<int> maybeWithValue(10);
+ *     Maybe<int> maybeWithoutValue();
+ *
+ *     if (maybeWithValue) {
+ *         //there is data, using it is safe
+ *         a = maybeWithValue();
+ *     } else {
+ *         //will not get here, since it has data
+ *     }
+ *
+ *     if (maybeWithoutValue) {
+ *         //will not get here, since it has no data
+ *     } else {
+ *         //this will throw a NullMaybeException
+ *         a = maybeWithoutValue();
+ *     }
+ *
+ *     //you can also assign directly from a value
+ *     maybeWithoutValue = 10;
+ *
+ *     //Or from a null pointer
+ *     maybeWithValue = nullptr;
+ *
+ *     if (maybeWithValue) {
+ *         //it will no longer make it here, since it no longer
+ *         //has a value
+ *     }
+ *
+ *     if(maybeWithoutValue) {
+ *         //It will now make it in here, since it now has a value
+ *     }
+ */
 template <typename T>
 class Maybe {
 
@@ -55,7 +52,7 @@ class Maybe {
     std::allocator<T> alloc;
 
 public:
-    /*
+    /*! \callergraph
      * Constructs a non-empty Maybe by forwarding the args to the
      * templated type's constructor.
      */
@@ -65,14 +62,14 @@ public:
         alloc.construct(value, args...);
     }
 
-    /*
+    /*! \callergraph
      * Constructs an empty maybe
      */
     Maybe<T>() {
         value = nullptr;
     }
 
-    /*
+    /*! \callergraph
      * Frees up the contained value, if there is one
      */
     ~Maybe<T>() {
@@ -81,7 +78,7 @@ public:
         }
     }
 
-    /*
+    /*! \callergraph
      * Copy constructor
      */
     Maybe<T>(const Maybe<T>& other) {
@@ -93,7 +90,7 @@ public:
         }
     }
 
-    /*
+    /*! \callergraph
      * Move constructor
      */
     Maybe<T>(Maybe<T>&& other) {
@@ -101,7 +98,7 @@ public:
         other.value = nullptr;
     }
 
-    /*
+    /*! \callergraph
      * Copy assignment operator
      */
     Maybe<T>& operator=(const Maybe<T>& other) {
@@ -119,7 +116,7 @@ public:
         return *this;
     }
 
-    /*
+    /*! \callergraph
      * Move assignment operator
      */
     Maybe<T>& operator=(Maybe<T>&& other) {
@@ -133,7 +130,7 @@ public:
         return *this;
     }
 
-    /*
+    /*! \callergraph
      * Assign to Maybe based on anything T can be assigned by
      */
     template <typename O>
@@ -147,7 +144,7 @@ public:
         return *this;
     }
 
-    /*
+    /*! \callergraph
      * Assign will null pointer
      */
     Maybe<T>& operator=(const std::nullptr_t& null_p) {
@@ -160,14 +157,14 @@ public:
         return *this;
     }
 
-    /*
+    /*! \callergraph
      * Checks if value can be extracted from this Maybe
      */
     operator bool() const {
         return value != nullptr;
     }
 
-    /*
+    /*! \callergraph
      * Extracts the value from this Maybe, and throws and exception if we can't
      */
     T& operator()() const {

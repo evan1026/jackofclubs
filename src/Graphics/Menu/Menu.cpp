@@ -1,11 +1,12 @@
 #include "Graphics/Menu/Menu.h"
 
-/*
+/*! \callergraph
+ *
  * Base constructor that sets up the menu background
  * (just a blackish box with a full black outline)
  *
- * size - the height and width of the menu (centered automatically)
- * type - the Menu::Type of the derived class (see Menu.h)
+ * \p size - the height and width of the menu (centered automatically)
+ * \p type - the Menu::Type of the derived class (see Menu.h)
  */
 Menu::Menu(sf::Vector2f size, Type type) : _box(size), _type(type) {
     _box.setFillColor(sf::Color(0,0,0,128)); //Black but kinda see-through
@@ -13,10 +14,11 @@ Menu::Menu(sf::Vector2f size, Type type) : _box(size), _type(type) {
     _box.setOutlineThickness(5);
 }
 
-/*
+/*! \callergraph
+ *
  * Centers the menu on the window
  *
- * w - the window to center on
+ * \p w - the window to center on
  */
 void Menu::center(sf::RenderWindow& w) {
     sf::Vector2u wsize = w.getSize();
@@ -24,13 +26,14 @@ void Menu::center(sf::RenderWindow& w) {
     _box.setPosition(wsize.x / 2 - bsize.x / 2, wsize.y / 2 - bsize.y / 2);
 }
 
-/*
+/*! \callergraph
+ *
  * Renders the window. First it sets itself up to use sfml rendering,
  * then it renders the backround and calls the child class's rendering
  * function. This overrides IRenderable::render.
  *
- * e - the rendering engine for opengl calls (not used)
- * w - the window for sfml calls (used)
+ * \p e - the rendering engine for opengl calls (not used)
+ * \p w - the window for sfml calls (used)
  */
 void Menu::render(RenderEngine& e, sf::RenderWindow& w) {
     center(w);
@@ -40,7 +43,8 @@ void Menu::render(RenderEngine& e, sf::RenderWindow& w) {
     w.popGLStates();
 }
 
-/*
+/*! \callergraph
+ *
  * Returns a rectangle that represents the menu's position
  * and size on the screen.
  */

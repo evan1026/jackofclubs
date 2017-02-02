@@ -6,17 +6,15 @@
 
 #define STACK_TRACE_MAX_SIZE 500
 
-/*
+/*!
  * Base class for all exceptions. It resembles Java's Exception
  * in that it will save the stacktrace and will print it out as
- * part of what().
+ * part of Exception::what
  *
- * Currently, the system only supports stack traces on Linux, and
- * will not even compile on Windows.
+ * Currently, the system only supports stack traces on Linux
  *
  * TODO: Add stack trace support for Windows
  */
-
 class Exception : public std::runtime_error {
     char ** _out;                            // The text to use in what(). It's a pointer to a pointer so that the text can be mutable, even when the exception is const
     std::string _reason;                     // The reason the exception was thrown. Basically, eveything that will be printed but the stack trace
@@ -33,10 +31,12 @@ public:
     // See Exception.cpp for a description of this function
     Exception(std::string reason, int stackSkip);
 
-    // Handles freeing out
-    // This way, whoever I send it to doesn't have to worry about it
-    // NOTE: If planning to make use of the text outside the lifetime of this object, please save it
-    // somewhere else (preferably in std::string, to avoid memory issues entirely)
+    /*!
+     * Handles freeing output string. This way, whoever I send it to doesn't have to worry about it
+     *
+     * NOTE: If planning to make use of the text outside the lifetime of this object, please save it
+     * somewhere else (preferably in std::string, to avoid memory issues entirely)
+     */
     virtual ~Exception() {
         if (*_out != nullptr) delete[] *_out;
         delete _out;

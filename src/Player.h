@@ -12,15 +12,15 @@
 
 class World;
 
-/*
+/*!
  * Keeps information about the player like their position
  * and which way they're looking and contains functionality
  * to make sure they don't collide with a block when moving.
  * Also handles finding the block selection.
  */
-
 class Player : public ICollidable, public IRenderable {
     public:
+        /*! Quick enumeration to distinguish between oneself and others */
         enum class Type {
             SELF,
             OTHER

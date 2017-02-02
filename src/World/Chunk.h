@@ -15,15 +15,14 @@
 
 class World;
 
-/*
- * One Chunk is 16x16x16 blocks. Contains the actual
- * blocks and has functions for interfacing with them
- */
-
 typedef std::array<Block, BLOCK_COUNT_DEF>   __line;
 typedef std::array<__line, BLOCK_COUNT_DEF>  __plane;
 typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
 
+/*!
+ * One Chunk is 16x16x16 blocks. Contains the actual
+ * blocks and has functions for interfacing with them
+ */
 class Chunk : public IRenderable {
 
     __chunk _blocks;
@@ -40,6 +39,7 @@ class Chunk : public IRenderable {
 
     public:
 
+        /*! How many blocks are in one side of the chunk. Set by a preprocessor definition, which is currently equal to 16 */
         static constexpr int BLOCK_COUNT = BLOCK_COUNT_DEF;
 
         Chunk(const sf::Vector3i& position, World* world);

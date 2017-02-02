@@ -16,13 +16,10 @@
 
 class Game;
 
-/*
+/*!
  * This is the big class that does most of the work for displaying the world
  * to the user and letting them interact with it.
- *
- * For docs on each function, see WorldScreen.cpp
  */
-
 class WorldScreen : public Screen {
 
     //Rendered objects

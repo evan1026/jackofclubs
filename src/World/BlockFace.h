@@ -6,15 +6,15 @@
 
 #include "Utils/EnumClassHash.h"
 
-/*
+/*!
  * Represents one particular face of a block
  * Only keeps track of the block's position, rather
- * than keeping a reference to it
+ * than keeping a reference to the block
  */
-
 class BlockFace {
 
     public:
+        /*! Face names */
         enum class Face {
             NORTH,
             SOUTH,

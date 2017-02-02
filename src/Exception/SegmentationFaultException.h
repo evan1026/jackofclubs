@@ -5,10 +5,9 @@
 
 #include "Exception/Exception.h"
 
-/*
+/*!
  * Exception thrown if someone tries to dereference an invalid pointer (not null)
  */
-
 class SegmentationFaultException : public Exception {
 
     std::string generateMessage(void *invalidLocation) {
@@ -18,6 +17,9 @@ class SegmentationFaultException : public Exception {
     }
 
 public:
+    /*! \callergraph
+     * Constructor
+     */
     SegmentationFaultException(void* loc, int stack_skip = 0) : Exception(generateMessage(loc), stack_skip + 1) {}
 };
 

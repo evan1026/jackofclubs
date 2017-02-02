@@ -3,14 +3,13 @@
 
 #include <SFML/System.hpp>
 
-/*
+/*!
  * Axis aligned bounding box
  * Basically just a box surrounding some thing with
  * sides that are aligned to x,y,z
  *
  * Used for easy collision checking
  */
-
 class AABB {
 
     sf::Vector3f _position;

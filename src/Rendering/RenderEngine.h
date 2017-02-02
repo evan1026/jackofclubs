@@ -10,10 +10,9 @@
 
 class Player;
 
-/*
+/*!
  * Handles interfacing with OpenGL. All OpenGL calls must be made through this class.
  */
-
 class RenderEngine {
 
     sf::RenderWindow _window;
@@ -32,8 +31,7 @@ class RenderEngine {
 
     public:
 
-        // Defines the scale between world-coords and gl-coords
-        // If I don't scale it up clipping gets weird
+        /*! Defines the scale between world-coords and gl-coords. If I don't scale it up clipping gets weird */
         static constexpr float SCALE = 5;
 
         RenderEngine();

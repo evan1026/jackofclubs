@@ -11,11 +11,12 @@
 #define COLOR_TEXT_SIZE   17
 #define TITLE_TEXT_SIZE   30
 
-/*
+/*! \callergraph
+ *
  * Constructs a new ColorSelectorMenu by telling it what color variable it should
  * be modifying. Also initializes all of the GUI members.
  *
- * color - the color data we will be modifying
+ * \p color - the color data we will be modifying
  */
 ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     Menu(sf::Vector2f(WIDTH, HEIGHT), Menu::Type::ColorSelector),
@@ -37,13 +38,14 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     _titleText.setCharacterSize(TITLE_TEXT_SIZE);
 }
 
-/*
+/*! \callergraph
+ *
  * Recalculates the position of the children and draws them to the screen.
  * Note that this function is called from Menu::render(), which handles
  * the rest of the drawing, so we only need to call w.draw() on all of
  * our components (Slider::render() does this automatically)
  *
- * w - the window to draw to
+ * \p w - the window to draw to
  */
 void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
 
@@ -93,12 +95,13 @@ void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
     w.draw(_titleText);
 }
 
-/*
+/*! \callergraph
+ *
  * Handles a mouse click. Just forwards the click to the sliders if they clicked on us.
  * Gotta return true after each forward because if one guy handled it, we don't even need to
  * tell the rest about it.
  *
- * e - The click event we're handling
+ * \p e - The click event we're handling
  */
 bool ColorSelectorMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
     if (getBounds().contains(e.x, e.y)) {
@@ -110,13 +113,14 @@ bool ColorSelectorMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEve
     return false;
 }
 
-/*
+/*! \callergraph
+ *
  * Handles a mouse button release event. Differs from the mouse click in that it doesn't
  * do bounds checking before forwarding to the children. This is so that if they drag outside
  * the bounds of the menu and then release, the children aren't left thinking the mouse movements
  * still apply to them.
  *
- * e - The mouse release event we're handling
+ * \p e - The mouse release event we're handling
  */
 bool ColorSelectorMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
 
@@ -130,22 +134,24 @@ bool ColorSelectorMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEv
     return false;
 }
 
-/*
+/*! \callergraph
+ *
  * We don't actually handle key presses (if they press c again, the screen will handle it),
  * but I have it here because I need to override this function from Menu.
  *
- * e - The key event we're ignoring
+ * \p e - The key event we're ignoring
  */
 bool ColorSelectorMenu::handleKeyPressed(const sf::Event::KeyEvent& e) {
     return false;
 }
 
-/*
+/*! \callergraph
+ *
  * Forwards mouse movements on to the children if the movement was on this menu.
  * The bounds checking doesn't make too much of a difference, but I think it makes
  * the behavior a bit more intuitive.
  *
- * e - The movement event we're handling
+ * \p e - The movement event we're handling
  */
 bool ColorSelectorMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
     if (getBounds().contains(e.x, e.y)) {

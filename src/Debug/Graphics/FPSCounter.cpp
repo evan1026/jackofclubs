@@ -5,13 +5,14 @@
 #include "Utils/Font.h"
 #include "Utils/Utils.h"
 
-/*
+/*! \callergraph
+ *
  * Initialize a new FPSCounter. Initializes a new sf::Text with a white fill color,
  * a black outline color, and an outline thickness of 1, which is located at the
  * provided position.
  *
- * position    - the upper left corner position to render the underlying sf::Text
- * refreshRate - how often (in milliseconds) to update the text
+ * \p position    - the upper left corner position to render the underlying sf::Text     <br>
+ * \p refreshRate - how often (in milliseconds) to update the text                       <br>
  */
 FPSCounter::FPSCounter(sf::Vector2i position, long refreshRate) :
     _refreshRate(refreshRate),
@@ -29,12 +30,13 @@ FPSCounter::FPSCounter(sf::Vector2i position, long refreshRate) :
     setPosition(position.x, position.y);
 }
 
-/*
+/*! \callergraph
+ *
  * Updates the FPSCounter's internal states. This is meant to be called once every
- * frame. It will:
+ * frame. It will:                                                                         <br>
  *     1) Increase the count of how many frames have gone by since the last time
- *        the text was updated
- *     2) Update the text if the specified amount of time has gone by (see constructor)
+ *        the text was updated                                                             <br>
+ *     2) Update the text if the specified amount of time has gone by (see constructor)    <br>
  */
 void FPSCounter::update() {
     _count++;
@@ -61,9 +63,9 @@ void FPSCounter::update() {
     _lastCall = currentTime;
 }
 
-/*
+/*! \callergraph
+ *
  * Renders the FPSCounter to the screen
- * Overrides IRenderable::render()
  *
  * See super method for more documentation
  */
@@ -75,7 +77,8 @@ void FPSCounter::render(RenderEngine& e, sf::RenderWindow& w) {
     }
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the counter's refresh rate, i.e., how often it will update
  * the text, in milliseconds
  */
@@ -83,10 +86,11 @@ long FPSCounter::getRefreshRate() {
     return _refreshRate;
 }
 
-/*
+/*! \callergraph
+ *
  * Sets how often to update the text
  *
- * r - refresh rate, in milliseconds
+ * \p r - refresh rate, in milliseconds
  */
 void FPSCounter::setRefreshRate(long r) {
     _refreshRate = r;

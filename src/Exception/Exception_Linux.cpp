@@ -13,27 +13,28 @@
 
 using Logger::globalLogger;
 
-/*
-* "Demangles" stack trace item names.
-* Code from https://panthema.net/2008/0901-stacktrace-demangled/
-*
-* When C++ code is translated into assembly, each function has to be given
-* a label to jump to. With C code, that label can just be the function name.
-* However, with C++, the full function name would be something like
-* Exception::demangle (and that doesn't even take function overloading into account,
-* but I have no idea how they handle that). Since the colon (:) isn't a valid
-* character to be part of a label, they have to "mangle" the name into a format
-* that is valid. The format it turns into is pretty much unreadable. For instance,
-* this function becomes:
-*     _ZNK9Exception8demangleERNSt7__cxx1118basic_stringstreamIcSt11char_traitsIcESaIcEEEPPcm
-*
-* Which is a lot less readable than the header below. So, this function takes that
-* mess and translates it back using a provided function abi::__cxa_demangle
-*
-* ss         - The string stream representing the final output that we'll write into
-* symbollist - array of strings containing the mangled names
-* addrlen    - number of entries to process (name is a carry-over from where I got this code)
-*/
+/*! \callergraph
+ *
+ * "Demangles" stack trace item names.
+ * Code from https://panthema.net/2008/0901-stacktrace-demangled/
+ *
+ * When C++ code is translated into assembly, each function has to be given
+ * a label to jump to. With C code, that label can just be the function name.
+ * However, with C++, the full function name would be something like
+ * Exception::demangle (and that doesn't even take function overloading into account,
+ * but I have no idea how they handle that). Since the colon (:) isn't a valid
+ * character to be part of a label, they have to "mangle" the name into a format
+ * that is valid. The format it turns into is pretty much unreadable. For instance,
+ * this function becomes: <br>
+ *     _ZNK9Exception8demangleERNSt7__cxx1118basic_stringstreamIcSt11char_traitsIcESaIcEEEPPcm
+ *
+ * Which is very hard to read. So, this function takes that
+ * mess and translates it back using a provided function abi::__cxa_demangle
+ *
+ * \p ss         - The string stream representing the final output that we'll write into
+ * \p symbollist - array of strings containing the mangled names
+ * \p addrlen    - number of entries to process (name is a carry-over from where I got this code)
+ */
 void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrlen) const {
     size_t funcnamesize = STRING_BUFFER_SIZE;
     char funcname[STRING_BUFFER_SIZE];
@@ -104,22 +105,23 @@ void Exception::demangle(std::stringstream& ss, char** symbollist, size_t addrle
     }
 }
 
-/*
-* Prints the stacktrace saved in the exception into the stringstream.
-*
-* ss - the stringstream to print the data into
-*/
+/*! \callergraph
+ *
+ * Prints the stacktrace saved in the exception into the stringstream.
+ *
+ * \p ss - the stringstream to print the data into
+ */
 void Exception::printStackTrace(std::stringstream& ss) const {
     char** lines = backtrace_symbols(_stackTrace, _stackSize);
     demangle(ss, lines, _stackSize);
     delete[] lines;
 }
 
-/*
-* Uses linux-specific library function to save the stacktrace for this function call.
-* The fact that it will include everything up to this function is why we have the
-* stack skip later. There's no point in printing stuff for the Exception library itself.
-*/
+/*! \callergraph
+ * Uses linux-specific library function to save the stacktrace for this function call.
+ * The fact that it will include everything up to this function is why we have the
+ * stack skip later. There's no point in printing stuff for the Exception library itself.
+ */
 void Exception::saveStackTrace() {
     _stackSize = backtrace(_stackTrace, STACK_TRACE_MAX_SIZE);
 }

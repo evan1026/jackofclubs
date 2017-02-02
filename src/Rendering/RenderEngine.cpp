@@ -12,7 +12,7 @@
 
 using Logger::globalLogger;
 
-//TODO UPgrade to modern OpenGL
+//TODO Upgrade to modern OpenGL
 
 // RGBA values for different lights
 float RenderEngine::lightPos[] =     { -0.1f,  -1.0f,   0.2f,  0.f  };
@@ -20,7 +20,8 @@ float RenderEngine::light2Pos[] =    {  0.1f,  -1.0f,  -0.2f,  0.f  };
 float RenderEngine::lightAmbient[] = {  0.25f,  0.25f,  0.25f, 1.0f };
 float RenderEngine::lightDiffuse[] = {  0.35f,  0.35f,  0.35f, 1.0f };
 
-/*
+/*! \callergraph
+ *
  * Creates a rendering window and sets up OpenGL
  */
 RenderEngine::RenderEngine() :
@@ -80,7 +81,8 @@ RenderEngine::RenderEngine() :
     setPerspective(windowSize.x, windowSize.y);
 }
 
-/*
+/*! \callergraph
+ *
  * Returns a video mode where the window takes up 1/4 of the screen
  */
 sf::VideoMode RenderEngine::getVideoMode() {
@@ -88,25 +90,27 @@ sf::VideoMode RenderEngine::getVideoMode() {
     return sf::VideoMode(defaultVideoMode.width / 2, defaultVideoMode.height / 2, defaultVideoMode.bitsPerPixel);
 }
 
-/*
+/*! \callergraph
+ *
  * Defines default values for the other setPerspective
  *
- * width  - width of the window
- * height - height of the window
+ * \p width  - width of the window     <br>
+ * \p height - height of the window    <br>
  */
 void RenderEngine::setPerspective(int width, int height) {
     setPerspective(60.f, width, height, 1.f, 10000.f);
 }
 
-/*
+/*! \callergraph
+ *
  * Calls glFustrum with the appropriate values give the input parameters.
  * idk how glFustrum works, but this code is from StackOverflow, so it's probably right.
  *
- * fovY   - Desired field of view
- * width  - Window width
- * height - Window height
- * zNear  - How close something has to be to be clipped
- * zFar   - How far something has to be to be clipped
+ * \p fovY   - Desired field of view                          <br>
+ * \p width  - Window width                                   <br>
+ * \p height - Window height                                  <br>
+ * \p zNear  - How close something has to be to be clipped    <br>
+ * \p zFar   - How far something has to be to be clipped      <br>
  */
 void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar) {
     GLdouble aspect = (double) width / height;
@@ -123,12 +127,13 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
-/*
+/*! \callergraph
+ *
  * Handles notifying OpenGL and SFML's OpenGL that the screen has
  * been resized.
  *
- * width  - new window width
- * height - new window height
+ * \p width  - new window width     <br>
+ * \p height - new window height    <br>
  */
 void RenderEngine::handleResize(int width, int height) {
     setPerspective(width, height);
@@ -139,7 +144,8 @@ void RenderEngine::handleResize(int width, int height) {
     globalLogger.log("Window resized to ", width, "x", height);
 }
 
-/*
+/*! \callergraph
+ *
  * Called before doing a full render. Sets OpenGL up to do rendering.
  */
 void RenderEngine::beginRender() {
@@ -149,28 +155,30 @@ void RenderEngine::beginRender() {
     glLoadIdentity();
 }
 
-/*
+/*! \callergraph
+ *
  * Called after doing a full render. Flushes the buffer to the screen.
  */
 void RenderEngine::endRender() {
     _window.display();
 }
 
-/*
- * Moves the camera based on the player's position. Automatically handles
- * moving the camera to the player's head (whereas their position is in their feet).
+/*! \callergraph
  *
- * position - Player's position
+ * Moves the camera based on the player's position.
+ *
+ * \p position - Player's position
  */
 void RenderEngine::translatePlayer(const Player& player) {
     sf::Vector3f position = player.getHeadLocation();
     glTranslatef(-position.x * SCALE, -position.y * SCALE, -position.z * SCALE);
 }
 
-/*
+/*! \callergraph
+ *
  * Rotates the camera based on the direction the player is looking
  *
- * rotation - Player's look direction
+ * \p rotation - Player's look direction
  */
 void RenderEngine::rotatePlayer(const Player& player) {
     sf::Vector3f rotation = player.getRotation();
@@ -179,13 +187,14 @@ void RenderEngine::rotatePlayer(const Player& player) {
     glRotatef(rotation.z, 0.f, 0.f, 1.f);
 }
 
-/*
+/*! \callergraph
+ *
  * Renders an entire array of vertices, all at once
  *
- * vertices - The vertices to render
+ * \p vertices - The vertices to render
  */
 void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
-	if (vertices.size() == 0) return;
+    if (vertices.size() == 0) return;
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
     glLightfv(GL_LIGHT1, GL_POSITION, light2Pos);
@@ -204,12 +213,13 @@ void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
     glDisableClientState(GL_NORMAL_ARRAY);
 }
 
-/*
+/*! \callergraph
+ *
  * Given a top left front point, pushes all of the vertices needed to render a
  * block.
  *
- * p - Starting position
- * s - Size (in each direction)
+ * \p p - Starting position           <br>
+ * \p s - Size (in each direction)    <br>
  */
 void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s) {
     sf::Vector3f position = p;
@@ -259,15 +269,16 @@ void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& 
     glVertex3f(position.x + size.x, position.y,          position.z + size.z);
 }
 
-/*
+/*! \callergraph
+ *
  * Renders an axis aligned bounding box. Simply turns off culling
  * and makes rendering use lines instead of fill, then calls
  * pushBlockVertcies() (gotta turn off culling because pushBlockVerticies()
  * is designed so that it renders only the outside of the block,
  * but you can be inside the AABB)
  *
- * box   - The AABB to render
- * color - The color to render the AABB
+ * \p box   - The AABB to render              <br>
+ * \p color - The color to render the AABB    <br>
  */
 void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
@@ -310,15 +321,16 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
 
 #define LINE_WIDTH 0.05
 
-/*
+/*! \callergraph
+ *
  * Render the box around a block selection. Similar to renderAABB()
  * except that it renders 1 block for each edge instead of lines, where
  * each rendered block is LINE_WIDTH x LINE_WIDTH x 1. Essentially, it looks
  * like a line, but it won't get completely cut off when blocks are next to
  * each other (which was the observed behavior when using lines)
  *
- * box   - The AABB to render
- * color - The color to use in rendering
+ * \p box   - The AABB to render               <br>
+ * \p color - The color to use in rendering    <br>
  */
 void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color) {
     sf::Vector3f p = box.getPosition();
@@ -332,54 +344,55 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
 
     glPushMatrix();
 
-        glBegin(GL_QUADS);
+    glBegin(GL_QUADS);
 
-            glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
+    glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
 
-            // Now, we go through the points on the block and render the edges that haven't been taken care of
-            // Each block is one point, whereas each call to pushBlockVertices is an edge that ends at that point
+    // Now, we go through the points on the block and render the edges that haven't been taken care of
+    // Each block is one point, whereas each call to pushBlockVertices is an edge that ends at that point
 
-            linePos = p - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
-            lineSize = sf::Vector3f(LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(LINE_WIDTH, s.y + LINE_WIDTH, LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
+    linePos = p - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
+    lineSize = sf::Vector3f(LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(LINE_WIDTH, s.y + LINE_WIDTH, LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x, p.y, p.z + SCALE) - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, -LINE_WIDTH / 2);
-            lineSize = sf::Vector3f(LINE_WIDTH, s.y + LINE_WIDTH, -LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, -LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
+    linePos = sf::Vector3f(p.x, p.y, p.z + SCALE) - sf::Vector3f(LINE_WIDTH / 2, LINE_WIDTH / 2, -LINE_WIDTH / 2);
+    lineSize = sf::Vector3f(LINE_WIDTH, s.y + LINE_WIDTH, -LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(s.x + LINE_WIDTH, LINE_WIDTH, -LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x, p.y + SCALE, p.z) - sf::Vector3f(LINE_WIDTH / 2, -LINE_WIDTH / 2, LINE_WIDTH / 2);
-            lineSize = sf::Vector3f(LINE_WIDTH, -LINE_WIDTH, s.z + LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(s.x + LINE_WIDTH, -LINE_WIDTH, LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
+    linePos = sf::Vector3f(p.x, p.y + SCALE, p.z) - sf::Vector3f(LINE_WIDTH / 2, -LINE_WIDTH / 2, LINE_WIDTH / 2);
+    lineSize = sf::Vector3f(LINE_WIDTH, -LINE_WIDTH, s.z + LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(s.x + LINE_WIDTH, -LINE_WIDTH, LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x + SCALE, p.y, p.z) - sf::Vector3f(-LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
-            lineSize = sf::Vector3f(-LINE_WIDTH, s.y + LINE_WIDTH, LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(-LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
+    linePos = sf::Vector3f(p.x + SCALE, p.y, p.z) - sf::Vector3f(-LINE_WIDTH / 2, LINE_WIDTH / 2, LINE_WIDTH / 2);
+    lineSize = sf::Vector3f(-LINE_WIDTH, s.y + LINE_WIDTH, LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(-LINE_WIDTH, LINE_WIDTH, s.z + LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
 
-            linePos = sf::Vector3f(p.x + SCALE, p.y + SCALE, p.z + SCALE)
-                        - sf::Vector3f(-LINE_WIDTH / 2, -LINE_WIDTH / 2, -LINE_WIDTH / 2);
-            lineSize = sf::Vector3f(-LINE_WIDTH, -LINE_WIDTH, -s.z - LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(-LINE_WIDTH, -s.y - LINE_WIDTH, -LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
-            lineSize = sf::Vector3f(-s.x - LINE_WIDTH, -LINE_WIDTH, -LINE_WIDTH);
-            pushBlockVertices(linePos, lineSize);
+    linePos = sf::Vector3f(p.x + SCALE, p.y + SCALE, p.z + SCALE)
+        - sf::Vector3f(-LINE_WIDTH / 2, -LINE_WIDTH / 2, -LINE_WIDTH / 2);
+    lineSize = sf::Vector3f(-LINE_WIDTH, -LINE_WIDTH, -s.z - LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(-LINE_WIDTH, -s.y - LINE_WIDTH, -LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
+    lineSize = sf::Vector3f(-s.x - LINE_WIDTH, -LINE_WIDTH, -LINE_WIDTH);
+    pushBlockVertices(linePos, lineSize);
 
-        glEnd();
+    glEnd();
 
     glPopMatrix();
 }
 
-/*
+/*! \callergraph
+ *
  * Returns the render window. Useful for making SFML calls.
  */
 sf::RenderWindow& RenderEngine::getWindow() {

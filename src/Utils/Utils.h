@@ -4,13 +4,12 @@
 #include <sstream>
 #include <SFML/Graphics.hpp>
 
-/*
+/*!
  * Defines a number of miscellaneous utility functions
  */
-
 struct Utils {
 
-    /*
+    /*!
      * Converts an object to a string based on its << operator
      */
     template <typename T> inline
@@ -22,7 +21,7 @@ struct Utils {
         return ss.str();
     }
 
-    /*
+    /*!
      * Gets the width of an sf::Text
      */
     static float textWidth(const sf::Text& text) {

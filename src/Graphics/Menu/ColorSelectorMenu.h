@@ -4,7 +4,7 @@
 #include "Graphics/Menu/Menu.h"
 #include "Graphics/Components/Slider.h"
 
-/*
+/*!
  * Class for the menu that does color selection (press c when
  * on the world screen). Consists 3 sliders that control 3 ints,
  * as well as a color preview that changes colors as the slider
@@ -15,7 +15,6 @@
  * that will be modified and write it back to wherever it needs to
  * go after the menu is exitted.
  */
-
 class ColorSelectorMenu : public Menu {
 
     // These references point to the values stored in the sf::Color
