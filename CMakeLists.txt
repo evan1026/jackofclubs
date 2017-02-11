@@ -47,6 +47,10 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 find_package(OpenGL REQUIRED)
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 
+if(WIN32)
+    target_link_libraries(${EXECUTABLE_NAME} imagehlp.lib)
+endif()
+
 add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR} $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)

@@ -21,6 +21,7 @@ class Exception : public std::runtime_error {
     void *_stackTrace[STACK_TRACE_MAX_SIZE]; // Data representing the stack trace. Note: not the strings
     size_t _stackSize;                       // Actual size of the stack trace
     int _stackSkip;                          // How much of the stack trace to skip (see constructor below)
+	void* _address;
 
     void printStackTrace(std::stringstream& ss) const;
     void demangle(std::stringstream&ss, char** symbollist, size_t addrlen) const;
@@ -29,7 +30,7 @@ class Exception : public std::runtime_error {
 public:
 
     // See Exception.cpp for a description of this function
-    Exception(std::string reason, int stackSkip);
+    Exception(std::string reason, int stackSkip, void* address = nullptr);
 
     /*!
      * Handles freeing output string. This way, whoever I send it to doesn't have to worry about it

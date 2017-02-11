@@ -11,7 +11,7 @@ public:
     /*! \callergraph
      * Constructor
      */
-    NullptrException(int stack_skip = 0) : Exception("NullptrException: Tried to dereference null pointer", stack_skip + 1) {}
+    NullptrException(void* address, int stack_skip = 0) : Exception("NullptrException: Tried to dereference null pointer", stack_skip + 1, address) {}
 };
 
 #endif

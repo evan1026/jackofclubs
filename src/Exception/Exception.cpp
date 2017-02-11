@@ -20,11 +20,12 @@ using Logger::globalLogger;
  * As such, it probably makes sense to have each guy take an optional stack skip and call this
  * constructor with that value plus 1.
  *
- * \p reason    - The issue that caused the exception itself. Mostly in the format "ExceptionName: Cause of exception."    <br>
- * \p stackSkip - explained above
+ * \p reason    - The issue that caused the exception itself. Mostly in the format "ExceptionName: Cause of exception."        <br>
+ * \p stackSkip - explained above                                                                                              <br>
+ * \p address   - The address in the code that caused the exception. Defaults to nullptr. Only used for segmentation faults    <br>
  */
-Exception::Exception(std::string reason, int stackSkip) :
-            std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2) { //+2 because of the 2 extra functions we add (constructor and printStackTrace())
+Exception::Exception(std::string reason, int stackSkip, void* address) :
+            std::runtime_error(reason), _reason(reason), _stackSkip(stackSkip + 2), _address(address) { //+2 because of the 2 extra functions we add (constructor and printStackTrace())
     globalLogger.warn("Exception thrown - ", reason);
     _out = new char*;
     *_out = nullptr;

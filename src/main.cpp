@@ -64,7 +64,7 @@ int main() {
         globalLogger.error();
         globalLogger.error();
         globalLogger.error("If you're seeing this in production, please screenshot and send to the developer.");
-        return 1;
+        exit(1);
     }
 }
 
@@ -74,9 +74,9 @@ void segvHandler(int sig, siginfo_t* si, void* unused) {
     // Throw exception. The 2 tells it to skip the top two functions (which are the OS's function
     // for handling the trap the CPU generates and this function)
     if (si->si_addr == nullptr) {
-        throw NullptrException(2);
+        throw NullptrException(nullptr, 2);
     } else {
-        throw SegmentationFaultException(si->si_addr, 2);
+        throw SegmentationFaultException(si->si_addr, nullptr, 2);
     }
 }
 
@@ -97,13 +97,11 @@ LONG WINAPI segvHandler(EXCEPTION_POINTERS* einfo) {
     void* address = nullptr;
     switch (einfo->ExceptionRecord->ExceptionCode) {
         case EXCEPTION_ACCESS_VIOLATION:
-            // Throw exception. The 2 tells it to skip the top two functions (which are the OS's function
-            // for handling the trap the CPU generates and this function)
             address = (void*)einfo->ExceptionRecord->ExceptionInformation[1];
             if (address == nullptr) {
-                throw NullptrException(2);
+                throw NullptrException(einfo->ExceptionRecord->ExceptionAddress, 0);
             } else {
-                throw SegmentationFaultException(address, 2);
+                throw SegmentationFaultException(address, einfo->ExceptionRecord->ExceptionAddress, 0);
             }
             break;
         default:

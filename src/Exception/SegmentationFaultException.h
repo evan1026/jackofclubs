@@ -20,7 +20,7 @@ public:
     /*! \callergraph
      * Constructor
      */
-    SegmentationFaultException(void* loc, int stack_skip = 0) : Exception(generateMessage(loc), stack_skip + 1) {}
+    SegmentationFaultException(void* loc, void* address, int stack_skip = 0) : Exception(generateMessage(loc), stack_skip + 1, address) {}
 };
 
 #endif
