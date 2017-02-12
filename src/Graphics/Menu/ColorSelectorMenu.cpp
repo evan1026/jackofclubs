@@ -162,3 +162,7 @@ bool ColorSelectorMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
     }
     return false;
 }
+
+bool ColorSelectorMenu::handleResize(const sf::Event::SizeEvent& e) {
+    return false;
+}

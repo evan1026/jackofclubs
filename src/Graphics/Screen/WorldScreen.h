@@ -50,7 +50,7 @@ class WorldScreen : public Screen {
     void placeBlock();
     void removeBlock();
 
-    void toggleColorSelectorMenu();
+    void addMenu(Menu* const m);
     void removeMenu();
 
     void handlePlayerMovement();

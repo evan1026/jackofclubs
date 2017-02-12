@@ -21,7 +21,8 @@ class Menu : public IRenderable {
          * All of the types of menus that exist
          */
         enum class Type {
-            ColorSelector
+            ColorSelector,
+            Escape
         };
 
     private:
@@ -69,9 +70,16 @@ class Menu : public IRenderable {
         virtual bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) = 0;
 
         /*! \callergraph
+         * Base function for windows resize handling
+         */
+        virtual bool handleResize(const sf::Event::SizeEvent& e) = 0;
+
+        /*! \callergraph
          * Returns what type of Menu this one is
          */
         Type getType() { return _type; }
+
+        void setSize(const sf::Vector2f size);
 };
 
 #endif

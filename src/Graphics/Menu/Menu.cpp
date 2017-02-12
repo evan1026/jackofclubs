@@ -55,3 +55,7 @@ sf::FloatRect Menu::getBounds() {
     rect.top = pos.y;
     return rect;
 }
+
+void Menu::setSize(const sf::Vector2f size) {
+    _box.setSize(size);
+}

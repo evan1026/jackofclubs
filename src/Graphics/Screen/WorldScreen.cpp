@@ -3,6 +3,7 @@
 
 #include "Game.h"
 #include "Graphics/Menu/ColorSelectorMenu.h"
+#include "Graphics/Menu/EscapeMenu.h"
 #include "Logger/GlobalLogger.hpp"
 #include "Rendering/RenderEngine.h"
 #include "Utils/Math.h"
@@ -55,6 +56,9 @@ void WorldScreen::handleEvent(const sf::Event& event) {
     switch (event.type) {
         case sf::Event::Resized:
             _screenMiddle = sf::Vector2i(event.size.width / 2, event.size.height / 2);
+            if (_activeMenu != nullptr) {
+                _activeMenu->handleResize(event.size);
+            }
             break;
         case sf::Event::LostFocus:
             _mouseCaptured = false;
@@ -140,18 +144,25 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     }
 
     switch (event.code) {
-        case sf::Keyboard::Escape:
-            _mouseCaptured = false;
-            break;
         case sf::Keyboard::Q:
             _game.end();
             break;
         case sf::Keyboard::C:
-            toggleColorSelectorMenu();
+            if (_activeMenu == nullptr) {
+                addMenu(new ColorSelectorMenu(_selectedColor));
+            } else if (_activeMenu->getType() == Menu::Type::ColorSelector) {
+                removeMenu();
+            }
             break;
         case sf::Keyboard::E:
             copySelectionColor();
             break;
+        case sf::Keyboard::Escape:
+            if (_activeMenu == nullptr) {
+                addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y));
+            } else {
+                removeMenu();
+            }
         default:
             break;
     }
@@ -208,30 +219,27 @@ void WorldScreen::removeBlock() {
     _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
-/*! \callergraph
- *
- * Shows or hides the color selection menu
- */
-void WorldScreen::toggleColorSelectorMenu() {
-    if (_activeMenu == nullptr) {
-        _mouseCaptured = false;
-        _activeMenu = std::unique_ptr<Menu>(new ColorSelectorMenu(_selectedColor));
-        _activeMenu->prevMenu = nullptr;
-    } else if (_activeMenu->getType() == Menu::Type::ColorSelector) {
-        removeMenu();
-    }
+void WorldScreen::addMenu(Menu* const m) {
+    _mouseCaptured = false;
+
+    std::unique_ptr<Menu> current(std::move(_activeMenu));
+    _activeMenu = std::unique_ptr<Menu>(m);
+    _activeMenu->prevMenu = std::move(current);
 }
 
 /*! \callergraph
  *
- * Removes any menu that may exists and captures the mouse
- *
- * TODO should probably have a function to go to the previous menu when menu chaining actually starts to happen
+ * Removes the current menu and goes up the chain
  */
 void WorldScreen::removeMenu() {
-    _activeMenu = nullptr;
-    _mouseCaptured = true;
-    sf::Mouse::setPosition(_screenMiddle, _window);
+    if (_activeMenu != nullptr) {
+        _activeMenu = std::move(_activeMenu->prevMenu);
+    }
+
+    if (_activeMenu == nullptr) {
+        _mouseCaptured = true;
+        sf::Mouse::setPosition(_screenMiddle, _window);
+    }
 }
 
 /*! \callergraph
