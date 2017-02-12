@@ -30,6 +30,8 @@ Exception::Exception(std::string reason, int stackSkip, void* address) :
     _out = new char*;
     *_out = nullptr;
     saveStackTrace();
+
+    (void)_address; //Suppresses unused variable warnings, since this variable is only used on Windows
 }
 
 /*! \callergraph

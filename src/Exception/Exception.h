@@ -12,8 +12,6 @@
  * part of Exception::what
  *
  * Currently, the system only supports stack traces on Linux
- *
- * TODO: Add stack trace support for Windows
  */
 class Exception : public std::runtime_error {
     char ** _out;                            // The text to use in what(). It's a pointer to a pointer so that the text can be mutable, even when the exception is const
@@ -21,7 +19,7 @@ class Exception : public std::runtime_error {
     void *_stackTrace[STACK_TRACE_MAX_SIZE]; // Data representing the stack trace. Note: not the strings
     size_t _stackSize;                       // Actual size of the stack trace
     int _stackSkip;                          // How much of the stack trace to skip (see constructor below)
-	void* _address;
+    void* _address;
 
     void printStackTrace(std::stringstream& ss) const;
     void demangle(std::stringstream&ss, char** symbollist, size_t addrlen) const;

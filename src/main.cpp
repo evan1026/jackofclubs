@@ -5,7 +5,7 @@
 #include "Exception/SegmentationFaultException.h"
 #include "Game.h"
 #include "Logger/GlobalLogger.hpp"
-#include "Platforms.h"
+#include "Utils/Platforms.h"
 
 #ifdef JOC_LINUX_BUILD
 #include <signal.h>
