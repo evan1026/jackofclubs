@@ -7,13 +7,14 @@
 
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
+#include "Utils/Events/ResizeEventHandler.h"
 
 class Player;
 
 /*!
  * Handles interfacing with OpenGL. All OpenGL calls must be made through this class.
  */
-class RenderEngine {
+class RenderEngine : public ResizeEventHandler {
 
     sf::RenderWindow _window;
 
@@ -41,7 +42,7 @@ class RenderEngine {
         void setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar);
 
         // Called when the window is resized
-        void handleResize(int width, int height);
+        bool handleResize(const sf::Event::SizeEvent& e) override;
 
         // Called before and after a full screen render is done
         void beginRender();

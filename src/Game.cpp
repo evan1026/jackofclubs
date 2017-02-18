@@ -72,7 +72,7 @@ bool Game::handleEvent(const sf::Event& e) {
             end();
             return true;
         case sf::Event::Resized:
-            _re.handleResize(e.size.width, e.size.height);
+            _re.handleResize(e.size);
             return false;
         case sf::Event::KeyPressed:
             if (e.key.code == sf::Keyboard::F3) {

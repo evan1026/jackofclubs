@@ -52,31 +52,27 @@ WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
  *
  * \p event - Event to be handled
  */
-void WorldScreen::handleEvent(const sf::Event& event) {
+bool WorldScreen::handleEvent(const sf::Event& event) {
     switch (event.type) {
         case sf::Event::Resized:
             _screenMiddle = sf::Vector2i(event.size.width / 2, event.size.height / 2);
             if (_activeMenu != nullptr) {
                 _activeMenu->handleResize(event.size);
             }
-            break;
+            return false;
         case sf::Event::LostFocus:
             _mouseCaptured = false;
-            break;
+            return false;
         case sf::Event::MouseButtonPressed:
-            handleMouseButtonPressed(event.mouseButton);
-            break;
+            return handleMouseButtonPressed(event.mouseButton);
         case sf::Event::MouseButtonReleased:
-            handleMouseButtonReleased(event.mouseButton);
-            break;
+            return handleMouseButtonReleased(event.mouseButton);
         case sf::Event::KeyPressed:
-            handleKeyPressed(event.key);
-            break;
+            return handleKeyPressed(event.key);
         case sf::Event::MouseMoved:
-            handleMouseMoved(event.mouseMove);
-            break;
+            return handleMouseMoved(event.mouseMove);
         default:
-            break;
+            return false;
     }
 }
 
@@ -87,9 +83,9 @@ void WorldScreen::handleEvent(const sf::Event& event) {
  *
  * \p event - The mouse click event to handle
  */
-void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event) {
+bool WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonPressed(event)) {
-        return;
+        return true;
     }
 
     // If the mouse isn't captured at this point, it means there is an
@@ -103,16 +99,16 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
             } else {
                 removeBlock();
             }
-            break;
+            return true;
         case sf::Mouse::Button::Right:
             if (!_mouseCaptured) {
                 removeMenu();
             } else {
                 placeBlock();
             }
-            break;
+            return true;
         default:
-            break;
+            return false;
     }
 }
 
@@ -125,10 +121,12 @@ void WorldScreen::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& ev
  *
  * \p event - The mouse button release event to handle
  */
-void WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& event) {
+bool WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseButtonReleased(event)) {
-        return;
+        return true;
     }
+
+    return false;
 }
 
 /*! \callergraph
@@ -138,33 +136,34 @@ void WorldScreen::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e
  *
  * \p event - The key event to handle
  */
-void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
+bool WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleKeyPressed(event)) {
-        return;
+        return true;
     }
 
     switch (event.code) {
         case sf::Keyboard::Q:
             _game.end();
-            break;
+            return true;
         case sf::Keyboard::C:
             if (_activeMenu == nullptr) {
                 addMenu(new ColorSelectorMenu(_selectedColor));
             } else if (_activeMenu->getType() == Menu::Type::ColorSelector) {
                 removeMenu();
             }
-            break;
+            return true;
         case sf::Keyboard::E:
             copySelectionColor();
-            break;
+            return true;
         case sf::Keyboard::Escape:
             if (_activeMenu == nullptr) {
                 addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y));
             } else {
                 removeMenu();
             }
+            return true;
         default:
-            break;
+            return false;
     }
 }
 
@@ -178,10 +177,12 @@ void WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
  *
  * \p event - The mouse movement to forward
  */
-void WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
+bool WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
     if (_activeMenu != nullptr && _activeMenu->handleMouseMoved(event)) {
-        return;
+        return true;
     }
+
+    return false;
 }
 
 /*! \callergraph

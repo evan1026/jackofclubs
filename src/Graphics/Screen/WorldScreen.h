@@ -11,6 +11,8 @@
 #include "Graphics/Screen/Screen.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
+#include "Utils/Events/KeyboardEventHandler.h"
+#include "Utils/Events/MouseEventHandler.h"
 #include "World/BlockFace.h"
 #include "World/World.h"
 
@@ -20,7 +22,7 @@ class Game;
  * This is the big class that does most of the work for displaying the world
  * to the user and letting them interact with it.
  */
-class WorldScreen : public Screen {
+class WorldScreen : public Screen, public KeyboardEventHandler, public MouseEventHandler {
 
     //Rendered objects
     World _world;
@@ -42,10 +44,10 @@ class WorldScreen : public Screen {
     sf::RenderWindow& _window;
     Game& _game;
 
-    void handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event);
-    void handleKeyPressed(const sf::Event::KeyEvent& event);
-    void handleMouseMoved(const sf::Event::MouseMoveEvent& event);
-    void handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e);
+    bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& event) override;
+    bool handleKeyPressed(const sf::Event::KeyEvent& event) override;
+    bool handleMouseMoved(const sf::Event::MouseMoveEvent& event) override;
+    bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
 
     void placeBlock();
     void removeBlock();
@@ -60,7 +62,7 @@ class WorldScreen : public Screen {
     public:
         WorldScreen(sf::RenderWindow& window, Game& game);
 
-        void handleEvent(const sf::Event& event) override;
+        bool handleEvent(const sf::Event& event) override;
         void tick() override;
 
         void render(RenderEngine& re, sf::RenderWindow& w) override;

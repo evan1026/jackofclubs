@@ -4,6 +4,9 @@
 #include <memory>
 
 #include "Rendering/IRenderable.h"
+#include "Utils/Events/KeyboardEventHandler.h"
+#include "Utils/Events/MouseEventHandler.h"
+#include "Utils/Events/ResizeEventHandler.h"
 
 /*!
  * Base class for all menus. Handles bounds checking and centering
@@ -13,7 +16,7 @@
  * which opens a resolution menu, and you can go backwards through the
  * whole thing when done with the current menu).
  */
-class Menu : public IRenderable {
+class Menu : public IRenderable, public MouseEventHandler, public KeyboardEventHandler, public ResizeEventHandler {
 
     public:
         // Somewhat restrictive, but useful enough that it makes up for it
@@ -48,31 +51,6 @@ class Menu : public IRenderable {
         Menu(sf::Vector2f size, Type type);
 
         void render(RenderEngine& e, sf::RenderWindow& w) override;
-
-        /*! \callergraph
-         * Base function for mouse click event handling
-         */
-        virtual bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) = 0;
-
-        /*! \callergraph
-         * Base function for mouse release event handling
-         */
-        virtual bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) = 0;
-
-        /*! \callergraph
-         * Base function for key press event handling
-         */
-        virtual bool handleKeyPressed(const sf::Event::KeyEvent& e) = 0;
-
-        /*! \callergraph
-         * Base function for mouse move event handling
-         */
-        virtual bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) = 0;
-
-        /*! \callergraph
-         * Base function for windows resize handling
-         */
-        virtual bool handleResize(const sf::Event::SizeEvent& e) = 0;
 
         /*! \callergraph
          * Returns what type of Menu this one is

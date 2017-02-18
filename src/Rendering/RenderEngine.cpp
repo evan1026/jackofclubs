@@ -135,13 +135,18 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
  * \p width  - new window width     <br>
  * \p height - new window height    <br>
  */
-void RenderEngine::handleResize(int width, int height) {
+bool RenderEngine::handleResize(const sf::Event::SizeEvent& e) {
+    int width = e.width;
+    int height = e.height;
+
     setPerspective(width, height);
 
     // Update's the window's internal GL states to match the resize
     _window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
 
     globalLogger.log("Window resized to ", width, "x", height);
+
+    return false;
 }
 
 /*! \callergraph

@@ -5,8 +5,9 @@
 #include <type_traits>
 
 #include "Graphics/Components/Component.h"
-#include "Utils/Utils.h"
+#include "Utils/Events/MouseEventHandler.h"
 #include "Utils/Font.h"
+#include "Utils/Utils.h"
 
 #define SLIDER_LINE_WIDTH 4
 #define SLIDER_BAR_HEIGHT 10
@@ -21,7 +22,7 @@
  * manipulates, undefined behavior can occur. So don't let that happen ;)
  */
 template<typename T>
-class Slider : public Component {
+class Slider : public Component, public MouseEventHandler {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "Slider can only be contructed with number types!");
 
     sf::RectangleShape _sliderLine;
@@ -123,7 +124,7 @@ class Slider : public Component {
          *
          * \p e - The mouse button event representing the click
          */
-        bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
+        bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override {
             if (_boundingBox.contains(sf::Vector2i(e.x, e.y))) {
                 switch(e.button) {
                     case sf::Mouse::Button::Left:
@@ -147,7 +148,7 @@ class Slider : public Component {
          *
          * \p e - The mouse button event representing the button release
          */
-        bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
+        bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override {
             if (_capturedMouse && e.button == sf::Mouse::Button::Left) {
                 _capturedMouse = false;
                 return true;
@@ -163,7 +164,7 @@ class Slider : public Component {
          * Doesn't actually move the bar. The bar's position is calculated
          * later based on the data.
          */
-        bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
+        bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override {
             if (_capturedMouse) {
 
                 if (e.y < _boundingBox.top) {
