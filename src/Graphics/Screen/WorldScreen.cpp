@@ -142,9 +142,6 @@ bool WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
     }
 
     switch (event.code) {
-        case sf::Keyboard::Q:
-            _game.end();
-            return true;
         case sf::Keyboard::C:
             if (_activeMenu == nullptr) {
                 addMenu(new ColorSelectorMenu(_selectedColor));
@@ -157,7 +154,7 @@ bool WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
             return true;
         case sf::Keyboard::Escape:
             if (_activeMenu == nullptr) {
-                addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y));
+                addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y, _game));
             } else {
                 removeMenu();
             }

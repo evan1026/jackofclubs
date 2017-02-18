@@ -2,14 +2,22 @@
 #define ESCAPE_MENU_H
 
 #include "Graphics/Menu/Menu.h"
+#include "Graphics/Components/Button.h"
+#include "Game.h"
 
 class EscapeMenu : public Menu {
+
+    Game& _game;
+
+    Button _quitButton;
+
+    void testButtonFunction(const std::string& s);
 
     protected:
         void renderMenu(sf::RenderWindow& w) override;
 
     public:
-        EscapeMenu(int width, int height);
+        EscapeMenu(int width, int height, Game& g);
 
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
         bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
