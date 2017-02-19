@@ -1,5 +1,9 @@
 #include "Graphics/Menu/Menu.h"
 
+#include "Logger/GlobalLogger.hpp"
+
+using Logger::globalLogger;
+
 /*! \callergraph
  *
  * Base constructor that sets up the menu background
@@ -46,7 +50,9 @@ void Menu::render(RenderEngine& e, sf::RenderWindow& w) {
 /*! \callergraph
  *
  * Returns a rectangle that represents the menu's position
- * and size on the screen.
+ * and size on the screen. This includes the outline!!! To
+ * get bounds without the outline use getPosition and
+ * getSize seperately!
  */
 sf::FloatRect Menu::getBounds() {
     sf::FloatRect rect = _box.getLocalBounds();
@@ -54,6 +60,14 @@ sf::FloatRect Menu::getBounds() {
     rect.left = pos.x;
     rect.top = pos.y;
     return rect;
+}
+
+sf::Vector2f Menu::getSize() {
+    return _box.getSize();
+}
+
+sf::Vector2f Menu::getPosition() {
+    return _box.getPosition();
 }
 
 void Menu::setSize(const sf::Vector2f size) {

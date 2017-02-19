@@ -4,18 +4,16 @@
 
 using Logger::globalLogger;
 
-#define OUTTER_PADDING 20
-
 EscapeMenu::EscapeMenu(int width, int height, Game& g) :
-    Menu(sf::Vector2f(width - 2 * OUTTER_PADDING, height - 2 * OUTTER_PADDING), Menu::Type::Escape),
+    Menu(sf::Vector2f(width, height), Menu::Type::Escape),
     _game(g),
     _quitButton(sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(300, 100), std::bind(&EscapeMenu::testButtonFunction, this, std::placeholders::_1), "quitButton", "Quit")
     {}
 
 void EscapeMenu::renderMenu(sf::RenderWindow& w) {
-    _quitButton.setParentPosition(sf::Vector2i(getBounds().left, getBounds().top));
-    _quitButton.setLocalPosition (sf::Vector2i(getBounds().width  / 2 - _quitButton.getSize().x / 2,
-                                               getBounds().height / 2 - _quitButton.getSize().y / 2));
+    _quitButton.setParentPosition(sf::Vector2i(getPosition().x, getPosition().y));
+    _quitButton.setLocalPosition (sf::Vector2i(getSize().x  / 2 - _quitButton.getSize().x / 2,
+                                               getSize().y / 2 - _quitButton.getSize().y / 2));
     _quitButton.render(w);
 }
 
@@ -41,6 +39,6 @@ bool EscapeMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e)
 }
 
 bool EscapeMenu::handleResize(const sf::Event::SizeEvent& e) {
-    setSize(sf::Vector2f(e.width - 2 * OUTTER_PADDING, e.height - 2 * OUTTER_PADDING));
+    setSize(sf::Vector2f(e.width, e.height));
     return false;
 }

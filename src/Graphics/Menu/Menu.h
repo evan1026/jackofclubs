@@ -43,6 +43,8 @@ class Menu : public IRenderable, public MouseEventHandler, public KeyboardEventH
         virtual void renderMenu(sf::RenderWindow& w) = 0;
 
         sf::FloatRect getBounds();
+        sf::Vector2f getSize();
+        sf::Vector2f getPosition();
 
     public:
         /*! Pointer to next menu for menu chaining */
