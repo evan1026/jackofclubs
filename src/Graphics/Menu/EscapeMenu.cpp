@@ -4,22 +4,51 @@
 
 using Logger::globalLogger;
 
+#define BUTTON_CALLBACK std::bind(&EscapeMenu::buttonCallback, this, std::placeholders::_1)
+
+const static std::string QUIT_BUTTON_STRING = "quitButton";
+const static std::string RESUME_BUTTON_STRING = "resumeButton";
+const static int BUTTON_WIDTH = 250;
+const static int BUTTON_HEIGHT = 75;
+const static int BUTTON_PADDING = 20;
+
 EscapeMenu::EscapeMenu(int width, int height, Game& g) :
     Menu(sf::Vector2f(width, height), Menu::Type::Escape),
     _game(g),
-    _quitButton(sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(300, 100), std::bind(&EscapeMenu::testButtonFunction, this, std::placeholders::_1), "quitButton", "Quit")
+    _quitButton(sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(BUTTON_WIDTH, BUTTON_HEIGHT), BUTTON_CALLBACK, QUIT_BUTTON_STRING, "Quit"),
+    _resumeButton(sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(BUTTON_WIDTH, BUTTON_HEIGHT), BUTTON_CALLBACK, RESUME_BUTTON_STRING, "Resume"),
+    _resumeButtonClicked(false)
     {}
 
 void EscapeMenu::renderMenu(sf::RenderWindow& w) {
-    _quitButton.setParentPosition(sf::Vector2i(getPosition().x, getPosition().y));
-    _quitButton.setLocalPosition (sf::Vector2i(getSize().x  / 2 - _quitButton.getSize().x / 2,
-                                               getSize().y / 2 - _quitButton.getSize().y / 2));
+    sf::Vector2i quitSize = _quitButton.getSize();
+    sf::Vector2i resumeSize = _resumeButton.getSize();
+    auto pos = getPosition();
+    auto size = getSize();
+    int fullHeight = quitSize.y + resumeSize.y + BUTTON_PADDING;
+
+    _resumeButton.setParentPosition(sf::Vector2i(pos.x, pos.y));
+    _resumeButton.setLocalPosition (sf::Vector2i(size.x / 2 - resumeSize.x / 2,
+                                                 size.y / 2 - fullHeight / 2));
+
+    _quitButton.setParentPosition(sf::Vector2i(pos.x, pos.y));
+    _quitButton.setLocalPosition (sf::Vector2i(size.x / 2 - quitSize.x / 2,
+                                               size.y / 2 - fullHeight / 2 + resumeSize.y + BUTTON_PADDING));
     _quitButton.render(w);
+    _resumeButton.render(w);
 }
 
-void EscapeMenu::testButtonFunction(const std::string& s) {
+void EscapeMenu::buttonCallback(const std::string& s) {
     globalLogger.log("Pressed ", s);
-    _game.end();
+
+    if (s == QUIT_BUTTON_STRING) {
+       _game.end();
+    } else if (s == RESUME_BUTTON_STRING) {
+        _resumeButtonClicked = true;
+    } else {
+        globalLogger.error("Unknown button clicked: ", s);
+    }
+
 }
 
 bool EscapeMenu::handleKeyPressed(const sf::Event::KeyEvent& e) {
@@ -27,15 +56,16 @@ bool EscapeMenu::handleKeyPressed(const sf::Event::KeyEvent& e) {
 }
 
 bool EscapeMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
-    return _quitButton.handleMouseMoved(e);
+    return (_quitButton.handleMouseMoved(e) || _resumeButton.handleMouseMoved(e));
 }
 
 bool EscapeMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
-    return _quitButton.handleMouseButtonPressed(e);
+    _quitButton.handleMouseButtonPressed(e) || _resumeButton.handleMouseButtonPressed(e);
+    return !_resumeButtonClicked;
 }
 
 bool EscapeMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
-    return _quitButton.handleMouseButtonReleased(e);
+    return (_quitButton.handleMouseButtonReleased(e) || _resumeButton.handleMouseButtonReleased(e));
 }
 
 bool EscapeMenu::handleResize(const sf::Event::SizeEvent& e) {

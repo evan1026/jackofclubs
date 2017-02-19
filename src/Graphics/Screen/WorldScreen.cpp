@@ -385,11 +385,12 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
     _fpsCounter.render(re, w);
 
     // Draw our other GUI components
-    // TODO probably shouldn't do this if there's a menu up
-    w.pushGLStates();
-    w.draw(_colorRect);
-    w.draw(_centerRect);
-    w.popGLStates();
+    if (_activeMenu == nullptr) {
+        w.pushGLStates();
+        w.draw(_colorRect);
+        w.draw(_centerRect);
+        w.popGLStates();
+    }
 
     // And draw the menu if there is one
     if (_activeMenu != nullptr) {

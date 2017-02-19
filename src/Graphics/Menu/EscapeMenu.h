@@ -10,8 +10,11 @@ class EscapeMenu : public Menu {
     Game& _game;
 
     Button _quitButton;
+    Button _resumeButton;
 
-    void testButtonFunction(const std::string& s);
+    bool _resumeButtonClicked;
+
+    void buttonCallback(const std::string& s);
 
     protected:
         void renderMenu(sf::RenderWindow& w) override;
