@@ -217,6 +217,12 @@ void WorldScreen::removeBlock() {
     _world.setBlockType(blockPosition, Block::Type::AIR);
 }
 
+/*! \callergraph
+ *
+ * Adds a menu to the chain
+ *
+ * \p m - The menu to add. You must allocate it but we will handle deallocating.
+ */
 void WorldScreen::addMenu(Menu* const m) {
     _mouseCaptured = false;
 

@@ -132,8 +132,7 @@ void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble
  * Handles notifying OpenGL and SFML's OpenGL that the screen has
  * been resized.
  *
- * \p width  - new window width     <br>
- * \p height - new window height    <br>
+ * \p e - The size event corresponding to this resize (given to us by SFML)
  */
 bool RenderEngine::handleResize(const sf::Event::SizeEvent& e) {
     int width = e.width;

@@ -7,14 +7,14 @@
 
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
-#include "Utils/Events/ResizeEventHandler.h"
+#include "Utils/Events/IResizeEventHandler.h"
 
 class Player;
 
 /*!
  * Handles interfacing with OpenGL. All OpenGL calls must be made through this class.
  */
-class RenderEngine : public ResizeEventHandler {
+class RenderEngine : public IResizeEventHandler {
 
     sf::RenderWindow _window;
 

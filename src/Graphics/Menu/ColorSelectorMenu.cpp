@@ -163,6 +163,7 @@ bool ColorSelectorMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
     return false;
 }
 
+/*! \callergraph */
 bool ColorSelectorMenu::handleResize(const sf::Event::SizeEvent& e) {
     return false;
 }

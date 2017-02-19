@@ -1,9 +1,5 @@
 #include "Graphics/Menu/Menu.h"
 
-#include "Logger/GlobalLogger.hpp"
-
-using Logger::globalLogger;
-
 /*! \callergraph
  *
  * Base constructor that sets up the menu background
@@ -62,14 +58,26 @@ sf::FloatRect Menu::getBounds() {
     return rect;
 }
 
+/*! \callergraph
+ *
+ * Returns the size of the menu (not including the outline)
+ */
 sf::Vector2f Menu::getSize() {
     return _box.getSize();
 }
 
+/*! \callergraph
+ *
+ * Returns the top left corner of the menu (not including the outline)
+ */
 sf::Vector2f Menu::getPosition() {
     return _box.getPosition();
 }
 
+/*! \callergraph
+ *
+ * Sets the size of the menu
+ */
 void Menu::setSize(const sf::Vector2f size) {
     _box.setSize(size);
 }

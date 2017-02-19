@@ -4,9 +4,9 @@
 #include <memory>
 
 #include "Rendering/IRenderable.h"
-#include "Utils/Events/KeyboardEventHandler.h"
-#include "Utils/Events/MouseEventHandler.h"
-#include "Utils/Events/ResizeEventHandler.h"
+#include "Utils/Events/IKeyboardEventHandler.h"
+#include "Utils/Events/IMouseEventHandler.h"
+#include "Utils/Events/IResizeEventHandler.h"
 
 /*!
  * Base class for all menus. Handles bounds checking and centering
@@ -16,7 +16,7 @@
  * which opens a resolution menu, and you can go backwards through the
  * whole thing when done with the current menu).
  */
-class Menu : public IRenderable, public MouseEventHandler, public KeyboardEventHandler, public ResizeEventHandler {
+class Menu : public IRenderable, public IMouseEventHandler, public IKeyboardEventHandler, public IResizeEventHandler {
 
     public:
         // Somewhat restrictive, but useful enough that it makes up for it

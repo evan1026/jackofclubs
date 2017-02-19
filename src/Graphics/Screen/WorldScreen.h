@@ -11,8 +11,8 @@
 #include "Graphics/Screen/Screen.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
-#include "Utils/Events/KeyboardEventHandler.h"
-#include "Utils/Events/MouseEventHandler.h"
+#include "Utils/Events/IKeyboardEventHandler.h"
+#include "Utils/Events/IMouseEventHandler.h"
 #include "World/BlockFace.h"
 #include "World/World.h"
 
@@ -22,7 +22,7 @@ class Game;
  * This is the big class that does most of the work for displaying the world
  * to the user and letting them interact with it.
  */
-class WorldScreen : public Screen, public KeyboardEventHandler, public MouseEventHandler {
+class WorldScreen : public Screen, public IKeyboardEventHandler, public IMouseEventHandler {
 
     //Rendered objects
     World _world;

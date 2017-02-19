@@ -4,11 +4,14 @@
 #include <functional>
 
 #include "Graphics/Components/Component.h"
-#include "Utils/Events/MouseEventHandler.h"
+#include "Utils/Events/IMouseEventHandler.h"
 
 using ButtonFunction = std::function<void(const std::string&)>;
 
-class Button : public Component, public MouseEventHandler {
+/*!
+ * When the user clicks on it, it calls the callback function. Pretty simple.
+ */
+class Button : public Component, public IMouseEventHandler {
 
     ButtonFunction _function;
     std::string _name;
@@ -16,6 +19,15 @@ class Button : public Component, public MouseEventHandler {
     bool _mouseOver;
 
     public:
+        /*! \callergraph
+         *
+         * \p pos       - The position of the button relative to its parent                                                                                                 <br>
+         * \p parentPos - The global position of the parent                                                                                                                 <br>
+         * \p size      - The size of the button                                                                                                                            <br>
+         * \p f         - The callback function to call when the button is clicked. Should have the signature @code{.cpp} void callback(const std::string& text) @endcode   <br>
+         * \p name      - The name of the button. This string is sent to the callback so that you can have multiple buttons call the same function.                         <br>
+         * \p text      - The text to display on the button                                                                                                                 <br>
+         */
         Button(const sf::Vector2i& pos, const sf::Vector2i& parentPos, const sf::Vector2i& size, ButtonFunction f, const std::string& name, const std::string& text) :
             Component(pos, parentPos, size),
             _function(f),

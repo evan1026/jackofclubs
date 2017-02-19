@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include "Graphics/Components/Component.h"
-#include "Utils/Events/MouseEventHandler.h"
+#include "Utils/Events/IMouseEventHandler.h"
 #include "Utils/Font.h"
 #include "Utils/Utils.h"
 
@@ -22,7 +22,7 @@
  * manipulates, undefined behavior can occur. So don't let that happen ;)
  */
 template<typename T>
-class Slider : public Component, public MouseEventHandler {
+class Slider : public Component, public IMouseEventHandler {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "Slider can only be contructed with number types!");
 
     sf::RectangleShape _sliderLine;

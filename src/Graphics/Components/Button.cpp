@@ -1,11 +1,13 @@
 #include "Graphics/Components/Button.h"
 #include "Utils/Font.h"
 
+/*! \callergraph */
 bool Button::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
     _mouseOver = getBounds().contains(e.x, e.y);
     return false;
 }
 
+/*! \callergraph */
 bool Button::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
     if (getBounds().contains(e.x, e.y)) {
         _function(_name);
@@ -15,10 +17,12 @@ bool Button::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
     return false;
 }
 
+/*! \callergraph */
 bool Button::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
     return false;
 }
 
+/*! \callergraph */
 void Button::render(sf::RenderWindow& w) {
     sf::Vector2i size = getSize();
     sf::RectangleShape rect(sf::Vector2f(size.x, size.y));
