@@ -15,7 +15,7 @@ public class Block {
 
 	public struct Tile { public int x; public int y;};
 
-	const float tileSize = 1f;
+	const float tileSize = 0.5f;
 
 	public Color32 color;
 
@@ -25,6 +25,8 @@ public class Block {
 	}
 
 	public virtual MeshData Blockdata (Chunk chunk, int x, int y, int z, MeshData meshData) {
+		meshData.useRenderDataForCol = true;
+
 		if (!chunk.GetBlock (x, y + 1, z).IsSolid (Direction.down)) {
 			meshData = FaceDataUp (chunk, x, y, z, meshData);
 		}
@@ -54,10 +56,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataUp (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.up));
 		meshData.colors.AddRange (FaceColors ());
@@ -65,10 +67,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataDown (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.down));
 		meshData.colors.AddRange (FaceColors ());
@@ -76,10 +78,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataNorth (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.north));
 		meshData.colors.AddRange (FaceColors ());
@@ -87,10 +89,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataEast (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.east));
 		meshData.colors.AddRange (FaceColors ());
@@ -98,10 +100,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataSouth (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.south));
 		meshData.colors.AddRange (FaceColors ());
@@ -109,10 +111,10 @@ public class Block {
 	}
 
 	protected virtual MeshData FaceDataWest (Chunk chunk, int x, int y, int z, MeshData meshData) {
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
-		meshData.vertices.Add(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
+		meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
 		meshData.AddQuadTriangles();
 		meshData.uv.AddRange(FaceUVs(Direction.west));
 		meshData.colors.AddRange (FaceColors ());
