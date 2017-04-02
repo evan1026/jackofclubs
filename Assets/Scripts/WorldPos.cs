@@ -22,4 +22,8 @@ public struct WorldPos {
 			return true;
 		}
 	}
+
+	public override string ToString () {
+		return string.Format ("[WorldPos]{{x:{0}, y:{1}, z:{2}}}", x, y, z);
+	}
 }

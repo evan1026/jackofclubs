@@ -20,6 +20,7 @@ public class Chunk : MonoBehaviour {
 	void Start () {
 		filter = gameObject.GetComponent<MeshFilter> ();
 		coll = gameObject.GetComponent<MeshCollider> ();
+		gameObject.layer = BlockModificationEngine.worldLayer;
 	}
 
 	//Update is called once per frame
