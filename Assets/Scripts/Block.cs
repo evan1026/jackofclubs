@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-
-
+[Serializable]
 public class Block {
 	public enum Direction {
 		north,
@@ -17,11 +17,11 @@ public class Block {
 
 	const float tileSize = 0.5f;
 
-	public Color32 color;
+	public SerializableColor color;
 
 	//Base block constructor
-	public Block (Color32 _color) {
-		color = _color;
+	public Block (Color _color) {
+		color = new SerializableColor(_color);
 	}
 
 	public virtual MeshData Blockdata (Chunk chunk, int x, int y, int z, MeshData meshData) {
@@ -160,12 +160,12 @@ public class Block {
 		return UVs;
 	}
 
-	public virtual Color32[] FaceColors() {
-		Color32[] colors = new Color32[4];
-		colors [0] = color;
-		colors [1] = color;
-		colors [2] = color;
-		colors [3] = color;
+	public virtual Color[] FaceColors() {
+		Color[] colors = new Color[4];
+		colors [0] = color.getColor();
+		colors [1] = color.getColor();
+		colors [2] = color.getColor();
+		colors [3] = color.getColor();
 		return colors;
 	}
 }

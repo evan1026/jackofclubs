@@ -7,32 +7,101 @@ public class World : MonoBehaviour {
 	public Dictionary<WorldPos, Chunk> chunks = new Dictionary<WorldPos, Chunk> ();
 	public GameObject chunkPrefab;
 	public GameObject wallParent;
+	public GameObject player;
+	public GameObject loadingScreen;
+	public GameObject savingScreen;
+
+	public Vector3 playerStartPos;
 
 	private static string wallName = "Wall";
 
-	// Use this for initialization
-	void Start () {
-		int xStart = -4;
-		int xEnd = 4;
+	public string worldName;
+
+	public WorldMetaData meta;
+
+	IEnumerator Start () {
+		Time.timeScale = 0;
+
+		LoadingBarScript loadingBar = loadingScreen.GetComponentInChildren<LoadingBarScript> ();
+
+		if (worldName.Equals ("")) {
+			Debug.LogError ("World name cannot be empty!");
+			Application.Quit ();
+		}
+
+		if (!Serialization.loadMeta (this)) {
+			Debug.Log ("Metadata file not found! Using default values.");
+
+			meta = new WorldMetaData ();
+			meta.dimension = new SerializableVector3 (new Vector3 (8, 8, 8));
+		}
+
+		if (meta.dimension.x < 1 || meta.dimension.y < 1 || meta.dimension.z < 1) {
+			Debug.LogError ("Dimensions must all be at least 1!");
+			Application.Quit ();
+		}
+
+		int xStart = -Mathf.FloorToInt(meta.dimension.x / 2);
+		int xEnd = Mathf.CeilToInt(meta.dimension.x / 2);
 		int yStart = 0;
-		int yEnd = 8;
-		int zStart = -4;
-		int zEnd = 4;
+		int yEnd = Mathf.FloorToInt(meta.dimension.y);
+		int zStart = -Mathf.FloorToInt(meta.dimension.z / 2);
+		int zEnd = Mathf.CeilToInt(meta.dimension.z / 2);
+
+		int chunksTotal = (int)(meta.dimension.x * meta.dimension.y * meta.dimension.z);
+		int chunksSoFar = 0;
 
 		for (int x = xStart; x < xEnd; x++) {
 			for (int y = yStart; y < yEnd; y++) {
 				for (int z = zStart; z < zEnd; z++) {
 					CreateChunk (x * Chunk.chunkSize, y * Chunk.chunkSize, z * Chunk.chunkSize);
+					chunksSoFar++;
+					loadingBar.setPercent (((float)chunksSoFar) / chunksTotal);
+					yield return null;
 				}
 			}
 		}
 
+		updateAllChunks ();
+
 		generateWalls (xStart, xEnd, yStart, zStart, zEnd);
+
+		player.transform.position = playerStartPos;
+
+		loadingScreen.SetActive (false);
+
+		Time.timeScale = 1;
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
+	void Update() {
+		if (Input.GetKeyDown ("q")) {
+			StartCoroutine ("OnQuit");
+		}
+	}
+
+	IEnumerator OnQuit() {
+		savingScreen.SetActive (true);
+		Time.timeScale = 0;
+
+		int chunksTotal = (int)(meta.dimension.x * meta.dimension.y * meta.dimension.z);
+		int chunksSoFar = 0;
+
+		LoadingBarScript loadingBar = savingScreen.GetComponentInChildren<LoadingBarScript> ();
+
+		WorldPos[] keys = new WorldPos[chunks.Keys.Count];
+		chunks.Keys.CopyTo (keys, 0);
+
+		foreach (WorldPos chunkPos in keys) {
+			DestroyChunk(chunkPos.x, chunkPos.y, chunkPos.z);
+			chunksSoFar++;
+			loadingBar.setPercent (((float)chunksSoFar) / chunksTotal);
+			yield return null;
+		}
+
+		Serialization.saveMeta (this);
+
+		Debug.Log ("Quitting!");
+		Application.Quit ();
 	}
 
 	private static float wallDepth = 0.1f;
@@ -94,6 +163,14 @@ public class World : MonoBehaviour {
 		//Add it to the chunks dictionary with the position as the key
 		chunks.Add (worldPos, newChunk);
 
+		bool loaded = Serialization.loadChunk (newChunk);
+
+		newChunk.update = false;
+
+		if (loaded) {
+			return;
+		}
+		
 		for (int xi = 0; xi < Chunk.chunkSize; ++xi) {
 			for (int yi = 0; yi < Chunk.chunkSize; ++yi) {
 				for (int zi = 0; zi < Chunk.chunkSize; ++zi) {
@@ -103,18 +180,21 @@ public class World : MonoBehaviour {
 						color.g = (byte)(255f / Chunk.chunkSize * yi);
 						color.b = (byte)(255f / Chunk.chunkSize * zi);
 						color.a = 255;
-						SetBlock (x + xi, y + yi, z + zi, new Block (color));
+						SetBlock (x + xi, y + yi, z + zi, new Block (color), false);
 					} else {
-						SetBlock (x + xi, y + yi, z + zi, new BlockAir ());
+						SetBlock (x + xi, y + yi, z + zi, new BlockAir (), false);
 					}
 				}
 			}
 		}
+
+		newChunk.modifiedSinceLastSave = true;
 	}
 
 	public void DestroyChunk (int x, int y, int z) {
 		Chunk chunk = null;
 		if (chunks.TryGetValue (new WorldPos (x, y, z), out chunk)) {
+			Serialization.saveChunk(chunk);
 			Object.Destroy (chunk.gameObject);
 			chunks.Remove (new WorldPos (x, y, z));
 		}
@@ -142,7 +222,7 @@ public class World : MonoBehaviour {
 		}
 	}
 
-	public void SetBlock (int x, int y, int z, Block block) {
+	public void SetBlock (int x, int y, int z, Block block, bool update) {
 		Chunk chunk = GetChunk (x, y, z);
 
 		Collider[] stuffInTheWay = Physics.OverlapBox (new Vector3 (x, y, z), new Vector3 (0.5f, 0.5f, 0.5f));
@@ -157,14 +237,23 @@ public class World : MonoBehaviour {
 
 		if (chunk != null) {
 			chunk.SetBlock (x - chunk.pos.x, y - chunk.pos.y, z - chunk.pos.z, block);
-			chunk.update = true;
 
-			UpdateIfEqual (x - chunk.pos.x, 0, new WorldPos (x - 1, y, z));
-			UpdateIfEqual (x - chunk.pos.x, Chunk.chunkSize - 1, new WorldPos (x + 1, y, z));
-			UpdateIfEqual (y - chunk.pos.y, 0, new WorldPos (x, y - 1, z));
-			UpdateIfEqual (y - chunk.pos.y, Chunk.chunkSize - 1, new WorldPos (x, y + 1, z));
-			UpdateIfEqual (z - chunk.pos.z, 0, new WorldPos (x, y, z - 1));
-			UpdateIfEqual (z - chunk.pos.z, Chunk.chunkSize - 1, new WorldPos (x, y, z + 1));
+			if (update) {
+				chunk.update = true;
+
+				UpdateIfEqual (x - chunk.pos.x, 0, new WorldPos (x - 1, y, z));
+				UpdateIfEqual (x - chunk.pos.x, Chunk.chunkSize - 1, new WorldPos (x + 1, y, z));
+				UpdateIfEqual (y - chunk.pos.y, 0, new WorldPos (x, y - 1, z));
+				UpdateIfEqual (y - chunk.pos.y, Chunk.chunkSize - 1, new WorldPos (x, y + 1, z));
+				UpdateIfEqual (z - chunk.pos.z, 0, new WorldPos (x, y, z - 1));
+				UpdateIfEqual (z - chunk.pos.z, Chunk.chunkSize - 1, new WorldPos (x, y, z + 1));
+			}
+		}
+	}
+
+	void updateAllChunks() {
+		foreach (Chunk c in chunks.Values) {
+			c.update = true;
 		}
 	}
 

@@ -7,8 +7,10 @@ using System.Collections;
 public class Chunk : MonoBehaviour {
 	public static int chunkSize = 16;
 
-	Block[ , , ] blocks = new Block[chunkSize, chunkSize, chunkSize];
-	public bool update = true;
+	public Block[ , , ] blocks = new Block[chunkSize, chunkSize, chunkSize];
+	public bool update = false;
+
+	public bool modifiedSinceLastSave;
 
 	public World world;
 	public WorldPos pos;
@@ -74,8 +76,9 @@ public class Chunk : MonoBehaviour {
 	public void SetBlock (int x, int y, int z, Block block) {
 		if (InRange (x) && InRange (y) && InRange (z)) {
 			blocks [x, y, z] = block;
+			modifiedSinceLastSave = true;
 		} else {
-			world.SetBlock (pos.x + x, pos.y + y, pos.z + z, block);
+			world.SetBlock (pos.x + x, pos.y + y, pos.z + z, block, true);
 		}
 	}
 

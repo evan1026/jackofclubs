@@ -44,7 +44,7 @@ public class TerrainHelper {
 
 		WorldPos pos = GetBlockPos (hit, adjacent);
 
-		chunk.world.SetBlock (pos.x, pos.y, pos.z, block);
+		chunk.world.SetBlock (pos.x, pos.y, pos.z, block, true);
 
 		return true;
 	}
