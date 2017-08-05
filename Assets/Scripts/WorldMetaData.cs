@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
+using ProtoBuf;
 
-[Serializable]
+[ProtoContract]
 public class WorldMetaData {
-
+	
+	[ProtoMember(1)]
 	public SerializableVector3 dimension;
 
 }

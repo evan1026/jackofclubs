@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using ProtoBuf;
 
-[Serializable]
+[ProtoContract]
+[ProtoInclude(1, typeof(BlockAir))]
 public class Block {
 	public enum Direction {
 		north,
@@ -17,12 +19,15 @@ public class Block {
 
 	const float tileSize = 0.5f;
 
+	[ProtoMember(2)]
 	public SerializableColor color;
 
 	//Base block constructor
 	public Block (Color _color) {
 		color = new SerializableColor(_color);
 	}
+
+	public Block () : this(new Color32(0,0,0,0)) {}
 
 	public virtual MeshData Blockdata (Chunk chunk, int x, int y, int z, MeshData meshData) {
 		meshData.useRenderDataForCol = true;

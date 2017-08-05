@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
+using ProtoBuf;
 
-[Serializable]
+[ProtoContract]
 public class BlockAir : Block {
 	public BlockAir () : base (new Color32(0,0,0,0)) {
 	}

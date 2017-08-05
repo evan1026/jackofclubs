@@ -2,8 +2,7 @@
 using System.Collections;
 using System.IO;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
+using ProtoBuf;
 
 public static class Serialization {
 
@@ -35,9 +34,10 @@ public static class Serialization {
 		string saveFile = getSaveLocation(chunk.world.worldName);
 		saveFile += getChunkFileName(chunk.pos);
 
-		IFormatter formatter = new BinaryFormatter();
+		ProtoArray<Block> protoArray = ProtoArrayFix.ToProtoArray<Block> (chunk.blocks);
+
 		Stream stream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None);
-		formatter.Serialize(stream, chunk.blocks);
+		Serializer.Serialize(stream, protoArray);
 		stream.Close();
 	}
 
@@ -49,11 +49,12 @@ public static class Serialization {
 			return false;
 
 		try {
-			IFormatter formatter = new BinaryFormatter();
 			FileStream stream = new FileStream(saveFile, FileMode.Open);
 
-			chunk.blocks = (Block[,,]) formatter.Deserialize(stream);
+			ProtoArray<Block> protoArray = Serializer.Deserialize<ProtoArray<Block>>(stream);
 			stream.Close();
+
+			chunk.blocks = (Block[,,])protoArray.ToArray<Block>();
 
 			chunk.modifiedSinceLastSave = false;
 
@@ -68,9 +69,8 @@ public static class Serialization {
 		string saveFile = getSaveLocation(w.worldName);
 		saveFile += getMetaFileName(w);
 
-		IFormatter formatter = new BinaryFormatter();
 		Stream stream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None);
-		formatter.Serialize (stream, w.meta);
+		Serializer.Serialize(stream, w.meta);
 		stream.Close();
 	}
 
@@ -82,10 +82,9 @@ public static class Serialization {
 			return false;
 
 		try {
-			IFormatter formatter = new BinaryFormatter();
 			FileStream stream = new FileStream(saveFile, FileMode.Open);
 
-			w.meta = (WorldMetaData) formatter.Deserialize(stream);
+			w.meta = (WorldMetaData) Serializer.Deserialize<WorldMetaData>(stream);
 			stream.Close();
 			return true;
 		} catch (Exception e) {
