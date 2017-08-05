@@ -1,5 +1,4 @@
-﻿/*
-Unity Standard Vertex Color Shader Lib v0.92.1 (for Unity 5.5.0f3)
+﻿
 by defaxer
 */
 
@@ -412,3 +411,4 @@ void fragDeferred_VC (
 }
 
 #endif
+
