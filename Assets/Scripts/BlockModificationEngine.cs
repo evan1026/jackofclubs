@@ -4,24 +4,16 @@ using UnityEngine;
 
 public class BlockModificationEngine : MonoBehaviour {
 
-	public float maxDistance;
-	public static int worldLayer = 8;
-	private int layerMask;
-
-	void Start() {
-		layerMask = 1 << worldLayer;
-	}
-
 	void Update () {
 		if (Input.GetMouseButtonDown (0)) {
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit, maxDistance, layerMask)) {
-				TerrainHelper.SetBlock (hit, new BlockAir ());
+			RaycastHit selectedBlock = RayCasting.Instance.getSelectedBlock ();
+			if (selectedBlock.collider != null) {
+				TerrainHelper.SetBlock (selectedBlock, new BlockAir ());
 			}
 		} else if (Input.GetMouseButtonDown (1)) {
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit, maxDistance, layerMask)) {
-				TerrainHelper.SetBlock (hit, new Block (new Color32 (255, 255, 255, 255)), true);
+			RaycastHit selectedBlock = RayCasting.Instance.getSelectedBlock ();
+			if (selectedBlock.collider != null) {
+				TerrainHelper.SetBlock (selectedBlock, new Block (ColorSelection.Instance.getColor()), true);
 			}
 		}
 	}

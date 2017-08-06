@@ -66,13 +66,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
+			m_cursorIsLocked = value; // ADDED BY ME BECAUSE SERIOUSLY WHY WAS THIS NOT ALREADY HERE ALSO WHY IS THERE LOCKCURSOR AS WELL AS THIS THING WHATEVER IT DOESN'T MATTER BECAUSE IT WORKS NOW
         }
 
         public void UpdateCursorLock()
         {
             //if the user set "lockCursor" we check & properly lock the cursos
-            if (lockCursor)
-                InternalLockUpdate();
+			if (lockCursor) {
+				InternalLockUpdate ();
+			}
         }
 
         private void InternalLockUpdate()

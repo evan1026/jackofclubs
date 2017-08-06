@@ -23,7 +23,11 @@ public class SerializableColor {
 		a = c.a;
 	}
 
-	public Color getColor() {
-		return new Color (r, g, b, a);
+	public static implicit operator Color(SerializableColor c) {
+		return new Color (c.r, c.g, c.b, c.a);
+	}
+
+	public static implicit operator SerializableColor(Color c) {
+		return new SerializableColor (c);
 	}
 }

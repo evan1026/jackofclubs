@@ -167,10 +167,10 @@ public class Block {
 
 	public virtual Color[] FaceColors() {
 		Color[] colors = new Color[4];
-		colors [0] = color.getColor();
-		colors [1] = color.getColor();
-		colors [2] = color.getColor();
-		colors [3] = color.getColor();
+		colors [0] = color;
+		colors [1] = color;
+		colors [2] = color;
+		colors [3] = color;
 		return colors;
 	}
 }

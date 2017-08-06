@@ -83,6 +83,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
         }
 
+		//ADDED BY ME BECAUSE WHY CAN'T I DISABLE CURSOR LOCK GOD DAMN IT THIS IS DUMB
+		public void setCursorLock(bool b) {
+			m_MouseLook.SetCursorLock(b);
+		}
+
 
         private void PlayLandingSound()
         {

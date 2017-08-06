@@ -22,7 +22,7 @@ public class Chunk : MonoBehaviour {
 	void Start () {
 		filter = gameObject.GetComponent<MeshFilter> ();
 		coll = gameObject.GetComponent<MeshCollider> ();
-		gameObject.layer = BlockModificationEngine.worldLayer;
+		gameObject.layer = RayCasting.worldLayer;
 	}
 
 	//Update is called once per frame
