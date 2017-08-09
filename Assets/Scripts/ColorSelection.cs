@@ -8,10 +8,10 @@ public class ColorSelection : Singleton<ColorSelection> {
 
 	private Color selectedColor;
 
-	public ColorPreviewImageUpdater preview;
+	public Image preview;
+	public Animator previewParent;
 
 	public GameObject ColorSelectionPanel;
-	public Image SelectedColorPreview;
 	public Slider redSlider;
 	public Slider greenSlider;
 	public Slider blueSlider;
@@ -26,10 +26,12 @@ public class ColorSelection : Singleton<ColorSelection> {
 	void Update () {
 		if (Input.GetButtonDown("Select New Color")) {
 			if (ColorSelectionPanel.activeSelf) {
-				setColor (SelectedColorPreview.color);
+				setColor (preview.color);
 				ColorSelectionPanel.SetActive (false);
+				previewParent.SetTrigger ("CloseColorMenu");
 				fpc.setCursorLock (true);
 			} else {
+				previewParent.SetTrigger ("OpenColorMenu");
 				ColorSelectionPanel.SetActive (true);
 				redSlider.value = selectedColor.r * 255;
 				greenSlider.value = selectedColor.g * 255;
@@ -48,9 +50,8 @@ public class ColorSelection : Singleton<ColorSelection> {
 	}
 
 	private void setColor(Color newColor) {
+		preview.color = newColor;
 		selectedColor = newColor;
-		preview.setColor (newColor);
-
 	}
 
 	public Color getColor() {
