@@ -88,6 +88,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.SetCursorLock(b);
 		}
 
+		//ADDED BY ME
+		public bool getCursorLock() {
+			return m_MouseLook.GetCursorLock();
+		}
+
 
         private void PlayLandingSound()
         {

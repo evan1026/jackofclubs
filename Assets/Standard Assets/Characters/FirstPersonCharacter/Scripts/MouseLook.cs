@@ -69,6 +69,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_cursorIsLocked = value; // ADDED BY ME BECAUSE SERIOUSLY WHY WAS THIS NOT ALREADY HERE ALSO WHY IS THERE LOCKCURSOR AS WELL AS THIS THING WHATEVER IT DOESN'T MATTER BECAUSE IT WORKS NOW
         }
 
+		// ADDED BY ME
+		public bool GetCursorLock()
+		{
+			return m_cursorIsLocked;
+		}
+
         public void UpdateCursorLock()
         {
             //if the user set "lockCursor" we check & properly lock the cursos
