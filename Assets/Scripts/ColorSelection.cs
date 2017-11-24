@@ -19,7 +19,7 @@ public class ColorSelection : Singleton<ColorSelection> {
 
 	// Use this for initialization
 	void Start () {
-		selectedColor = new Color (255, 255, 255, 255);
+		setColor(new Color (1, 1, 1, 1));
 	}
 	
 	// Update is called once per frame
