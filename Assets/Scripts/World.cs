@@ -11,8 +11,6 @@ public class World : MonoBehaviour {
 	public GameObject loadingScreen;
 	public GameObject savingScreen;
 
-	public Vector3 playerStartPos;
-
 	private static string wallName = "Wall";
 
 	public string worldName;
@@ -65,8 +63,6 @@ public class World : MonoBehaviour {
 		updateAllChunks ();
 
 		generateWalls (xStart, xEnd, yStart, zStart, zEnd);
-
-		player.transform.position = playerStartPos;
 
 		loadingScreen.SetActive (false);
 

@@ -15,7 +15,6 @@ public class ColorSelection : Singleton<ColorSelection> {
 	public Slider redSlider;
 	public Slider greenSlider;
 	public Slider blueSlider;
-	public FirstPersonController fpc;
 
 	// Use this for initialization
 	void Start () {
@@ -29,14 +28,14 @@ public class ColorSelection : Singleton<ColorSelection> {
 				setColor (preview.color);
 				ColorSelectionPanel.SetActive (false);
 				previewParent.SetTrigger ("CloseColorMenu");
-				fpc.setCursorLock (true);
+				FirstPersonController.localInstance.setCursorLock (true);
 			} else {
 				previewParent.SetTrigger ("OpenColorMenu");
 				ColorSelectionPanel.SetActive (true);
 				redSlider.value = selectedColor.r * 255;
 				greenSlider.value = selectedColor.g * 255;
 				blueSlider.value = selectedColor.b * 255;
-				fpc.setCursorLock (false);
+				FirstPersonController.localInstance.setCursorLock (false);
 			}
 		}
 
