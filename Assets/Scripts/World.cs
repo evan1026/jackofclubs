@@ -1,23 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class World : MonoBehaviour {
+public class World : NetworkBehaviour {
 
 	public Dictionary<WorldPos, Chunk> chunks = new Dictionary<WorldPos, Chunk> ();
 	public GameObject chunkPrefab;
 	public GameObject wallParent;
-	public GameObject player;
 	public GameObject loadingScreen;
 	public GameObject savingScreen;
 
 	private static string wallName = "Wall";
 
+	public static World Instance;
+
+	[SyncVar]
 	public string worldName;
 
+	[SyncVar]
 	public WorldMetaData meta;
 
+	public Queue<Block[,,]> chunkQueue = new Queue<Block[,,]>();
+
+	private int playerCount = 0;
+	void OnPlayerConnected(NetworkPlayer player) {
+		Debug.Log("Player " + playerCount++ + " connected from " + player.ipAddress + ":" + player.port);
+	}
+
 	IEnumerator Start () {
+		Instance = this;
+
 		Time.timeScale = 0;
 
 		LoadingBarScript loadingBar = loadingScreen.GetComponentInChildren<LoadingBarScript> ();
@@ -52,7 +65,7 @@ public class World : MonoBehaviour {
 		for (int x = xStart; x < xEnd; x++) {
 			for (int y = yStart; y < yEnd; y++) {
 				for (int z = zStart; z < zEnd; z++) {
-					CreateChunk (x * Chunk.chunkSize, y * Chunk.chunkSize, z * Chunk.chunkSize);
+					yield return CreateChunk (x * Chunk.chunkSize, y * Chunk.chunkSize, z * Chunk.chunkSize);
 					chunksSoFar++;
 					loadingBar.setPercent (((float)chunksSoFar) / chunksTotal);
 					yield return null;
@@ -144,11 +157,10 @@ public class World : MonoBehaviour {
 		Destroy (plusZ.GetComponent<MeshRenderer> ());
 	}
 
-	public void CreateChunk (int x, int y, int z) {
-		WorldPos worldPos = new WorldPos (x, y, z);
+	private Chunk CreateChunkCommon(WorldPos worldPos) {
 
 		//Instantiate the chunk at the coordinates using the chunk prefab
-		GameObject newChunkObject = Instantiate (chunkPrefab, new Vector3 (x, y, z), Quaternion.identity) as GameObject;
+		GameObject newChunkObject = Instantiate (chunkPrefab, new Vector3 (worldPos.x, worldPos.y, worldPos.z), Quaternion.identity) as GameObject;
 		newChunkObject.transform.parent = gameObject.transform;
 
 		Chunk newChunk = newChunkObject.GetComponent<Chunk> ();
@@ -159,29 +171,49 @@ public class World : MonoBehaviour {
 		//Add it to the chunks dictionary with the position as the key
 		chunks.Add (worldPos, newChunk);
 
-		bool loaded = Serialization.loadChunk (newChunk);
+		return newChunk;
+	}
 
-		newChunk.update = false;
+	public IEnumerator CreateChunk (int x, int y, int z) {
+		WorldPos worldPos = new WorldPos (x, y, z);
 
-		if (loaded) {
-			return;
-		}
-		
-		for (int xi = 0; xi < Chunk.chunkSize; ++xi) {
-			for (int yi = 0; yi < Chunk.chunkSize; ++yi) {
-				for (int zi = 0; zi < Chunk.chunkSize; ++zi) {
-					if (y + yi <= 40) {
-						Color32 color;
-						color.r = (byte)(255f / Chunk.chunkSize * xi);
-						color.g = (byte)(255f / Chunk.chunkSize * yi);
-						color.b = (byte)(255f / Chunk.chunkSize * zi);
-						color.a = 255;
-						SetBlock (x + xi, y + yi, z + zi, new Block (color), false);
-					} else {
-						SetBlock (x + xi, y + yi, z + zi, new BlockAir (), false);
+		Chunk newChunk;
+
+		if (isServer) {
+			newChunk = CreateChunkCommon (worldPos);
+
+			bool loaded = Serialization.loadChunk (newChunk);
+
+			newChunk.update = false;
+
+			if (!loaded) {
+				for (int xi = 0; xi < Chunk.chunkSize; ++xi) {
+					for (int yi = 0; yi < Chunk.chunkSize; ++yi) {
+						for (int zi = 0; zi < Chunk.chunkSize; ++zi) {
+							if (y + yi <= 40) {
+								Color32 color;
+								color.r = (byte)(255f / Chunk.chunkSize * xi);
+								color.g = (byte)(255f / Chunk.chunkSize * yi);
+								color.b = (byte)(255f / Chunk.chunkSize * zi);
+								color.a = 255;
+								SetBlock (x + xi, y + yi, z + zi, new Block (color), false);
+							} else {
+								SetBlock (x + xi, y + yi, z + zi, new BlockAir (), false);
+							}
+						}
 					}
 				}
 			}
+		} else {
+			while (NetworkDataRequests.Instance == null) {
+				yield return null;
+			}
+			NetworkDataRequests.Instance.CmdGetChunk (worldPos);
+			while (chunkQueue.Count == 0) {
+				yield return null;
+			}
+			newChunk = CreateChunkCommon (worldPos);
+			newChunk.blocks = chunkQueue.Dequeue ();
 		}
 
 		newChunk.modifiedSinceLastSave = true;
