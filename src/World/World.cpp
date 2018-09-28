@@ -1,4 +1,5 @@
 #include <SFML/System.hpp>
+#include <cmath>
 
 #include "Exception/NullptrException.h"
 #include "Exception/OutOfRangeException.h"

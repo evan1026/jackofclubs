@@ -51,6 +51,7 @@ class Menu : public IRenderable, public IMouseEventHandler, public IKeyboardEven
         std::unique_ptr<Menu> prevMenu = nullptr;
 
         Menu(sf::Vector2f size, Type type);
+        virtual ~Menu() = default;
 
         void render(RenderEngine& e, sf::RenderWindow& w) override;
 

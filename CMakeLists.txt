@@ -26,6 +26,8 @@ if(WIN32)
     set(CMAKE_MODULE_PATH "${SFML_ROOT}/cmake/Modules")
 endif()
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+
 set(SOURCES "" CACHE STRING "Sources for project" FORCE)
 get_filename_component(ROOT_DIR_ABS ${SOURCE_DIR} ABSOLUTE)
 get_filename_component(ROOT_DIR ${ROOT_DIR_ABS} DIRECTORY)

@@ -18,6 +18,7 @@ class Screen : public IRenderable, public IEventHandler {
          * the screen
          */
         virtual void tick() = 0;
+        virtual ~Screen() = default;
 };
 
 #endif
