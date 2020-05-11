@@ -42,6 +42,9 @@ class World : public IRenderable {
         void setBlockColor(const sf::Vector3i& pos, const sf::Color& color);
 
         bool checkCollision(const Player& player) const;
+
+        sf::Vector3i getMinPosition() const;
+        sf::Vector3i getMaxPosition() const;
 };
 
 #endif

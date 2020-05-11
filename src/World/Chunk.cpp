@@ -16,8 +16,7 @@ Chunk::Chunk() {}
 /*! \callergraph
  *
  * Creates a chunk and initializes the blocks to be solid or air based on
- * some weird-ass formula I just tinkered with until I found something that
- * looked cool. Block color starts at black at the (0,0,0) position in the
+ * the y value. Block color starts at black at the (0,0,0) position in the
  * chunk and goes to white at (15,15,15). One color increases in each direction
  * (x is red, y is green, z is blue).
  *
@@ -32,10 +31,7 @@ Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true)
                 float blockY = y + _position.y * BLOCK_COUNT;
                 float blockZ = z + _position.z * BLOCK_COUNT;
 
-                Block::Type type = (-8 * blockY + blockZ * blockX > 0
-                                 || -8 * blockY - blockZ * blockX > 0
-                                 || 8 * (-128 + blockY) - blockZ * blockX > 0
-                                 || 8 * (-128 + blockY) + blockZ * blockX > 0) ? Block::Type::AIR : Block::Type::SOLID;
+                Block::Type type = blockY > world->getMaxPosition().y / 2 ? Block::Type::AIR : Block::Type::SOLID;
 
                 _blocks.at(x).at(y).at(z) = Block(sf::Vector3i(blockX, blockY, blockZ),
                                                   sf::Color(x * COLOR_SCALE, y * COLOR_SCALE, z * COLOR_SCALE),

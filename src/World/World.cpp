@@ -11,6 +11,7 @@
 #define NUM_CHUNKS_LENGTH 2   // Actually half the total length
 #define NUM_CHUNKS_HEIGHT 8
 
+
 /*! \callergraph
  * Creates a new world which is 4 chunks by 4 chunks by 8 chunks (size is just for testing purposes)
  */
@@ -220,4 +221,20 @@ bool World::checkCollision(const Player& player) const {
     } // for x
 
     return false;
+}
+
+/*! \callergraph
+ *
+ * Gets the position vector with the smallest possible values for x, y, and z
+ */
+sf::Vector3i World::getMinPosition() const {
+    return sf::Vector3i(-NUM_CHUNKS_LENGTH * Chunk::BLOCK_COUNT, 0, -NUM_CHUNKS_LENGTH * Chunk::BLOCK_COUNT);
+}
+
+/*! \callergraph
+ *
+ * Gets the position vector with the greatest possible values for x, y, and z
+ */
+sf::Vector3i World::getMaxPosition() const {
+    return sf::Vector3i(NUM_CHUNKS_LENGTH * Chunk::BLOCK_COUNT, NUM_CHUNKS_HEIGHT * Chunk::BLOCK_COUNT, NUM_CHUNKS_LENGTH * Chunk::BLOCK_COUNT);
 }
