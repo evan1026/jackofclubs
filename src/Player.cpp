@@ -131,29 +131,38 @@ float Player::shrinkVelocity(const float startVel, const float endPos, const flo
  * \p world    - The world they're moving in (used to check collisions)    <br>
  */
 void Player::tick(const World& world) {
-    sf::Vector3f startPos = _position;
-    sf::Vector3f finalVelocity = _velocity;
+    int numSubTicks = 20;
+    for (int i = 0; i < numSubTicks; ++i) {
+        sf::Vector3f startPos = _position;
 
-    _position.y += _velocity.y;
-    if (world.checkCollision(*this)) {
-        finalVelocity.y = shrinkVelocity(_velocity.y, _position.y, 0);
-        _position.y = startPos.y + finalVelocity.y;
-        setJumping(false);
+        _velocity /= (float)numSubTicks;
+        sf::Vector3f finalVelocity = _velocity;
+
+        _position.y += _velocity.y;
+        if (world.checkCollision(*this)) {
+            finalVelocity.y = shrinkVelocity(_velocity.y, _position.y, 0);
+            _position.y = startPos.y + finalVelocity.y;
+            finalVelocity.y = 0;
+            setJumping(false);
+        }
+
+        _position.x += _velocity.x;
+        if (world.checkCollision(*this)) {
+            finalVelocity.x = shrinkVelocity(_velocity.x, _position.x, AABB_INSET_SCALED);
+            _position.x = startPos.x + finalVelocity.x;
+            finalVelocity.x = 0;
+        }
+
+        _position.z += _velocity.z;
+        if (world.checkCollision(*this)) {
+            finalVelocity.z = shrinkVelocity(_velocity.z, _position.z, AABB_INSET_SCALED);
+            _position.z = startPos.z + finalVelocity.z;
+            finalVelocity.z = 0;
+        }
+
+        _velocity = finalVelocity * (float)numSubTicks;
     }
 
-    _position.x += _velocity.x;
-    if (world.checkCollision(*this)) {
-        finalVelocity.x = shrinkVelocity(_velocity.x, _position.x, AABB_INSET_SCALED);
-        _position.x = startPos.x + finalVelocity.x;
-    }
-
-    _position.z += _velocity.z;
-    if (world.checkCollision(*this)) {
-        finalVelocity.z = shrinkVelocity(_velocity.z, _position.z, AABB_INSET_SCALED);
-        _position.z = startPos.z + finalVelocity.z;
-    }
-
-    _velocity = finalVelocity;
 }
 
 /*! \callergraph
