@@ -1,10 +1,13 @@
 #ifndef RENDER_ENGINE_H
 #define RENDER_ENGINE_H
 
+#include <GL/glew.h>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
+#include "ShaderProgram.h"
 #include "Rendering/Vertex.h"
 #include "Utils/AABB.h"
 #include "Utils/Events/IResizeEventHandler.h"
@@ -17,6 +20,7 @@ class Player;
 class RenderEngine : public IResizeEventHandler {
 
     sf::RenderWindow _window;
+    ShaderProgram _shaderProgram;
 
     static float lightPos[4];
     static float light2Pos[4];

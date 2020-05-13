@@ -8,15 +8,17 @@ set(RESOURCES_DIR "resources")
 set(EXECUTABLE_NAME "jackofclubs")
 set(DEBUG true)
 
+set(OpenGL_GL_PREFERENCE GLVND)
+
 if(DEBUG)
-    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
     if(NOT WIN32)
         set(CMAKE_CXX_FLAGS "-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wall -Werror ${CMAKE_CXX_FLAGS}")
     endif()
     #set(CMAKE_CXX_FLAGS "-fsanitize=memory ${CMAKE_CXX_FLAGS}")
     #set(CMAKE_CXX_FLAGS "-fsanitize=address ${CMAKE_CXX_FLAGS}")
 else()
-    set(CMAKE_CXX_FLAGS "-O3 -std=c++11 ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-O3 -std=c++17 ${CMAKE_CXX_FLAGS}")
 endif(DEBUG)
 
 if(WIN32)
@@ -48,6 +50,10 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
+
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+target_link_libraries(${EXECUTABLE_NAME} ${GLEW_LIBRARIES})
 
 if(WIN32)
     target_link_libraries(${EXECUTABLE_NAME} imagehlp.lib)

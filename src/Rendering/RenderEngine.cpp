@@ -1,7 +1,10 @@
+#include <GL/glew.h>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <vector>
 
+#include "Shader.h"
 #include "Logger/GlobalLogger.hpp"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
@@ -11,8 +14,6 @@
 #include "World/Block.h"
 
 using Logger::globalLogger;
-
-//TODO Upgrade to modern OpenGL
 
 // RGBA values for different lights
 float RenderEngine::lightPos[] =     { -0.1f,  -1.0f,   0.2f,  0.f  };
@@ -28,7 +29,8 @@ RenderEngine::RenderEngine() :
     _window(getVideoMode(),
             "jack o' clubs",
             sf::Style::Default,
-            sf::ContextSettings(24))
+            sf::ContextSettings(24, 0, 4, 4, 0, sf::ContextSettings::Attribute::Default, false)),
+    _shaderProgram("resources/vertex-shader.glsl", "resources/fragment-shader.glsl")
 {
     sf::Vector2u windowSize = _window.getSize();
     sf::ContextSettings windowSettings = _window.getSettings();
@@ -39,21 +41,26 @@ RenderEngine::RenderEngine() :
     sf::Vector2i windowPosition = _window.getPosition();
 
     globalLogger.log("Initialized window:");
-    globalLogger.log("    OS Handle:           ", _window.getSystemHandle());
-    globalLogger.log("    Size:                ", windowSize.x, "x", windowSize.y);
-    globalLogger.log("    Position:            (", windowPosition.x, ", ", windowPosition.y, ")");
-    globalLogger.log("    Depth bits:          ", windowSettings.depthBits);
-    globalLogger.log("    Stencil bits:        ", windowSettings.stencilBits);
-    globalLogger.log("    Antialiasing level:  ", windowSettings.antialiasingLevel);
-    globalLogger.log("    GL version:          ", windowSettings.majorVersion, ".", windowSettings.minorVersion);
-    globalLogger.log("    Attribute flags:     ", windowSettings.attributeFlags);
-    globalLogger.log("    sRGB capable:        ", windowSettings.sRgbCapable ? "true" : "false");
+    globalLogger.log("    OS Handle:               ", _window.getSystemHandle());
+    globalLogger.log("    Size:                    ", windowSize.x, "x", windowSize.y);
+    globalLogger.log("    Position:                (", windowPosition.x, ", ", windowPosition.y, ")");
+    globalLogger.log("    Depth bits:              ", windowSettings.depthBits);
+    globalLogger.log("    Stencil bits:            ", windowSettings.stencilBits);
+    globalLogger.log("    Antialiasing level:      ", windowSettings.antialiasingLevel);
+    globalLogger.log("    GL version:              ", windowSettings.majorVersion, ".", windowSettings.minorVersion);
+    globalLogger.log("    Attribute flags:         ", windowSettings.attributeFlags);
+    globalLogger.log("    sRGB capable:            ", windowSettings.sRgbCapable ? "true" : "false");
+    globalLogger.log("    Vendor:                  ", glGetString(GL_VENDOR));
+    globalLogger.log("    Renderer:                ", glGetString(GL_RENDERER));
 
     _window.setVerticalSyncEnabled(true);
 
+    glewInit();
+    _shaderProgram.compile();
+
     // Set background color
     glClearDepth(1.f);
-    glClearColor(217.f / 256.f, 233.f / 256.f, 255.f / 256.f, 1.f);
+    glClearColor(255.f / 256.f, 0.f / 256.f, 0.f / 256.f, 1.f);
 
     // Make sure things in front get drawn in front
     glEnable(GL_DEPTH_TEST);
@@ -157,6 +164,7 @@ void RenderEngine::beginRender() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    _shaderProgram.bind();
 }
 
 /*! \callergraph
@@ -164,6 +172,7 @@ void RenderEngine::beginRender() {
  * Called after doing a full render. Flushes the buffer to the screen.
  */
 void RenderEngine::endRender() {
+    _shaderProgram.unbind();
     _window.display();
 }
 
