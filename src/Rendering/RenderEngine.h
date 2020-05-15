@@ -2,6 +2,7 @@
 #define RENDER_ENGINE_H
 
 #include <GL/glew.h>
+#include "glm/glm.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
@@ -26,7 +27,7 @@ class RenderEngine : public IResizeEventHandler {
     static float light2Pos[4];
     static float lightAmbient[4];
     static float lightDiffuse[4];
-
+ 
     // Given a top left front point and a size, push
     // all of the points in a block to OpenGL
     void pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s);
@@ -53,7 +54,6 @@ class RenderEngine : public IResizeEventHandler {
         void endRender();
 
         // Various functions to render specific things
-        void renderVertexArray(const std::vector<Vertex>& vertices);
         void renderAABB(const AABB& box, const sf::Color& color);
         void renderBlockSelection(const AABB& box, const sf::Color& color);
 
@@ -61,7 +61,6 @@ class RenderEngine : public IResizeEventHandler {
 
         // Moves and rotates the camera based on player position/rotation
         void translatePlayer(const Player& player);
-        void rotatePlayer(const Player& player);
 };
 
 #endif

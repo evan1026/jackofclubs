@@ -55,6 +55,9 @@ find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 target_link_libraries(${EXECUTABLE_NAME} ${GLEW_LIBRARIES})
 
+find_package(glm REQUIRED)
+include_directories(${GLM_INCLUDE_DIRS})
+
 if(WIN32)
     target_link_libraries(${EXECUTABLE_NAME} imagehlp.lib)
 endif()

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <optional>
+#include "glm/glm.hpp"
 
 #include "Shader.h"
 
@@ -19,6 +20,8 @@ class ShaderProgram {
         void compile();
         void bind();
         void unbind();
+
+        void setMat4(const std::string& name, const glm::mat4& mat4);
 };
 
 #endif

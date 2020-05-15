@@ -43,3 +43,21 @@ void ShaderProgram::unbind() {
         glUseProgram(0);
     }
 }
+
+#include <iostream>
+void ShaderProgram::setMat4(const std::string& name, const glm::mat4& mat) {
+    if (_id) {
+        GLint currentShaderId;
+        glGetIntegerv(GL_CURRENT_PROGRAM,&currentShaderId);
+
+        if (currentShaderId != *_id) {
+            bind();
+        }
+
+        glUniformMatrix4fv(glGetUniformLocation(*_id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+
+        if (currentShaderId != *_id) {
+            glUseProgram(currentShaderId);
+        }
+    }
+}

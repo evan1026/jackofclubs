@@ -15,9 +15,9 @@
 
 class World;
 
-typedef std::array<Block, BLOCK_COUNT_DEF>   __line;
-typedef std::array<__line, BLOCK_COUNT_DEF>  __plane;
-typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
+typedef std::array<Block, BLOCK_COUNT_DEF>  _Line;
+typedef std::array<_Line, BLOCK_COUNT_DEF>  _Plane;
+typedef std::array<_Plane, BLOCK_COUNT_DEF> _Chunk;
 
 /*!
  * One Chunk is 16x16x16 blocks. Contains the actual
@@ -25,15 +25,19 @@ typedef std::array<__plane, BLOCK_COUNT_DEF> __chunk;
  */
 class Chunk : public IRenderable {
 
-    __chunk _blocks;
+    _Chunk _blocks;
     sf::Vector3i _position;
     std::vector<Vertex> _vertArray;
     bool _changed;
     World* _world; // Points back up to the world just so that we can work with it easier
 
+    unsigned int _vbo;
+    unsigned int _vao;
+
     sf::Vector3i globalToLocalBlockPos(const sf::Vector3i& worldPos) const;
     sf::Vector3i localToGlobalBlockPos(const sf::Vector3i& localPos) const;
 
+    void initVertexArray();
     void rebuildVertArray();
     void addFace(const sf::Vector3i& target, const int& addTarget, const sf::Color& c, const sf::Vector2i& order);
 

@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
 #include "Logger/GlobalLogger.hpp"
@@ -60,7 +62,7 @@ RenderEngine::RenderEngine() :
 
     // Set background color
     glClearDepth(1.f);
-    glClearColor(255.f / 256.f, 0.f / 256.f, 0.f / 256.f, 1.f);
+    glClearColor(0.f / 256.f, 0.f / 256.f, 0.f / 256.f, 1.f);
 
     // Make sure things in front get drawn in front
     glEnable(GL_DEPTH_TEST);
@@ -69,20 +71,6 @@ RenderEngine::RenderEngine() :
     // Don't draw both sides of the face (more efficient)
     glFrontFace(GL_CW);
     glEnable(GL_CULL_FACE);
-
-    // Turn on lighting and make a vertexes color based on
-    // glColor rather than glMaterial
-    glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-
-    // Set up our "sun"
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-    glEnable(GL_LIGHT0);
-
-    glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-    glEnable(GL_LIGHT1);
 
     // Make sure the perspective matches the window
     setPerspective(windowSize.x, windowSize.y);
@@ -121,17 +109,8 @@ void RenderEngine::setPerspective(int width, int height) {
  */
 void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar) {
     GLdouble aspect = (double) width / height;
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, width, height);
-
-    GLdouble fW, fH;
-
-    fH = tan( fovY / 360 * Math::PI ) * zNear;
-    fW = fH * aspect;
-
-    glFrustum( -fW, fW, -fH, fH, zNear, zFar );
+    glm::mat4 projection = glm::perspective(glm::radians(fovY), aspect, zNear, zFar);
+    _shaderProgram.setMat4("projection", projection);
 }
 
 /*! \callergraph
@@ -162,8 +141,6 @@ bool RenderEngine::handleResize(const sf::Event::SizeEvent& e) {
 void RenderEngine::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     _shaderProgram.bind();
 }
 
@@ -184,46 +161,20 @@ void RenderEngine::endRender() {
  */
 void RenderEngine::translatePlayer(const Player& player) {
     sf::Vector3f position = player.getHeadLocation();
-    glTranslatef(-position.x * SCALE, -position.y * SCALE, -position.z * SCALE);
-}
+    glm::vec3 eye((float)position.x * SCALE, (float)position.y * SCALE, (float)position.z * SCALE);
 
-/*! \callergraph
- *
- * Rotates the camera based on the direction the player is looking
- *
- * \p rotation - Player's look direction
- */
-void RenderEngine::rotatePlayer(const Player& player) {
     sf::Vector3f rotation = player.getRotation();
-    glRotatef(rotation.x, 1.f, 0.f, 0.f);
-    glRotatef(rotation.y, 0.f, 1.f, 0.f);
-    glRotatef(rotation.z, 0.f, 0.f, 1.f);
-}
+    glm::vec3 forward;
+    forward.x += sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
+    forward.y += -sin(glm::radians(rotation.x));
+    forward.z += -cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
+    forward = glm::normalize(forward);
 
-/*! \callergraph
- *
- * Renders an entire array of vertices, all at once
- *
- * \p vertices - The vertices to render
- */
-void RenderEngine::renderVertexArray(const std::vector<Vertex>& vertices) {
-    if (vertices.size() == 0) return;
-
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-    glLightfv(GL_LIGHT1, GL_POSITION, light2Pos);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].pos[0]);
-    glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[0].color[0]);
-    glNormalPointer(GL_FLOAT, sizeof(Vertex), &vertices[0].normal[0]);
-
-    glDrawArrays(GL_QUADS, 0, vertices.size());
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
+    glm::vec3 worldUp(0.0f,1.0f,0.0f);
+    glm::vec3 right = glm::normalize(glm::cross(forward, worldUp));
+    glm::vec3 up = glm::normalize(glm::cross(right, forward));
+    glm::mat4 view = glm::lookAt(eye, eye + forward, up);
+    _shaderProgram.setMat4("view", view);
 }
 
 /*! \callergraph
@@ -294,7 +245,7 @@ void RenderEngine::pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& 
  * \p color - The color to render the AABB    <br>
  */
 void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
-    sf::Vector3f p = box.getPosition();
+    /*sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
 
     s = s * SCALE;
@@ -329,7 +280,7 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
     glEnable(GL_CULL_FACE);
 
     // Pop old state
-    glPopMatrix();
+    glPopMatrix();*/
 }
 
 #define LINE_WIDTH 0.05
@@ -346,7 +297,7 @@ void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
  * \p color - The color to use in rendering    <br>
  */
 void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color) {
-    sf::Vector3f p = box.getPosition();
+    /*sf::Vector3f p = box.getPosition();
     sf::Vector3f s = box.getSize();
     sf::Vector3f linePos;
     sf::Vector3f lineSize;
@@ -401,7 +352,7 @@ void RenderEngine::renderBlockSelection(const AABB& box, const sf::Color& color)
 
     glEnd();
 
-    glPopMatrix();
+    glPopMatrix();*/
 }
 
 /*! \callergraph

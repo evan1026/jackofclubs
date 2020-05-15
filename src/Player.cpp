@@ -175,7 +175,6 @@ void Player::tick(const World& world) {
  */
 void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_type == Type::SELF) {
-        e.rotatePlayer(*this);
         e.translatePlayer(*this);
     }
     // TODO else render other player
