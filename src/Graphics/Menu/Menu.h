@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Rendering/IRenderable.h"
+#include "Rendering/Renderable.h"
 #include "Utils/Events/IKeyboardEventHandler.h"
 #include "Utils/Events/IMouseEventHandler.h"
 #include "Utils/Events/IResizeEventHandler.h"
@@ -16,7 +16,7 @@
  * which opens a resolution menu, and you can go backwards through the
  * whole thing when done with the current menu).
  */
-class Menu : public IRenderable, public IMouseEventHandler, public IKeyboardEventHandler, public IResizeEventHandler {
+class Menu : public Renderable, public IMouseEventHandler, public IKeyboardEventHandler, public IResizeEventHandler {
 
     public:
         // Somewhat restrictive, but useful enough that it makes up for it

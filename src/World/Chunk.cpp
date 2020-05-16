@@ -27,7 +27,7 @@ Chunk::Chunk() {}
  * \p world - reference to the world (gotta be a pointer because of the default constructor)    <br>
  */
 Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true), _world(world) {
-    initVertexArray();
+    initBuffer();
     for (int x = 0; x < BLOCK_COUNT; ++x) {
         for (int y = 0; y < BLOCK_COUNT; ++y) {
             for (int z = 0; z < BLOCK_COUNT; ++z) {
@@ -43,22 +43,6 @@ Chunk::Chunk(const sf::Vector3i& p, World* world) : _position(p), _changed(true)
             }
         }
     }
-}
-
-void Chunk::initVertexArray() {
-    glGenVertexArrays(1, &_vao);
-    glGenBuffers(1, &_vbo);
-
-    glBindVertexArray(_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glBindVertexArray(0);
 }
 
 /*! \callergraph
@@ -126,9 +110,7 @@ void Chunk::rebuildVertArray() {
     }
 
     _changed = false;
-
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, _vertArray.size() * sizeof(Vertex), &_vertArray[0], GL_DYNAMIC_DRAW);
+    setBufferData(_vertArray);
 }
 
 /*! \callergraph
@@ -202,9 +184,7 @@ void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
         rebuildVertArray();
     }
 
-    glBindVertexArray(_vao);
-    glDrawArrays(GL_TRIANGLES, 0, _vertArray.size());
-    glBindVertexArray(0);
+    drawFromBuffer(GL_TRIANGLES);
 }
 
 /*! \callergraph

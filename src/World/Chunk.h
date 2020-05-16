@@ -6,7 +6,7 @@
 #include <SFML/System.hpp>
 #include <vector>
 
-#include "Rendering/IRenderable.h"
+#include "Rendering/Renderable.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "World/Block.h"
@@ -23,7 +23,7 @@ typedef std::array<_Plane, BLOCK_COUNT_DEF> _Chunk;
  * One Chunk is 16x16x16 blocks. Contains the actual
  * blocks and has functions for interfacing with them
  */
-class Chunk : public IRenderable {
+class Chunk : public Renderable {
 
     _Chunk _blocks;
     sf::Vector3i _position;
@@ -31,14 +31,11 @@ class Chunk : public IRenderable {
     bool _changed;
     World* _world; // Points back up to the world just so that we can work with it easier
 
-    unsigned int _vbo;
-    unsigned int _vao;
+    void rebuildVertArray();
 
     sf::Vector3i globalToLocalBlockPos(const sf::Vector3i& worldPos) const;
     sf::Vector3i localToGlobalBlockPos(const sf::Vector3i& localPos) const;
 
-    void initVertexArray();
-    void rebuildVertArray();
     void addFace(const sf::Vector3i& target, const int& addTarget, const sf::Color& c, const sf::Vector2i& order);
 
     public:

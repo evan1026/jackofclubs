@@ -4,7 +4,7 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 
-#include "Rendering/IRenderable.h"
+#include "Rendering/Renderable.h"
 
 typedef std::chrono::milliseconds Milliseconds;
 typedef std::chrono::high_resolution_clock::time_point TimePoint;
@@ -16,7 +16,7 @@ typedef std::chrono::high_resolution_clock::time_point TimePoint;
  * It will also handle updating the text at a shorter refresh rate (default
  * is every half second) to ensure readability.
  */
-class FPSCounter : public sf::Text, public IRenderable {
+class FPSCounter : public sf::Text, public Renderable {
 
     long _refreshRate;         // How often (in millis) to update the text
     long _count;               // Counts how many frames have gone by

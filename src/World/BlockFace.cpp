@@ -21,9 +21,10 @@ std::unordered_map<BlockFace::Face, sf::Vector3f, EnumClassHash> BlockFace::face
  * \p position - Block's position                             <br>
  * \p normal   - Normal vector pointing away from the face    <br>
  */
-BlockFace::BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal) :
+BlockFace::BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal, const sf::Color& color) :
     _position(position),
-    _normal(normal)
+    _normal(normal),
+    _color(color)
 {
     setFaceFromNormal(_normal);
 }
@@ -35,10 +36,11 @@ BlockFace::BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal) :
  * \p position - Block's position    <br>
  * \p face     - Name of the face    <br>
  */
-BlockFace::BlockFace(const sf::Vector3f& position, BlockFace::Face face) :
+BlockFace::BlockFace(const sf::Vector3f& position, BlockFace::Face face, const sf::Color& color) :
     _position(position),
     _face(face),
-    _normal(faceNormals[face])
+    _normal(faceNormals[face]),
+    _color(color)
 {}
 
 /*! \callergraph
@@ -62,6 +64,10 @@ BlockFace::Face BlockFace::getFace() const {
     return _face;
 }
 
+sf::Color BlockFace::getColor() const {
+    return _color;
+}
+
 /*! \callergraph
  * Sets the block this face is on
  */
@@ -83,6 +89,10 @@ void BlockFace::setNormal(const sf::Vector3f& normal) {
 void BlockFace::setFace(BlockFace::Face face) {
     _face = face;
     _normal = faceNormals[face];
+}
+
+void BlockFace::setColor(sf::Color color) {
+    _color = color;
 }
 
 /*! \callergraph

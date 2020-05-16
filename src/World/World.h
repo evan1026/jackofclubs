@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "Player.h"
-#include "Rendering/IRenderable.h"
+#include "Rendering/Renderable.h"
 #include "Utils/tuple_fix.h"
 #include "World/Block.h"
 #include "World/Chunk.h"
@@ -15,7 +15,7 @@
  * Class for the entire world as a whole. Contains methods for interfacing
  * with the world like changing blocks and getting their state.
  */
-class World : public IRenderable {
+class World : public Renderable {
 
     std::unordered_map<std::tuple<int, int, int>, Chunk> _chunks; //Tuple because I found code to hash it online
 

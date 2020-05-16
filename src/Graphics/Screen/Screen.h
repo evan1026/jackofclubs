@@ -3,15 +3,15 @@
 
 #include <SFML/Window/Event.hpp>
 
-#include "Rendering/IRenderable.h"
+#include "Rendering/Renderable.h"
 #include "Utils/Events/IEventHandler.h"
 
 /*! \callergraph
  * Base class for screens. Just defines some functions that need to
- * be overridden. (Not shown: IRenderable::render() also must be
+ * be overridden. (Not shown: Renderable::render() also must be
  * overridden).
  */
-class Screen : public IRenderable, public IEventHandler {
+class Screen : public Renderable, public IEventHandler {
     public:
         /*! \callergraph
          * Overridable function that is called once per frame to tick

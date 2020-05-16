@@ -38,7 +38,6 @@ WorldScreen::WorldScreen(sf::RenderWindow& window, Game& game) :
     _mouseCaptured(true),
     _screenMiddle(window.getSize().x / 2, window.getSize().y / 2),
     _selectedColor(sf::Color::White),
-    _selectedBlock(),
     _window(window),
     _game(game)
 {
@@ -190,10 +189,11 @@ bool WorldScreen::handleMouseMoved(const sf::Event::MouseMoveEvent& event) {
  * may have to be changed slightly when moving to the client-server model.
  */
 void WorldScreen::placeBlock() {
-    if (!_selectedBlock)
+    auto selectedBlock = _player.getSelection();
+    if (!selectedBlock)
         return;
 
-    sf::Vector3f position = _selectedBlock().getPosition() + _selectedBlock().getNormal();
+    sf::Vector3f position = selectedBlock->getPosition() + selectedBlock->getNormal();
     sf::Vector3i blockPosition(position.x, position.y, position.z);
 
     _world.setBlockType(blockPosition, Block::Type::SOLID);
@@ -208,10 +208,11 @@ void WorldScreen::placeBlock() {
  * Gets the position of the block we're looking at and sets it to air
  */
 void WorldScreen::removeBlock() {
-    if (!_selectedBlock)
+    auto selectedBlock = _player.getSelection();
+    if (!selectedBlock)
         return;
 
-    sf::Vector3f position = _selectedBlock().getPosition();
+    sf::Vector3f position = selectedBlock->getPosition();
     sf::Vector3i blockPosition(position.x, position.y, position.z);
 
     _world.setBlockType(blockPosition, Block::Type::AIR);
@@ -265,8 +266,8 @@ void WorldScreen::handlePlayerMovement() {
         // Use that distance to create a rotation
         // Also make sure it stays within bounds
         rotation += sf::Vector3f(diff.y, diff.x, 0.f);
-        if (rotation.x > 90) rotation.x = 90;
-        else if (rotation.x < -90) rotation.x = -90;
+        if (rotation.x > 89.99) rotation.x = 89.99;
+        else if (rotation.x < -89.99) rotation.x = -89.99;
 
         _player.setRotation(rotation);
 
@@ -318,8 +319,9 @@ void WorldScreen::handlePlayerMovement() {
  * (called when the user presses E)
  */
 void WorldScreen::copySelectionColor() {
-    if (_selectedBlock) {
-        sf::Vector3f posf = _selectedBlock().getPosition();
+    auto selectedBlock = _player.getSelection();
+    if (selectedBlock) {
+        sf::Vector3f posf = selectedBlock->getPosition();
         sf::Vector3i posi(posf.x, posf.y, posf.z);
         _selectedColor = _world.getBlockColor(posi);
     }
@@ -337,8 +339,6 @@ void WorldScreen::tick() {
     if (_activeMenu == nullptr) handlePlayerMovement();
 
     _player.tick(_world);
-
-    _selectedBlock = _player.getSelection(_world, 5);
 }
 
 /*! \callergraph
@@ -367,25 +367,6 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
     // Next we call render on the renderables
     _player.render(re, w);
     _world.render(re, w);
-
-    // If we've selected a block, draw its outline
-    if (_selectedBlock) {
-        sf::Vector3f blockPosition = _selectedBlock().getPosition();
-        sf::Vector3i blockPositioni = sf::Vector3i(blockPosition.x, blockPosition.y, blockPosition.z);
-        AABB blockBox = _world.getBlock(blockPositioni).getBoundingBox();
-
-        // Default outline color is black
-        sf::Color outlineColor = sf::Color::Black;
-
-        // But for darker blocks, make it white to improve visibility
-        sf::Color blockColor = _world.getBlockColor(blockPositioni);
-        if (blockColor.r < 128 && blockColor.g < 128 && blockColor.b < 128) {
-            outlineColor = sf::Color::White;
-        }
-
-        // And then render the outline
-        re.renderBlockSelection(blockBox, outlineColor);
-    }
 
     // Render the FPSCounter (it will check if it should be rendered at all)
     _fpsCounter.render(re, w);

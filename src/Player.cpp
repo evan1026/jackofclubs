@@ -163,6 +163,13 @@ void Player::tick(const World& world) {
         _velocity = finalVelocity * (float)numSubTicks;
     }
 
+    Maybe<BlockFace> selection = getSelection(world, 5);
+
+    if (selection) {
+        _selection.setSelection(std::optional<BlockFace>(selection()));
+    } else {
+        _selection.setSelection(std::optional<BlockFace>());
+    }
 }
 
 /*! \callergraph
@@ -176,6 +183,7 @@ void Player::tick(const World& world) {
 void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_type == Type::SELF) {
         e.translatePlayer(*this);
+        _selection.render(e, w);
     }
     // TODO else render other player
 
@@ -214,7 +222,7 @@ float Player::getTMax(float origin, float direction) const {
  * \p world - The world to trace through                                                                     <br>
  * \p range - The distance (in blocks) when we should say the selection (if there is one) is out of range    <br>
  */
-Maybe<BlockFace> Player::getSelection(World& world, float range) const {
+Maybe<BlockFace> Player::getSelection(const World& world, float range) const {
     sf::Vector3f direction = sf::Vector3f(Math::sinDeg(_rotation.y) * Math::cosDeg(_rotation.x),
                                          -Math::sinDeg(_rotation.x),
                                          -Math::cosDeg(_rotation.y) * Math::cosDeg(_rotation.x));
@@ -263,7 +271,8 @@ Maybe<BlockFace> Player::getSelection(World& world, float range) const {
     // so return it, and return nothing otherwise
     sf::Vector3i finalPosition(pos.x, pos.y, pos.z);
     if (world.getBlockType(finalPosition) == Block::Type::SOLID) {
-        return Maybe<BlockFace>(pos, normal);
+        sf::Color blockColor = world.getBlockColor(finalPosition);
+        return Maybe<BlockFace>(pos, normal, blockColor);
     } else {
         return Maybe<BlockFace>();
     }

@@ -8,7 +8,7 @@
  * sliders, etc. Anything that is a single item that can be used in multiple places.
  * Handles calculating the component's global position based on its parent's position
  * and its position relative to the parent. Also restricts rendering to work only
- * with an sf::Window (as opposed to also including the render engine, like IRenderable).
+ * with an sf::Window (as opposed to also including the render engine, like Renderable).
  * This just makes orthogonal rendering easier.
  */
 class Component {

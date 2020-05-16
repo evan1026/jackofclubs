@@ -36,7 +36,6 @@ class WorldScreen : public Screen, public IKeyboardEventHandler, public IMouseEv
     bool _mouseCaptured;
     sf::Vector2i _screenMiddle;
     sf::Color _selectedColor;
-    Maybe<BlockFace> _selectedBlock;
 
     // References to other objects we need to work with
     // I'm sure there's a better way to do this, but this is easier and

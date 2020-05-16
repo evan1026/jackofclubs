@@ -30,7 +30,7 @@ void Menu::center(sf::RenderWindow& w) {
  *
  * Renders the window. First it sets itself up to use sfml rendering,
  * then it renders the backround and calls the child class's rendering
- * function. This overrides IRenderable::render.
+ * function. This overrides Renderable::render.
  *
  * \p e - the rendering engine for opengl calls (not used)
  * \p w - the window for sfml calls (used)

@@ -2,6 +2,7 @@
 #define BLOCK_FACE_H
 
 #include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 #include <unordered_map>
 
 #include "Utils/EnumClassHash.h"
@@ -33,18 +34,21 @@ class BlockFace {
         sf::Vector3f _position;
         Face _face;
         sf::Vector3f _normal;
+        sf::Color _color;
 
     public:
-        BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal);
-        BlockFace(const sf::Vector3f& position, Face face);
+        BlockFace(const sf::Vector3f& position, const sf::Vector3f& normal, const sf::Color&);
+        BlockFace(const sf::Vector3f& position, Face face, const sf::Color&);
 
         sf::Vector3f getPosition() const;
         sf::Vector3f getNormal() const;
         Face getFace() const;
+        sf::Color getColor() const;
 
         void setPosition(const sf::Vector3f& position);
         void setNormal(const sf::Vector3f& normal);
         void setFace(Face face);
+        void setColor(sf::Color color);
 };
 
 #endif
