@@ -21,12 +21,13 @@ class Player;
 class RenderEngine : public IResizeEventHandler {
 
     sf::RenderWindow _window;
-    ShaderProgram _shaderProgram;
+    ShaderProgram _shaderProgramLight;
+    ShaderProgram _shaderProgramNoLight;
 
-    static float lightPos[4];
-    static float light2Pos[4];
-    static float lightAmbient[4];
-    static float lightDiffuse[4];
+    static glm::vec3 lightPos;
+    static glm::vec3 light2Pos;
+    static glm::vec4 lightAmbient;
+    static glm::vec4 lightDiffuse;
  
     // Given a top left front point and a size, push
     // all of the points in a block to OpenGL
@@ -61,6 +62,9 @@ class RenderEngine : public IResizeEventHandler {
 
         // Moves and rotates the camera based on player position/rotation
         void translatePlayer(const Player& player);
+
+        void useLightingShader();
+        void useNoLightingShader();
 };
 
 #endif

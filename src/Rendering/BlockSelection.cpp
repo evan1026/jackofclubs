@@ -10,6 +10,8 @@ void BlockSelection::render(RenderEngine& e, sf::RenderWindow& w) {
     if (_changed) {
         generateBuffer();
     }
+
+    e.useNoLightingShader();
     drawFromBuffer(GL_TRIANGLES);
 }
 

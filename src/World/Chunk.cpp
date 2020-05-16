@@ -184,6 +184,7 @@ void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
         rebuildVertArray();
     }
 
+    e.useLightingShader();
     drawFromBuffer(GL_TRIANGLES);
 }
 

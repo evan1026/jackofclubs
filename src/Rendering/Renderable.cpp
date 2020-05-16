@@ -14,17 +14,24 @@ void Renderable::initBuffer() {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glBindVertexArray(0);
+    
+    _initialized = true;
+    _bufferSize = 0;
 }
 
 void Renderable::setBufferData(const std::vector<Vertex>& vertexes) {
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes[0], GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    _bufferSize = vertexes.size();
+    if (_initialized) {
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes[0], GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        _bufferSize = vertexes.size();
+    }
 }
 
 void Renderable::drawFromBuffer(GLenum type) {
-    glBindVertexArray(_vao);
-    glDrawArrays(type, 0, _bufferSize);
-    glBindVertexArray(0);
+    if (_initialized) {
+        glBindVertexArray(_vao);
+        glDrawArrays(type, 0, _bufferSize);
+        glBindVertexArray(0);
+    }
 }

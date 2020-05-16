@@ -44,8 +44,23 @@ void ShaderProgram::unbind() {
     }
 }
 
-#include <iostream>
-void ShaderProgram::setMat4(const std::string& name, const glm::mat4& mat) {
+GLint ShaderProgram::getUniformLocation(std::string name) {
+    GLint loc = -1;
+    if (_id) {
+        if (_uniformLocations.find(name) != _uniformLocations.end()) {
+            loc = _uniformLocations[name];
+        } else {
+            loc = glGetUniformLocation(*_id, name.c_str());
+            if (loc != -1) {
+                _uniformLocations[name] = loc;
+            }
+        }
+    } 
+
+    return loc;
+}
+
+void ShaderProgram::safeCallVector(std::function<void(GLint, GLsizei, const GLfloat*)> func, std::string name, const GLfloat* value) {
     if (_id) {
         GLint currentShaderId;
         glGetIntegerv(GL_CURRENT_PROGRAM,&currentShaderId);
@@ -54,7 +69,24 @@ void ShaderProgram::setMat4(const std::string& name, const glm::mat4& mat) {
             bind();
         }
 
-        glUniformMatrix4fv(glGetUniformLocation(*_id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+        func(getUniformLocation(name), 1, value);
+
+        if (currentShaderId != *_id) {
+            glUseProgram(currentShaderId);
+        }
+    }
+}
+
+void ShaderProgram::safeCallMatrix(std::function<void(GLint, GLsizei, GLboolean, const GLfloat*)> func, std::string name, GLboolean transpose, const GLfloat* value) {
+    if (_id) {
+        GLint currentShaderId;
+        glGetIntegerv(GL_CURRENT_PROGRAM,&currentShaderId);
+
+        if (currentShaderId != *_id) {
+            bind();
+        }
+
+        func(getUniformLocation(name), 1, transpose, value);
 
         if (currentShaderId != *_id) {
             glUseProgram(currentShaderId);

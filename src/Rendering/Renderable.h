@@ -11,6 +11,7 @@
  */
 class Renderable {
 
+    bool _initialized;
     unsigned int _vao;
     unsigned int _vbo;
     unsigned int _bufferSize;

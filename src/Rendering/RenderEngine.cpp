@@ -18,10 +18,10 @@
 using Logger::globalLogger;
 
 // RGBA values for different lights
-float RenderEngine::lightPos[] =     { -0.1f,  -1.0f,   0.2f,  0.f  };
-float RenderEngine::light2Pos[] =    {  0.1f,  -1.0f,  -0.2f,  0.f  };
-float RenderEngine::lightAmbient[] = {  0.25f,  0.25f,  0.25f, 1.0f };
-float RenderEngine::lightDiffuse[] = {  0.35f,  0.35f,  0.35f, 1.0f };
+glm::vec3 RenderEngine::lightPos =     { -0.1f,  -1.0f,   0.2f};
+glm::vec3 RenderEngine::light2Pos =    {  0.1f,  -1.0f,  -0.2f};
+glm::vec4 RenderEngine::lightAmbient = {  0.25f,  0.25f,  0.25f, 1.0f };
+glm::vec4 RenderEngine::lightDiffuse = {  0.35f,  0.35f,  0.35f, 1.0f };
 
 /*! \callergraph
  *
@@ -31,8 +31,9 @@ RenderEngine::RenderEngine() :
     _window(getVideoMode(),
             "jack o' clubs",
             sf::Style::Default,
-            sf::ContextSettings(24, 0, 4, 4, 0, sf::ContextSettings::Attribute::Default, false)),
-    _shaderProgram("resources/vertex-shader.glsl", "resources/fragment-shader.glsl")
+            sf::ContextSettings(24, 0, 4, 4, 0, sf::ContextSettings::Attribute::Debug, false)),
+    _shaderProgramLight("resources/vertex-shader.glsl", "resources/fragment-shader.glsl"),
+    _shaderProgramNoLight("resources/vertex-shader.glsl", "resources/fragment-shader-no-light.glsl")
 {
     sf::Vector2u windowSize = _window.getSize();
     sf::ContextSettings windowSettings = _window.getSettings();
@@ -58,7 +59,8 @@ RenderEngine::RenderEngine() :
     _window.setVerticalSyncEnabled(true);
 
     glewInit();
-    _shaderProgram.compile();
+    _shaderProgramLight.compile();
+    _shaderProgramNoLight.compile();
 
     // Set background color
     glClearDepth(1.f);
@@ -74,6 +76,11 @@ RenderEngine::RenderEngine() :
 
     // Make sure the perspective matches the window
     setPerspective(windowSize.x, windowSize.y);
+
+    _shaderProgramLight.setVec4("ambientLight", lightAmbient);
+    _shaderProgramLight.setVec4("diffuseLight", lightDiffuse);
+    _shaderProgramLight.setVec3("light1Pos", lightPos);
+    _shaderProgramLight.setVec3("light2Pos", light2Pos);
 }
 
 /*! \callergraph
@@ -110,7 +117,8 @@ void RenderEngine::setPerspective(int width, int height) {
 void RenderEngine::setPerspective(GLdouble fovY, int width, int height, GLdouble zNear, GLdouble zFar) {
     GLdouble aspect = (double) width / height;
     glm::mat4 projection = glm::perspective(glm::radians(fovY), aspect, zNear, zFar);
-    _shaderProgram.setMat4("projection", projection);
+    _shaderProgramLight.setMat4("projection", projection);
+    _shaderProgramNoLight.setMat4("projection", projection);
 }
 
 /*! \callergraph
@@ -134,14 +142,21 @@ bool RenderEngine::handleResize(const sf::Event::SizeEvent& e) {
     return false;
 }
 
+void RenderEngine::useLightingShader() {
+    _shaderProgramLight.bind();
+}
+
+void RenderEngine::useNoLightingShader() {
+    _shaderProgramNoLight.bind();
+}
+
 /*! \callergraph
  *
  * Called before doing a full render. Sets OpenGL up to do rendering.
  */
 void RenderEngine::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    _shaderProgram.bind();
+    useLightingShader();
 }
 
 /*! \callergraph
@@ -149,7 +164,7 @@ void RenderEngine::beginRender() {
  * Called after doing a full render. Flushes the buffer to the screen.
  */
 void RenderEngine::endRender() {
-    _shaderProgram.unbind();
+    _shaderProgramLight.unbind(); // Regardless of which is bound, this will do the unbind
     _window.display();
 }
 
@@ -164,7 +179,7 @@ void RenderEngine::translatePlayer(const Player& player) {
     glm::vec3 eye((float)position.x * SCALE, (float)position.y * SCALE, (float)position.z * SCALE);
 
     sf::Vector3f rotation = player.getRotation();
-    glm::vec3 forward;
+    glm::vec3 forward(0,0,0);
     forward.x += sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
     forward.y += -sin(glm::radians(rotation.x));
     forward.z += -cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
@@ -174,7 +189,8 @@ void RenderEngine::translatePlayer(const Player& player) {
     glm::vec3 right = glm::normalize(glm::cross(forward, worldUp));
     glm::vec3 up = glm::normalize(glm::cross(right, forward));
     glm::mat4 view = glm::lookAt(eye, eye + forward, up);
-    _shaderProgram.setMat4("view", view);
+    _shaderProgramLight.setMat4("view", view);
+    _shaderProgramNoLight.setMat4("view", view);
 }
 
 /*! \callergraph
