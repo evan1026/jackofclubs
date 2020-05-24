@@ -157,19 +157,26 @@ void Chunk::addFace(const sf::Vector3i& target, const int& addTarget, const sf::
         fn[3 - order.x - order.y] = order.x - order.y;
     }
 
+    float texCoords[4][2] {
+        {0, 0},
+        {0, 1},
+        {1, 1},
+        {1, 0}
+    };
+
     // triangle 1
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[0]));
     fp[order.x] = fp[order.x] + RenderEngine::SCALE;
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[1]));
     fp[order.y] = fp[order.y] + RenderEngine::SCALE;
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[2]));
 
     // triangle 2
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[2]));
     fp[order.x] = fp[order.x] - RenderEngine::SCALE;
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[3]));
     fp[order.y] = fp[order.y] - RenderEngine::SCALE;
-    _vertArray.push_back(Vertex(fp,fc,fn));
+    _vertArray.push_back(Vertex(fp, fc, fn, texCoords[0]));
 }
 
 /*! \callergraph
@@ -185,6 +192,7 @@ void Chunk::render(RenderEngine& e, sf::RenderWindow& w) {
     }
 
     e.useLightingShader();
+    setTexture("blockTexture");
     drawFromBuffer(GL_TRIANGLES);
 }
 

@@ -104,14 +104,7 @@ void BlockSelection::pushBlockVertices(std::vector<Vertex>& vertexes, const sf::
           lowZ  = position.z,
           highZ = position.z + size.z;
 
-    // Default outline color is black
-    sf::Color outlineColor = sf::Color::Black;
-
-    // But for darker blocks, make it white to improve visibility
-    sf::Color blockColor = _selection->getColor();
-    if (blockColor.r < 128 && blockColor.g < 128 && blockColor.b < 128) {
-        outlineColor = sf::Color::White;
-    }
+    sf::Color outlineColor = sf::Color::White;
     float color[] = {outlineColor.r / 256.f, outlineColor.g / 256.f, outlineColor.b / 256.f};
 
     float posX[] = { 1,  0,  0};
@@ -120,6 +113,8 @@ void BlockSelection::pushBlockVertices(std::vector<Vertex>& vertexes, const sf::
     float negY[] = { 0, -1,  0};
     float posZ[] = { 0,  0,  1};
     float negZ[] = { 0,  0, -1};
+
+    float texCoords[] = {0, 0};
 
     float points[8][3] = {
         {lowX,  lowY,  lowZ},    // 000
@@ -132,45 +127,45 @@ void BlockSelection::pushBlockVertices(std::vector<Vertex>& vertexes, const sf::
         {highX, highY, highZ}    // 111
     };
 
-    vertexes.emplace_back(points[0b000], color, negY);
-    vertexes.emplace_back(points[0b001], color, negY);
-    vertexes.emplace_back(points[0b101], color, negY);
-    vertexes.emplace_back(points[0b101], color, negY);
-    vertexes.emplace_back(points[0b100], color, negY);
-    vertexes.emplace_back(points[0b000], color, negY);
+    vertexes.emplace_back(points[0b000], color, negY, texCoords);
+    vertexes.emplace_back(points[0b001], color, negY, texCoords);
+    vertexes.emplace_back(points[0b101], color, negY, texCoords);
+    vertexes.emplace_back(points[0b101], color, negY, texCoords);
+    vertexes.emplace_back(points[0b100], color, negY, texCoords);
+    vertexes.emplace_back(points[0b000], color, negY, texCoords);
 
-    vertexes.emplace_back(points[0b000], color, negZ);
-    vertexes.emplace_back(points[0b100], color, negZ);
-    vertexes.emplace_back(points[0b110], color, negZ);
-    vertexes.emplace_back(points[0b110], color, negZ);
-    vertexes.emplace_back(points[0b010], color, negZ);
-    vertexes.emplace_back(points[0b000], color, negZ);
+    vertexes.emplace_back(points[0b000], color, negZ, texCoords);
+    vertexes.emplace_back(points[0b100], color, negZ, texCoords);
+    vertexes.emplace_back(points[0b110], color, negZ, texCoords);
+    vertexes.emplace_back(points[0b110], color, negZ, texCoords);
+    vertexes.emplace_back(points[0b010], color, negZ, texCoords);
+    vertexes.emplace_back(points[0b000], color, negZ, texCoords);
 
-    vertexes.emplace_back(points[0b000], color, negX);
-    vertexes.emplace_back(points[0b010], color, negX);
-    vertexes.emplace_back(points[0b011], color, negX);
-    vertexes.emplace_back(points[0b011], color, negX);
-    vertexes.emplace_back(points[0b001], color, negX);
-    vertexes.emplace_back(points[0b000], color, negX);
+    vertexes.emplace_back(points[0b000], color, negX, texCoords);
+    vertexes.emplace_back(points[0b010], color, negX, texCoords);
+    vertexes.emplace_back(points[0b011], color, negX, texCoords);
+    vertexes.emplace_back(points[0b011], color, negX, texCoords);
+    vertexes.emplace_back(points[0b001], color, negX, texCoords);
+    vertexes.emplace_back(points[0b000], color, negX, texCoords);
 
-    vertexes.emplace_back(points[0b111], color, posY);
-    vertexes.emplace_back(points[0b011], color, posY);
-    vertexes.emplace_back(points[0b010], color, posY);
-    vertexes.emplace_back(points[0b010], color, posY);
-    vertexes.emplace_back(points[0b110], color, posY);
-    vertexes.emplace_back(points[0b111], color, posY);
+    vertexes.emplace_back(points[0b111], color, posY, texCoords);
+    vertexes.emplace_back(points[0b011], color, posY, texCoords);
+    vertexes.emplace_back(points[0b010], color, posY, texCoords);
+    vertexes.emplace_back(points[0b010], color, posY, texCoords);
+    vertexes.emplace_back(points[0b110], color, posY, texCoords);
+    vertexes.emplace_back(points[0b111], color, posY, texCoords);
 
-    vertexes.emplace_back(points[0b111], color, posZ);
-    vertexes.emplace_back(points[0b101], color, posZ);
-    vertexes.emplace_back(points[0b001], color, posZ);
-    vertexes.emplace_back(points[0b001], color, posZ);
-    vertexes.emplace_back(points[0b011], color, posZ);
-    vertexes.emplace_back(points[0b111], color, posZ);
+    vertexes.emplace_back(points[0b111], color, posZ, texCoords);
+    vertexes.emplace_back(points[0b101], color, posZ, texCoords);
+    vertexes.emplace_back(points[0b001], color, posZ, texCoords);
+    vertexes.emplace_back(points[0b001], color, posZ, texCoords);
+    vertexes.emplace_back(points[0b011], color, posZ, texCoords);
+    vertexes.emplace_back(points[0b111], color, posZ, texCoords);
 
-    vertexes.emplace_back(points[0b111], color, posX);
-    vertexes.emplace_back(points[0b110], color, posX);
-    vertexes.emplace_back(points[0b100], color, posX);
-    vertexes.emplace_back(points[0b100], color, posX);
-    vertexes.emplace_back(points[0b101], color, posX);
-    vertexes.emplace_back(points[0b111], color, posX);
+    vertexes.emplace_back(points[0b111], color, posX, texCoords);
+    vertexes.emplace_back(points[0b110], color, posX, texCoords);
+    vertexes.emplace_back(points[0b100], color, posX, texCoords);
+    vertexes.emplace_back(points[0b100], color, posX, texCoords);
+    vertexes.emplace_back(points[0b101], color, posX, texCoords);
+    vertexes.emplace_back(points[0b111], color, posX, texCoords);
 }

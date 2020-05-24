@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <map>
 
 #include "RenderEngine.h"
 
@@ -16,7 +17,12 @@ class Renderable {
     unsigned int _vbo;
     unsigned int _bufferSize;
 
+    static std::map<std::string, GLint> _textureIndexes;
+
+    static bool loadTexture(std::string name);
+
     protected:
+        void setTexture(std::string name);
         void initBuffer();
         void setBufferData(const std::vector<Vertex>& vertexes);
         void drawFromBuffer(GLenum type);

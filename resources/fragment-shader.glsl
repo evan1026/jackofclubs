@@ -3,11 +3,14 @@ out vec4 FragColor;
 
 in vec3 ourColor;
 in vec3 normal;
+in vec2 fragTexCoords;
 
 uniform vec4 ambientLight;
 uniform vec4 diffuseLight;
 uniform vec3 light1Pos;
 uniform vec3 light2Pos;
+
+uniform sampler2D ourTexture;
 
 void main() {
     vec3 norm = normalize(normal);
@@ -20,5 +23,5 @@ void main() {
     vec4 diffuse1 = diff1 * diffuseLight;
     vec4 diffuse2 = diff2 * diffuseLight;
 
-    FragColor = vec4(ourColor, 1.0) * (ambientLight + diffuse1 + diffuse2);
+    FragColor = texture(ourTexture, fragTexCoords) * vec4(ourColor, 1.0) * (ambientLight + diffuse1 + diffuse2);
 }
