@@ -54,10 +54,6 @@ class RenderEngine : public IResizeEventHandler {
         void beginRender();
         void endRender();
 
-        // Various functions to render specific things
-        void renderAABB(const AABB& box, const sf::Color& color);
-        void renderBlockSelection(const AABB& box, const sf::Color& color);
-
         sf::RenderWindow& getWindow();
 
         // Moves and rotates the camera based on player position/rotation

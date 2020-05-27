@@ -31,7 +31,7 @@ RenderEngine::RenderEngine() :
     _window(getVideoMode(),
             "jack o' clubs",
             sf::Style::Default,
-            sf::ContextSettings(24, 0, 4, 4, 0, sf::ContextSettings::Attribute::Debug, false)),
+            sf::ContextSettings(24, 0, 16, 4, 0, sf::ContextSettings::Attribute::Default, false)),
     _shaderProgramLight("resources/vertex-shader.glsl", "resources/fragment-shader.glsl"),
     _shaderProgramNoLight("resources/vertex-shader.glsl", "resources/fragment-shader-no-light.glsl")
 {
@@ -64,7 +64,7 @@ RenderEngine::RenderEngine() :
 
     // Set background color
     glClearDepth(1.f);
-    glClearColor(0.f / 256.f, 0.f / 256.f, 0.f / 256.f, 1.f);
+    glClearColor(135.f / 256.f, 206.f / 256.f, 235.f / 256.f, 1.f);
 
     // Make sure things in front get drawn in front
     glEnable(GL_DEPTH_TEST);
@@ -191,56 +191,6 @@ void RenderEngine::translatePlayer(const Player& player) {
     glm::mat4 view = glm::lookAt(eye, eye + forward, up);
     _shaderProgramLight.setMat4("view", view);
     _shaderProgramNoLight.setMat4("view", view);
-}
-
-/*! \callergraph
- *
- * Renders an axis aligned bounding box. Simply turns off culling
- * and makes rendering use lines instead of fill, then calls
- * pushBlockVertcies() (gotta turn off culling because pushBlockVerticies()
- * is designed so that it renders only the outside of the block,
- * but you can be inside the AABB)
- *
- * \p box   - The AABB to render              <br>
- * \p color - The color to render the AABB    <br>
- */
-void RenderEngine::renderAABB(const AABB& box, const sf::Color& color) {
-    /*sf::Vector3f p = box.getPosition();
-    sf::Vector3f s = box.getSize();
-
-    s = s * SCALE;
-    p = p * SCALE;
-
-    // Save state
-    glPushMatrix();
-
-    // Turn off culling
-    glDisable(GL_CULL_FACE);
-
-    // Make it line mode
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(5);
-
-    // Interpret vertices in 4's
-    glBegin(GL_QUADS);
-
-    // Set the color
-    glColor3f(color.r / 256.f, color.g / 256.f, color.b / 256.f);
-
-    // Push the vertices
-    pushBlockVertices(p, s);
-
-    // Done pushing vertices
-    glEnd();
-
-    // Turn fill back on
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    // Turn culling back on
-    glEnable(GL_CULL_FACE);
-
-    // Pop old state
-    glPopMatrix();*/
 }
 
 /*! \callergraph

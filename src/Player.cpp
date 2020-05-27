@@ -7,6 +7,7 @@
 #include "Utils/Maybe.h"
 #include "World/BlockFace.h"
 #include "World/World.h"
+#include "Rendering/AABBRenderer.h"
 
 #define AABB_INSET 0.25
 #define AABB_INSET_SCALED AABB_INSET * 99 / 100 // Needed because floating point is inexact, and when we
@@ -187,8 +188,9 @@ void Player::render(RenderEngine& e, sf::RenderWindow& w) {
     }
     // TODO else render other player
 
-    if (DebugOptions::playerHitboxRendered())
-        e.renderAABB(getBoundingBox(), sf::Color::Black);
+    if (DebugOptions::playerHitboxRendered()) {
+        AABBRenderer::renderer.renderAABB(e, getBoundingBox(), sf::Color::Black, 0.01);
+    }
 }
 
 /*! \callergraph
