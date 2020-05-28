@@ -9,6 +9,57 @@ using Logger::globalLogger;
 
 std::map<std::string, GLint> Renderable::_textureIndexes{};
 
+struct VertexAttribsCalculator {
+    struct VertexAttrib {
+        int index;
+        int count;
+        void* offset;
+        GLenum type;
+    };
+
+    std::vector<VertexAttrib> attribs;
+    int currIndex = 0;
+    size_t totalSize = 0;
+
+    template<typename T>
+    void addVertexAttrib(GLenum type, int count) {
+        VertexAttrib attrib;
+        attrib.index = currIndex++;
+        attrib.count = count;
+        attrib.offset = (void *)totalSize;
+        attrib.type = type;
+        attribs.push_back(attrib);
+
+        totalSize += sizeof(T) * count;
+    }
+
+    template<typename T>
+    void addVertexAttrib(int count);
+
+    template<>
+    void addVertexAttrib<GLbyte>(int count) { addVertexAttrib<GLbyte>(GL_BYTE, count); }
+    template<>
+    void addVertexAttrib<GLubyte>(int count) { addVertexAttrib<GLubyte>(GL_UNSIGNED_BYTE, count); }
+    template<>
+    void addVertexAttrib<GLshort>(int count) { addVertexAttrib<GLshort>(GL_SHORT, count); }
+    template<>
+    void addVertexAttrib<GLushort>(int count) { addVertexAttrib<GLushort>(GL_UNSIGNED_SHORT, count); }
+    template<>
+    void addVertexAttrib<GLint>(int count) { addVertexAttrib<GLint>(GL_INT, count); }
+    template<>
+    void addVertexAttrib<GLuint>(int count) { addVertexAttrib<GLuint>(GL_UNSIGNED_INT, count); }
+    template<>
+    void addVertexAttrib<GLfloat>(int count) { addVertexAttrib<GLfloat>(GL_FLOAT, count); }
+    template<>
+    void addVertexAttrib<GLdouble>(int count) { addVertexAttrib<GLdouble>(GL_DOUBLE, count); }
+
+    void send() {
+        for (VertexAttrib attrib : attribs) {
+            glVertexAttribPointer(attrib.index, attrib.count, attrib.type, GL_FALSE /* normalized */, totalSize, attrib.offset);
+        }
+    }
+};
+
 void Renderable::initBuffer() {
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
@@ -16,11 +67,12 @@ void Renderable::initBuffer() {
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 
-    // TODO function to calculate this part
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(9 * sizeof(float)));
+    VertexAttribsCalculator vAttribs;
+    vAttribs.addVertexAttrib<float>(3);
+    vAttribs.addVertexAttrib<float>(3);
+    vAttribs.addVertexAttrib<float>(3);
+    vAttribs.addVertexAttrib<float>(2);
+    vAttribs.send();
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
