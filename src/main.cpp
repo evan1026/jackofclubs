@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <GlobalLogger.hpp>
 
 #include "Exception/NullptrException.h"
 #include "Exception/SegmentationFaultException.h"
 #include "Game.h"
-#include "Logger/GlobalLogger.hpp"
 #include "Utils/Platforms.h"
 
 #ifdef JOC_LINUX_BUILD

@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 
 project(jackofclubs)
 
+############
+# SETTINGS #
+############
 set(SOURCE_DIR "src")
-set(INCLUDE_DIR "src")
+set(INCLUDE_DIR "include")
 set(RESOURCES_DIR "resources")
+set(LIB_DIR "lib")
 set(EXECUTABLE_NAME "jackofclubs")
 set(DEBUG true)
 
@@ -29,7 +33,11 @@ if(WIN32)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "/usr/local/share/SFML/cmake/Modules/;${CMAKE_MODULE_PATH}")
 
+##################
+# GATHER SOURCES #
+##################
 set(SOURCES "" CACHE STRING "Sources for project" FORCE)
 get_filename_component(ROOT_DIR_ABS ${SOURCE_DIR} ABSOLUTE)
 get_filename_component(ROOT_DIR ${ROOT_DIR_ABS} DIRECTORY)
@@ -42,7 +50,13 @@ set(SOURCES ${SOURCES_WITHOUT_NL} CACHE STRING "Sources for project" FORCE)
 string(REPLACE " " ";" SOURCE_LIST ${SOURCES})
 add_executable(${EXECUTABLE_NAME} ${SOURCE_LIST})
 
-set(CMAKE_MODULE_PATH "/usr/local/share/SFML/cmake/Modules/;${CMAKE_MODULE_PATH}")
+
+#################
+# ADD LIBRARIES #
+#################
+add_subdirectory(${LIB_DIR})
+include_directories(${LIB_INCLUDES})
+target_link_libraries(${EXECUTABLE_NAME} ${LIB_LIBRARIES})
 
 find_package(SFML 2 REQUIRED graphics window system)
 include_directories(${SFML_INCLUDE_DIR})
@@ -62,11 +76,24 @@ if(WIN32)
     target_link_libraries(${EXECUTABLE_NAME} imagehlp.lib)
 endif()
 
-add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR} $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources)
+
+##################
+# COPY RESOURCES #
+##################
+set(EXECUTABLE_LOCATION $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>)
+add_custom_target(copy_resources ALL)
+file(GLOB_RECURSE RESOURCE_FILES ${CMAKE_SOURCE_DIR}/${RESOURCES_DIR}/*)
+add_custom_command(TARGET copy_resources PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E
+    make_directory ${EXECUTABLE_LOCATION}/resources)
+foreach(RESOURCE_FILE ${RESOURCE_FILES})
+    add_custom_command(TARGET copy_resources PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E
+        copy ${RESOURCE_FILE} ${EXECUTABLE_LOCATION}/resources/)
+endforeach()
 
 if(WIN32)
+    # TODO custom targets for windows but eh right now I can't be bothered
     string(REGEX MATCH "[^;]*" FIRST_LIBRARY "${SFML_LIBRARIES}")
     string(REGEX MATCH "(.*/)*" LIBS_DIR "${FIRST_LIBRARY}")
 

@@ -1,15 +1,15 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <GlobalLogger.hpp>
 
 #include "Game.h"
 #include "Graphics/Menu/ColorSelectorMenu.h"
 #include "Graphics/Menu/EscapeMenu.h"
-#include "Logger/GlobalLogger.hpp"
 #include "Rendering/RenderEngine.h"
 #include "Utils/Math.h"
 #include "Utils/Utils.h"
 #include "World/BlockFace.h"
-#include "WorldScreen.h"
+#include "Graphics/Screen/WorldScreen.h"
 
 using Logger::globalLogger;
 

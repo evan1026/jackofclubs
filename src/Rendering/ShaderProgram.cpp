@@ -1,6 +1,7 @@
-#include "ShaderProgram.h"
+#include <GlobalLogger.hpp>
+
+#include "Rendering/ShaderProgram.h"
 #include "Exception/ShaderCompilationFailureException.h"
-#include "Logger/GlobalLogger.hpp"
 
 using Logger::globalLogger;
 

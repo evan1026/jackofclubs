@@ -5,9 +5,9 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <GlobalLogger.hpp>
 
-#include "Shader.h"
-#include "Logger/GlobalLogger.hpp"
+#include "Rendering/Shader.h"
 #include "Player.h"
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"

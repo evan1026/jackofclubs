@@ -1,6 +1,6 @@
-#include "Graphics/Menu/EscapeMenu.h"
+#include <GlobalLogger.hpp>
 
-#include "Logger/GlobalLogger.hpp"
+#include "Graphics/Menu/EscapeMenu.h"
 
 using Logger::globalLogger;
 

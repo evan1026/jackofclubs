@@ -1,12 +1,12 @@
 // Including both and putting the if statements in the files makes Visual Studio happier
 // Doesn't really affect the code too much so eh
-#include "Exception/Exception_Windows.cpp"
-#include "Exception/Exception_Linux.cpp"
+#include "Exception_Windows.cpp"
+#include "Exception_Linux.cpp"
 
 #include <cstring>
+#include <GlobalLogger.hpp>
 
 #include "Exception/Exception.h"
-#include "Logger/GlobalLogger.hpp"
 
 using Logger::globalLogger;
 

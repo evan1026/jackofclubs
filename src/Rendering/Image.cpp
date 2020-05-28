@@ -1,6 +1,5 @@
-#include "Image.h"
-
-#include "stb_image.h"
+#include "Rendering/Image.h"
+#include "Rendering/stb_image.h"
 
 Image::Image(std::filesystem::path path) {
     _data = stbi_load(path.c_str(), &_width, &_height, &_numChannels, 0);

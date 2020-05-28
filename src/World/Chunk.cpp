@@ -1,11 +1,11 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
+#include <GlobalLogger.hpp>
 
 #include "Exception/OutOfRangeException.h"
 #include "World/Block.h"
 #include "World/Chunk.h"
 #include "World/World.h"
-#include "Logger/GlobalLogger.hpp"
 
 using Logger::globalLogger;
 

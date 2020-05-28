@@ -1,8 +1,8 @@
-#include "Renderable.h"
-
+#include <GlobalLogger.hpp>
 #include <filesystem>
+
+#include "Rendering/Renderable.h"
 #include "Rendering/stb_image.h"
-#include "Logger/GlobalLogger.hpp"
 #include "Rendering/Image.h"
 
 using Logger::globalLogger;
@@ -15,6 +15,8 @@ void Renderable::initBuffer() {
 
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+
+    // TODO function to calculate this part
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
@@ -25,7 +27,7 @@ void Renderable::initBuffer() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
     glBindVertexArray(0);
-    
+
     _initialized = true;
     _bufferSize = 0;
 }

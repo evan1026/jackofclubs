@@ -6,8 +6,9 @@
 #include <execinfo.h>
 #include <sstream>
 
+#include <GlobalLogger.hpp>
+
 #include "Exception/Exception.h"
-#include "Logger/GlobalLogger.hpp"
 
 #define STRING_BUFFER_SIZE 1024
 

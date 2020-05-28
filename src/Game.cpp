@@ -1,9 +1,10 @@
 #include <SFML/Window.hpp>
 
+#include <GlobalLogger.hpp>
+
 #include "Debug/DebugOptions.h"
 #include "Game.h"
 #include "Graphics/Screen/WorldScreen.h"
-#include "Logger/GlobalLogger.hpp"
 
 using Logger::globalLogger;
 
