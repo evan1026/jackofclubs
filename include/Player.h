@@ -1,12 +1,13 @@
 #pragma once
 
+#include <optional>
+
 #include <SFML/System.hpp>
 
 #include "Rendering/Renderable.h"
 #include "Rendering/RenderEngine.h"
 #include "Utils/AABB.h"
 #include "Utils/ICollidable.h"
-#include "Utils/Maybe.h"
 #include "World/BlockFace.h"
 #include "Rendering/BlockSelection.h"
 
@@ -26,7 +27,7 @@ class Player : public ICollidable, public Renderable {
             OTHER
         };
 
-        Maybe<BlockFace> getSelection(const World& world, float range) const;
+        std::optional<BlockFace> getSelection(const World& world, float range) const;
 
     private:
         Type _type;
