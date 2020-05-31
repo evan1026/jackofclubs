@@ -1,9 +1,10 @@
-#include <GlobalLogger.hpp>
 #include <filesystem>
 
+#include <GlobalLogger.hpp>
+
+#include "Rendering/Image.h"
 #include "Rendering/Renderable.h"
 #include "Rendering/stb_image.h"
-#include "Rendering/Image.h"
 
 using Logger::globalLogger;
 

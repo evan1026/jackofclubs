@@ -1,15 +1,9 @@
 #pragma once
 
-#include <GL/glew.h>
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-#include <vector>
-
-#include "ShaderProgram.h"
+#include "Rendering/ShaderProgram.h"
 #include "Rendering/Vertex.h"
-#include "Utils/AABB.h"
 #include "Utils/Events/IResizeEventHandler.h"
 
 class Player;
@@ -27,7 +21,7 @@ class RenderEngine : public IResizeEventHandler {
     static glm::vec3 light2Pos;
     static glm::vec4 lightAmbient;
     static glm::vec4 lightDiffuse;
- 
+
     // Given a top left front point and a size, push
     // all of the points in a block to OpenGL
     void pushBlockVertices(const sf::Vector3f& p, const sf::Vector3f& s);

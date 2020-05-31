@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SFML/Window/Event.hpp>
-
 #include "Rendering/Renderable.h"
 #include "Utils/Events/IEventHandler.h"
 

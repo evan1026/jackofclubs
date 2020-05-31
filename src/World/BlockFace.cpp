@@ -1,5 +1,5 @@
-#include "World/BlockFace.h"
 #include "Utils/EnumClassHash.h"
+#include "World/BlockFace.h"
 
 /*!
  * Defines normal vectors for each of the possible faces

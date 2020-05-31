@@ -1,9 +1,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
 
-#include "Utils/AABB.h"
 #include "World/Block.h"
-#include "World/World.h"
 
 /*! \callergraph
  *

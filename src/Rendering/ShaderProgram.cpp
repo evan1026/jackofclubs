@@ -1,7 +1,8 @@
 #include <GlobalLogger.hpp>
 
-#include "Rendering/ShaderProgram.h"
 #include "Exception/ShaderCompilationFailureException.h"
+#include "Rendering/ShaderProgram.h"
+#include "Rendering/Shader.h"
 
 using Logger::globalLogger;
 

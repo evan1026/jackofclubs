@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/System.hpp>
 #include <optional>
 
 #include "Rendering/Renderable.h"

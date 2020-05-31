@@ -1,8 +1,9 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
-#include <unordered_map>
 
 #include "Player.h"
 #include "Rendering/Renderable.h"

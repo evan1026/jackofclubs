@@ -4,12 +4,10 @@
 
 #include <SFML/System.hpp>
 
+#include "Rendering/BlockSelection.h"
 #include "Rendering/Renderable.h"
-#include "Rendering/RenderEngine.h"
 #include "Utils/AABB.h"
 #include "Utils/ICollidable.h"
-#include "World/BlockFace.h"
-#include "Rendering/BlockSelection.h"
 
 class World;
 

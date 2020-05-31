@@ -1,11 +1,8 @@
-#include <SFML/System.hpp>
 #include <cmath>
 
-#include "Exception/NullptrException.h"
+#include <SFML/System.hpp>
+
 #include "Exception/OutOfRangeException.h"
-#include "Player.h"
-#include "Rendering/RenderEngine.h"
-#include "World/Chunk.h"
 #include "World/World.h"
 
 #define NUM_CHUNKS_LENGTH 2   // Actually half the total length

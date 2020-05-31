@@ -1,10 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 
-#include "Utils/ICollidable.h"
 #include "Utils/AABB.h"
+#include "Utils/ICollidable.h"
 
 /*!
  * It's a block. Seems pretty obvious.

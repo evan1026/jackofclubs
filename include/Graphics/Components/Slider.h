@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <type_traits>
 
 #include "Graphics/Components/Component.h"

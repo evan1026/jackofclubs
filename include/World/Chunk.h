@@ -1,12 +1,11 @@
 #pragma once
 
 #include <array>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System.hpp>
 #include <vector>
 
+#include <SFML/System.hpp>
+
 #include "Rendering/Renderable.h"
-#include "Rendering/RenderEngine.h"
 #include "Rendering/Vertex.h"
 #include "World/Block.h"
 

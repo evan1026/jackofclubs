@@ -1,18 +1,15 @@
 #pragma once
 
-#include <chrono>
 #include <memory>
+
 #include <SFML/System.hpp>
-#include <SFML/Window.hpp>
 
 #include "Debug/Graphics/FPSCounter.h"
 #include "Graphics/Menu/Menu.h"
 #include "Graphics/Screen/Screen.h"
 #include "Player.h"
-#include "Rendering/RenderEngine.h"
 #include "Utils/Events/IKeyboardEventHandler.h"
 #include "Utils/Events/IMouseEventHandler.h"
-#include "World/BlockFace.h"
 #include "World/World.h"
 
 class Game;

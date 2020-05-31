@@ -9,8 +9,6 @@
  * Base class for all exceptions. It resembles Java's Exception
  * in that it will save the stacktrace and will print it out as
  * part of Exception::what
- *
- * Currently, the system only supports stack traces on Linux
  */
 class Exception : public std::runtime_error {
     char ** _out;                            // The text to use in what(). It's a pointer to a pointer so that the text can be mutable, even when the exception is const

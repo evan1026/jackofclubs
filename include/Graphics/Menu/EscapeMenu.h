@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Graphics/Menu/Menu.h"
-#include "Graphics/Components/Button.h"
 #include "Game.h"
+#include "Graphics/Components/Button.h"
+#include "Graphics/Menu/Menu.h"
 
 class EscapeMenu : public Menu {
 

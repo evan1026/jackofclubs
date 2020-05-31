@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include "Rendering/Image.h"
 #include "Rendering/stb_image.h"
 

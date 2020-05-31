@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "Debug/DebugOptions.h"
 #include "Debug/Graphics/FPSCounter.h"
 #include "Utils/Font.h"

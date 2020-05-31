@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
 #include <unordered_map>
+
+#include <SFML/Graphics.hpp>
 
 #include "Utils/EnumClassHash.h"
 

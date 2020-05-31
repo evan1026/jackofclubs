@@ -1,5 +1,5 @@
-#include <iostream>
 #include <fstream>
+
 #include <GlobalLogger.hpp>
 
 #include "Exception/NullptrException.h"

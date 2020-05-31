@@ -2,11 +2,9 @@
 
 #include "Debug/DebugOptions.h"
 #include "Player.h"
-#include "Utils/AABB.h"
-#include "Utils/Math.h"
-#include "World/BlockFace.h"
-#include "World/World.h"
 #include "Rendering/AABBRenderer.h"
+#include "Utils/Math.h"
+#include "World/World.h"
 
 #define AABB_INSET 0.25
 #define AABB_INSET_SCALED AABB_INSET * 99 / 100 // Needed because floating point is inexact, and when we

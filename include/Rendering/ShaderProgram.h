@@ -1,12 +1,11 @@
 #pragma once
 
-#include <GL/glew.h>
 #include <optional>
 #include <functional>
 #include <map>
-#include "glm/glm.hpp"
 
-#include "Shader.h"
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 class ShaderProgram {
 

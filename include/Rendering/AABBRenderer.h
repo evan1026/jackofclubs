@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Utils/AABB.h"
 #include "Rendering/Renderable.h"
+#include "Utils/AABB.h"
 
 class AABBRenderer : private Renderable {
 

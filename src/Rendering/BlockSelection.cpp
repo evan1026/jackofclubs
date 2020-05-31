@@ -1,5 +1,7 @@
-#include "Rendering/BlockSelection.h"
+#include <optional>
+
 #include "Rendering/AABBRenderer.h"
+#include "Rendering/BlockSelection.h"
 
 BlockSelection::BlockSelection() : _selection(std::optional<BlockFace>()) {}
 

@@ -1,5 +1,3 @@
-#include <SFML/System.hpp>
-
 #include "Utils/AABB.h"
 
 /*! \callergraph
