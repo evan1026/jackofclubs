@@ -1,5 +1,4 @@
-#ifndef PLATFORMS_H
-#define PLATFORMS_H
+#pragma once
 
 #if defined(linux) || defined(__linux) || defined(__linux__)
     #define JOC_LINUX_BUILD
@@ -7,6 +6,4 @@
     #define JOC_WINDOWS_BUILD
 #else
     #error Platform not supported. Please notify evanallan1026@gmail.com
-#endif
-
 #endif

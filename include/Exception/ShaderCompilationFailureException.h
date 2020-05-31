@@ -1,5 +1,4 @@
-#ifndef SHADER_COMPILATION_FAILURE_EXCEPTION_H
-#define SHADER_COMPILATION_FAILURE_EXCEPTION_H
+#pragma once
 
 #include <sstream>
 
@@ -22,5 +21,3 @@ public:
      */
     ShaderCompilationFailureException(std::string fileName, std::string errorMessage, int stack_skip = 0) : Exception(generateMessage(fileName, errorMessage), stack_skip + 1) {}
 };
-
-#endif

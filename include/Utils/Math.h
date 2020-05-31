@@ -1,5 +1,4 @@
-#ifndef MATH_H
-#define MATH_H
+#pragma once
 
 #include <cmath>
 #include <type_traits>
@@ -180,5 +179,3 @@ namespace Math {
         return (x > maxOfRest) ? x : maxOfRest;
     }
 };
-
-#endif

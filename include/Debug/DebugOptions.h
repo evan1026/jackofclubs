@@ -1,5 +1,4 @@
-#ifndef DEBUG_OPTIONS_H
-#define DEBUG_OPTIONS_H
+#pragma once
 
 /*!
  * A collection of options regarding displaying debug info on the screen
@@ -62,5 +61,3 @@ class DebugOptions {
          */
         static inline void setShowDebugOptions      (bool x) { _showDebug            = x; }
 };
-
-#endif

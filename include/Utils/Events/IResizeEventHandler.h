@@ -1,5 +1,4 @@
-#ifndef I_RESIZE_EVENT_HANDLER_H
-#define I_RESIZE_EVENT_HANDLER_H
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -17,5 +16,3 @@ class IResizeEventHandler {
          */
         virtual bool handleResize(const sf::Event::SizeEvent& e) = 0;
 };
-
-#endif

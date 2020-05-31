@@ -1,5 +1,4 @@
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#pragma once
 
 #include <sstream>
 #include <stdexcept>
@@ -45,4 +44,3 @@ public:
     // Automatically called by runtime environment if exception is left uncaught
     const char * what() const noexcept override;
 };
-#endif

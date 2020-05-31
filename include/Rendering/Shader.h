@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <string>
 
@@ -22,5 +21,3 @@ class Shader {
 
         auto getId() const { return _id; }
 };
-
-#endif

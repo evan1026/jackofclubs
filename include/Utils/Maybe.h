@@ -1,5 +1,4 @@
-#ifndef MAYBE_H
-#define MAYBE_H
+#pragma once
 
 #include "Exception/NullMaybeException.h"
 
@@ -172,5 +171,3 @@ public:
         else throw NullMaybeException();
     }
 };
-
-#endif

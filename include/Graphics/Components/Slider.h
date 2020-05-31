@@ -1,5 +1,4 @@
-#ifndef SLIDER_H
-#define SLIDER_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <type_traits>
@@ -187,5 +186,3 @@ class Slider : public Component, public IMouseEventHandler {
             return false;
         }
 };
-
-#endif

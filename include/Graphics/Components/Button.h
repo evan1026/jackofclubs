@@ -1,5 +1,4 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#pragma once
 
 #include <functional>
 
@@ -43,5 +42,3 @@ class Button : public Component, public IMouseEventHandler {
         bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
 
 };
-
-#endif

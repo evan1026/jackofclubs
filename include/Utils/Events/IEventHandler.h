@@ -1,5 +1,4 @@
-#ifndef I_EVENT_HANDLER_H
-#define I_EVENT_HANDLER_H
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -16,5 +15,3 @@ class IEventHandler {
          */
         virtual bool handleEvent(const sf::Event& e) = 0;
 };
-
-#endif

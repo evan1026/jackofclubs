@@ -1,5 +1,4 @@
-#ifndef CHUNK_H
-#define CHUNK_H
+#pragma once
 
 #include <array>
 #include <SFML/Graphics/Color.hpp>
@@ -59,5 +58,3 @@ class Chunk : public Renderable {
         // rebuild its vertex array
         void notifyChanged();
 };
-
-#endif

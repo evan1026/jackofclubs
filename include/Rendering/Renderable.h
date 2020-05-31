@@ -1,5 +1,4 @@
-#ifndef RENDERABLE_H
-#define RENDERABLE_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -36,5 +35,3 @@ class Renderable {
          */
         virtual void render(RenderEngine&, sf::RenderWindow&) = 0;
 };
-
-#endif

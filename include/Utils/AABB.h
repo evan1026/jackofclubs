@@ -1,5 +1,4 @@
-#ifndef AABB_H
-#define AABB_H
+#pragma once
 
 #include <SFML/System.hpp>
 
@@ -31,5 +30,3 @@ class AABB {
 
         bool checkCollision(const AABB& other) const;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef WORLD_H
-#define WORLD_H
+#pragma once
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
@@ -46,5 +45,3 @@ class World : public Renderable {
         sf::Vector3i getMinPosition() const;
         sf::Vector3i getMaxPosition() const;
 };
-
-#endif

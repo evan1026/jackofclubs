@@ -1,5 +1,4 @@
-#ifndef ESCAPE_MENU_H
-#define ESCAPE_MENU_H
+#pragma once
 
 #include "Graphics/Menu/Menu.h"
 #include "Graphics/Components/Button.h"
@@ -28,5 +27,3 @@ class EscapeMenu : public Menu {
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleResize(const sf::Event::SizeEvent& e) override;
 };
-
-#endif

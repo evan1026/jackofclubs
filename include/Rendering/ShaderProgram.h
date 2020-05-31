@@ -1,5 +1,4 @@
-#ifndef SHADER_PROGRAM_H
-#define SHADER_PROGRAM_H
+#pragma once
 
 #include <GL/glew.h>
 #include <optional>
@@ -37,5 +36,3 @@ class ShaderProgram {
         void setMat3(const std::string& name, const glm::mat3& mat3) { safeCallMatrix(glUniformMatrix3fv, name, GL_FALSE, &mat3[0][0]); }
         void setMat4(const std::string& name, const glm::mat4& mat4) { safeCallMatrix(glUniformMatrix4fv, name, GL_FALSE, &mat4[0][0]); }
 };
-
-#endif

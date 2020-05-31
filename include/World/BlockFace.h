@@ -1,5 +1,4 @@
-#ifndef BLOCK_FACE_H
-#define BLOCK_FACE_H
+#pragma once
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -50,5 +49,3 @@ class BlockFace {
         void setFace(Face face);
         void setColor(sf::Color color);
 };
-
-#endif

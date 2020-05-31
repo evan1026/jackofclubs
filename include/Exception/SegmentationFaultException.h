@@ -1,5 +1,4 @@
-#ifndef SEGMENTATION_FAULT_EXCEPTION_H
-#define SEGMENTATION_FAULT_EXCEPTION_H
+#pragma once
 
 #include <sstream>
 
@@ -22,5 +21,3 @@ public:
      */
     SegmentationFaultException(void* loc, void* address, int stack_skip = 0) : Exception(generateMessage(loc), stack_skip + 1, address) {}
 };
-
-#endif

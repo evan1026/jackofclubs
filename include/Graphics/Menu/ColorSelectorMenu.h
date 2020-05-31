@@ -1,5 +1,4 @@
-#ifndef COLOR_SELECTOR_MENU_H
-#define COLOR_SELECTOR_MENU_H
+#pragma once
 
 #include "Graphics/Menu/Menu.h"
 #include "Graphics/Components/Slider.h"
@@ -50,5 +49,3 @@ class ColorSelectorMenu : public Menu {
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleResize(const sf::Event::SizeEvent& e) override;
 };
-
-#endif

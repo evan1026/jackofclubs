@@ -1,5 +1,4 @@
-#ifndef BLOCK_H
-#define BLOCK_H
+#pragma once
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System.hpp>
@@ -38,5 +37,3 @@ class Block : public ICollidable {
 
         AABB getBoundingBox() const override;
 };
-
-#endif

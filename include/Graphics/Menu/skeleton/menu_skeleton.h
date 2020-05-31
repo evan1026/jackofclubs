@@ -1,5 +1,4 @@
-#ifndef {NAME_UPPER}_MENU_H
-#define {NAME_UPPER}_MENU_H
+#pragma once
 
 #include "Graphics/Menu/Menu.h"
 
@@ -17,5 +16,3 @@ class {NAME}Menu : public Menu {
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleResize(const sf::Event::SizeEvent& e) override;
 };
-
-#endif

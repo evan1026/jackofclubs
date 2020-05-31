@@ -1,5 +1,4 @@
-#ifndef RENDER_ENGINE_H
-#define RENDER_ENGINE_H
+#pragma once
 
 #include <GL/glew.h>
 #include "glm/glm.hpp"
@@ -62,5 +61,3 @@ class RenderEngine : public IResizeEventHandler {
         void useLightingShader();
         void useNoLightingShader();
 };
-
-#endif

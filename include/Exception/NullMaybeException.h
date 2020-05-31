@@ -1,5 +1,4 @@
-#ifndef NULL_MAYBE_EXCEPTION_H
-#define NULL_MAYBE_EXCEPTION_H
+#pragma once
 
 #include "Exception/Exception.h"
 
@@ -14,5 +13,3 @@ public:
      */
     NullMaybeException(int stack_skip = 0) : Exception("NullMaybeException: Attempted to turn an empty maybe into a value.", stack_skip + 1) {}
 };
-
-#endif

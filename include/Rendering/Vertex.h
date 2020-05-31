@@ -1,5 +1,4 @@
-#ifndef VERTEX_H
-#define VERTEX_H
+#pragma once
 
 /*!
  * Simple data structure defining a vertex that gets pushed
@@ -26,5 +25,3 @@ struct Vertex {
     /*! Initializes new vertex */
     Vertex() : pos{0,0,0}, color{0,0,0}, normal{0,0,0}, texCoords{0,0} {}
 };
-
-#endif

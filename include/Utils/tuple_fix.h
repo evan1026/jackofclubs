@@ -1,5 +1,4 @@
-#ifndef TUPLE_FIX_H
-#define TUPLE_FIX_H
+#pragma once
 
 /*!
  * Code to allow tuples to be used as the key in a map/set
@@ -62,5 +61,3 @@ namespace std{
 
     };
 }
-
-#endif

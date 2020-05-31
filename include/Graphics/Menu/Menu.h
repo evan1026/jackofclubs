@@ -1,5 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 
 #include <memory>
 
@@ -62,5 +61,3 @@ class Menu : public Renderable, public IMouseEventHandler, public IKeyboardEvent
 
         void setSize(const sf::Vector2f size);
 };
-
-#endif

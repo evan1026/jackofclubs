@@ -1,5 +1,4 @@
-#ifndef FONT_H
-#define FONT_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 
@@ -23,5 +22,3 @@ class Font : public sf::Font {
             loadFromFile(file);
         }
 };
-
-#endif

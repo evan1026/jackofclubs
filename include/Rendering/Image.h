@@ -1,5 +1,4 @@
-#ifndef IMAGE_H
-#define IMAGE_H
+#pragma once
 
 #include <filesystem>
 
@@ -25,5 +24,3 @@ class Image {
         int getHeight() const { return _height; }
         int getNumChannels() const { return _numChannels; }
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef FPS_COUNTER_H
-#define FPS_COUNTER_H
+#pragma once
 
 #include <chrono>
 #include <SFML/Graphics.hpp>
@@ -37,5 +36,3 @@ class FPSCounter : public sf::Text, public Renderable {
         long getRefreshRate();
         void setRefreshRate(long r);
 };
-
-#endif

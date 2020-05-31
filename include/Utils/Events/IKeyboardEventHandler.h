@@ -1,5 +1,4 @@
-#ifndef I_KEYBOARD_EVENT_HANDLER_H
-#define I_KEYBOARD_EVENT_HANDLER_H
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -17,5 +16,3 @@ class IKeyboardEventHandler {
          */
         virtual bool handleKeyPressed(const sf::Event::KeyEvent& e) = 0;
 };
-
-#endif

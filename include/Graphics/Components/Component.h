@@ -1,5 +1,4 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 
@@ -43,5 +42,3 @@ class Component {
 
         sf::Rect<int> getBounds();
 };
-
-#endif

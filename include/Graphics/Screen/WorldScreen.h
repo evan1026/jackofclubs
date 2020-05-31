@@ -1,5 +1,4 @@
-#ifndef WORLD_SCREEN_H
-#define WORLD_SCREEN_H
+#pragma once
 
 #include <chrono>
 #include <memory>
@@ -66,5 +65,3 @@ class WorldScreen : public Screen, public IKeyboardEventHandler, public IMouseEv
 
         void render(RenderEngine& re, sf::RenderWindow& w) override;
 };
-
-#endif

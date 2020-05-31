@@ -1,5 +1,4 @@
-#ifndef NULLPTR_EXCEPTION_H
-#define NULLPTR_EXCEPTION_H
+#pragma once
 
 #include "Exception/Exception.h"
 
@@ -13,5 +12,3 @@ public:
      */
     NullptrException(void* address, int stack_skip = 0) : Exception("NullptrException: Tried to dereference null pointer", stack_skip + 1, address) {}
 };
-
-#endif

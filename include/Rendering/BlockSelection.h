@@ -1,5 +1,4 @@
-#ifndef BLOCK_SELECTION_H
-#define BLOCK_SELECTION_H
+#pragma once
 
 #include <SFML/System.hpp>
 #include <optional>
@@ -17,5 +16,3 @@ class BlockSelection : public Renderable {
         void setSelection(const std::optional<BlockFace>& selection) { _selection = selection; }
         inline std::optional<BlockFace> getSelection() const { return _selection; }
 };
-
-#endif

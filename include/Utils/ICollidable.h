@@ -1,5 +1,4 @@
-#ifndef ICOLLIDABLE_H
-#define ICOLLIDABLE_H
+#pragma once
 
 #include "Utils/AABB.h"
 
@@ -16,5 +15,3 @@ class ICollidable {
 
         bool checkCollision(const ICollidable& other) const;
 };
-
-#endif

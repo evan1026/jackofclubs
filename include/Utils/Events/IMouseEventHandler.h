@@ -1,5 +1,4 @@
-#ifndef I_MOUSE_EVENT_HANDLER_H
-#define I_MOUSE_EVENT_HANDLER_H
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -31,5 +30,3 @@ class IMouseEventHandler {
          */
         virtual bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) = 0;
 };
-
-#endif

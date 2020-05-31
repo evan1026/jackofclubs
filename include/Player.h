@@ -1,5 +1,4 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include <SFML/System.hpp>
 
@@ -67,5 +66,3 @@ class Player : public ICollidable, public Renderable {
 
         sf::Vector3f getHeadLocation() const;
 };
-
-#endif

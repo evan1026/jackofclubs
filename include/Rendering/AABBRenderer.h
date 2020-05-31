@@ -1,5 +1,4 @@
-#ifndef AABB_RENDERER_H
-#define AABB_RENDERER_H
+#pragma once
 
 #include "Utils/AABB.h"
 #include "Rendering/Renderable.h"
@@ -24,5 +23,3 @@ class AABBRenderer : private Renderable {
         // be rendered so we implement the function to do nothing
         void render(RenderEngine& e, sf::RenderWindow& w) override {}
 };
-
-#endif

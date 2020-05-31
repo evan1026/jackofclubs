@@ -1,5 +1,4 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <sstream>
 #include <SFML/Graphics.hpp>
@@ -30,5 +29,3 @@ struct Utils {
         return end.x - start.x;
     }
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef OUT_OF_RANGE_EXCEPTION_H
-#define OUT_OF_RANGE_EXCEPTION_H
+#pragma once
 
 #include "Exception/Exception.h"
 
@@ -15,5 +14,3 @@ public:
      */
     OutOfRangeException(int stack_skip = 0) : Exception("OutOfRangeException: tried to reference object outside of range of container", stack_skip + 1) {}
 };
-
-#endif

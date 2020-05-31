@@ -1,5 +1,4 @@
-#ifndef SCREEN_H
-#define SCREEN_H
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -20,5 +19,3 @@ class Screen : public Renderable, public IEventHandler {
         virtual void tick() = 0;
         virtual ~Screen() = default;
 };
-
-#endif
