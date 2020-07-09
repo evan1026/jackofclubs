@@ -133,3 +133,23 @@ void Component::render(RenderEngine& e, sf::RenderWindow& w) {
         comp->render(e, w);
     }
 }
+
+bool Component::handleKeyPressed(const sf::Event::KeyEvent& e) {
+    return delegateToChildren([e](auto& child){return child.handleKeyPressed(e);});
+}
+
+bool Component::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
+    return delegateToChildren([e](auto& child){return child.handleMouseMoved(e);});
+}
+
+bool Component::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
+    return delegateToChildren([e](auto& child){return child.handleMouseButtonPressed(e);});
+}
+
+bool Component::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
+    return delegateToChildren([e](auto& child){return child.handleMouseButtonReleased(e);});
+}
+
+bool Component::handleResize(const sf::Event::SizeEvent& e) {
+    return delegateToChildren([e](auto& child){return child.handleResize(e);});
+}

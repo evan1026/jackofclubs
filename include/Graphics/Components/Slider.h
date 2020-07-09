@@ -20,7 +20,7 @@
  * manipulates, undefined behavior can occur. So don't let that happen ;)
  */
 template<typename T>
-class Slider : public Component, public IMouseEventHandler {
+class Slider : public Component {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "Slider can only be contructed with number types!");
 
     sf::RectangleShape _sliderLine;

@@ -15,7 +15,7 @@
  * which opens a resolution menu, and you can go backwards through the
  * whole thing when done with the current menu).
  */
-class Menu : public Component, public IMouseEventHandler, public IKeyboardEventHandler, public IResizeEventHandler {
+class Menu : public Component {
 
     public:
         // Somewhat restrictive, but useful enough that it makes up for it

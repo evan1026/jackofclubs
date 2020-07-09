@@ -10,7 +10,7 @@ using ButtonFunction = std::function<void(const std::string&)>;
 /*!
  * When the user clicks on it, it calls the callback function. Pretty simple.
  */
-class Button : public Component, public IMouseEventHandler {
+class Button : public Component {
 
     ButtonFunction _function;
     std::string _name;
@@ -38,6 +38,5 @@ class Button : public Component, public IMouseEventHandler {
 
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
-        bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
 
 };

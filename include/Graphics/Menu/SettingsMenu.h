@@ -14,10 +14,4 @@ class SettingsMenu : public Menu {
 
     public:
         SettingsMenu();
-
-        bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
-        bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
-        bool handleKeyPressed(const sf::Event::KeyEvent& e) override;
-        bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
-        bool handleResize(const sf::Event::SizeEvent& e) override;
 };

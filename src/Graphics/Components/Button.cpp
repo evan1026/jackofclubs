@@ -18,11 +18,6 @@ bool Button::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
 }
 
 /*! \callergraph */
-bool Button::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
-    return false;
-}
-
-/*! \callergraph */
 void Button::renderComponent(sf::RenderWindow& w) {
     sf::Vector2i size = getSize();
     sf::RectangleShape rect(sf::Vector2f(size.x, size.y));

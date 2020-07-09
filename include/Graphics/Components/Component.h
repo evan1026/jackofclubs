@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <memory>
 #include <vector>
 
@@ -7,6 +8,14 @@
 
 #include "Rendering/RenderEngine.h"
 #include "Rendering/Renderable.h"
+#include "Utils/Events/IKeyboardEventHandler.h"
+#include "Utils/Events/IMouseEventHandler.h"
+#include "Utils/Events/IResizeEventHandler.h"
+
+class Component;
+
+template<typename T>
+concept BoolFunc = std::is_invocable_r_v<bool, T, Component&>;
 
 /*!
  * Base class for a menu component. Things that would extend this would be buttons,
@@ -16,7 +25,7 @@
  * with an sf::Window (as opposed to also including the render engine, like Renderable).
  * This just makes orthogonal rendering easier.
  */
-class Component : public Renderable {
+class Component : public Renderable, public IMouseEventHandler, public IKeyboardEventHandler, public IResizeEventHandler {
 
     private:
         /*! The box that encompasses the component */
@@ -28,6 +37,17 @@ class Component : public Renderable {
 
         void setGlobalPosition(const sf::Vector2i& pos);
         void setParentPosition(const sf::Vector2i& pos);
+
+        bool delegateToChildren(BoolFunc auto func) {
+            bool finished;
+            for (auto child : _children) {
+                finished = finished || func(*child);
+                if (finished) {
+                    break;
+                }
+            }
+            return finished;
+        }
 
     protected:
         virtual void renderComponent(sf::RenderWindow& w) = 0;
@@ -59,4 +79,10 @@ class Component : public Renderable {
 
         void add(std::shared_ptr<Component>);
         std::shared_ptr<Component> remove(std::shared_ptr<Component>);
+
+        virtual bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
+        virtual bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
+        virtual bool handleKeyPressed(const sf::Event::KeyEvent& e) override;
+        virtual bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
+        virtual bool handleResize(const sf::Event::SizeEvent& e) override;
 };

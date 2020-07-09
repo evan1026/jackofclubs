@@ -76,24 +76,9 @@ void EscapeMenu::buttonCallback(const std::string& s) {
 }
 
 /*! \callergraph */
-bool EscapeMenu::handleKeyPressed(const sf::Event::KeyEvent& e) {
-    return false;
-}
-
-/*! \callergraph */
-bool EscapeMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
-    return (_quitButton->handleMouseMoved(e) || _resumeButton->handleMouseMoved(e) || _settingsButton->handleMouseMoved(e));
-}
-
-/*! \callergraph */
 bool EscapeMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
-    _quitButton->handleMouseButtonPressed(e) || _resumeButton->handleMouseButtonPressed(e) || _settingsButton->handleMouseButtonPressed(e);
+    Component::handleMouseButtonPressed(e);
     return !_resumeButtonClicked;
-}
-
-/*! \callergraph */
-bool EscapeMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
-    return (_quitButton->handleMouseButtonReleased(e) || _resumeButton->handleMouseButtonReleased(e) || _settingsButton->handleMouseButtonReleased(e));
 }
 
 /*! \callergraph */

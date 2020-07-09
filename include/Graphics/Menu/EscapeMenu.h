@@ -24,8 +24,5 @@ class EscapeMenu : public Menu {
         EscapeMenu(int width, int height, Game& g, Screen& screen);
 
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
-        bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;
-        bool handleKeyPressed(const sf::Event::KeyEvent& e) override;
-        bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleResize(const sf::Event::SizeEvent& e) override;
 };
