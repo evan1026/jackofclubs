@@ -23,9 +23,9 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     _redRef(color.r),   // These three keep references to the original data
     _greenRef(color.g),
     _blueRef(color.b),
-    _redSlider  (0, 255, _redRef,   sf::Vector2i(START_X, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
-    _greenSlider(0, 255, _greenRef, sf::Vector2i(START_X + SPACER + SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
-    _blueSlider (0, 255, _blueRef,  sf::Vector2i(START_X + 2 * SPACER + 2 * SLIDER_WIDTH, START_Y), sf::Vector2i(0,0), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT)),
+    _redSlider  (std::make_shared<Slider<sf::Uint8>>(0, 255, color.r, sf::Vector2i(START_X, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
+    _greenSlider(std::make_shared<Slider<sf::Uint8>>(0, 255, color.g, sf::Vector2i(START_X + SPACER + SLIDER_WIDTH, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
+    _blueSlider (std::make_shared<Slider<sf::Uint8>>(0, 255, color.b, sf::Vector2i(START_X + 2 * SPACER + 2 * SLIDER_WIDTH, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
     _colorRect(sf::Vector2f(COLOR_RECT_SIZE, COLOR_RECT_SIZE)),
     _redText  ("Red",   Font::defaultFont),
     _greenText("Green", Font::defaultFont),
@@ -36,6 +36,10 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     _greenText.setCharacterSize(COLOR_TEXT_SIZE);
     _blueText.setCharacterSize(COLOR_TEXT_SIZE);
     _titleText.setCharacterSize(TITLE_TEXT_SIZE);
+
+    add(_redSlider);
+    add(_greenSlider);
+    add(_blueSlider);
 }
 
 /*! \callergraph
@@ -47,21 +51,17 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
  *
  * \p w - the window to draw to
  */
-void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
+void ColorSelectorMenu::renderComponent(sf::RenderWindow& w) {
+    Menu::renderComponent(w);
 
     // Get our position...
-    sf::FloatRect bounds = getBounds();
+    sf::IntRect bounds = getBounds();
     sf::Vector2i pos(bounds.left, bounds.top);
-
-    // ...so we can tell our kids about it
-    _redSlider.setParentPosition(pos);
-    _greenSlider.setParentPosition(pos);
-    _blueSlider.setParentPosition(pos);
 
     {
         // Now grab the last slider's position and make the color preview
         // be to the right of it (3 SPACER's away)
-        sf::Vector2i blueSliderPos = _blueSlider.getGlobalPosition();
+        sf::Vector2i blueSliderPos = _blueSlider->getGlobalPosition();
         _colorRect.setPosition(sf::Vector2f(blueSliderPos.x, blueSliderPos.y)
                 + sf::Vector2f(SLIDER_WIDTH + 3 * SPACER, SLIDER_HEIGHT / 2 - COLOR_RECT_SIZE / 2));
         _colorRect.setFillColor(sf::Color(_redRef, _greenRef, _blueRef)); // Gotta make sure the preview has the right color
@@ -69,9 +69,9 @@ void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
 
     {
         // Now we grab the slider positions...
-        sf::Vector2i redPos = _redSlider.getGlobalPosition();
-        sf::Vector2i greenPos = _greenSlider.getGlobalPosition();
-        sf::Vector2i bluePos = _blueSlider.getGlobalPosition();
+        sf::Vector2i redPos = _redSlider->getGlobalPosition();
+        sf::Vector2i greenPos = _greenSlider->getGlobalPosition();
+        sf::Vector2i bluePos = _blueSlider->getGlobalPosition();
 
         // ...and center the text boxes under them
         _redText.setPosition  (redPos.x   + SLIDER_WIDTH / 2 - Utils::textWidth(_redText)   / 2, redPos.y   - 25);
@@ -81,11 +81,6 @@ void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
 
     // Last calculation: center the title text at the top
     _titleText.setPosition(pos.x + (float)bounds.width / 2 - Utils::textWidth(_titleText) / 2, pos.y + 25);
-
-    // Render the sliders
-    _redSlider.render(w);
-    _greenSlider.render(w);
-    _blueSlider.render(w);
 
     // And draw the rest of the components
     w.draw(_colorRect);
@@ -105,9 +100,9 @@ void ColorSelectorMenu::renderMenu(sf::RenderWindow& w) {
  */
 bool ColorSelectorMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
     if (getBounds().contains(e.x, e.y)) {
-        if (_redSlider.handleMouseButtonPressed(e))   return true;
-        if (_greenSlider.handleMouseButtonPressed(e)) return true;
-        if (_blueSlider.handleMouseButtonPressed(e))  return true;
+        if (_redSlider->handleMouseButtonPressed(e))   return true;
+        if (_greenSlider->handleMouseButtonPressed(e)) return true;
+        if (_blueSlider->handleMouseButtonPressed(e))  return true;
         return true;
     }
     return false;
@@ -124,9 +119,9 @@ bool ColorSelectorMenu::handleMouseButtonPressed(const sf::Event::MouseButtonEve
  */
 bool ColorSelectorMenu::handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) {
 
-    if (_redSlider.handleMouseButtonReleased(e))   return true;
-    if (_greenSlider.handleMouseButtonReleased(e)) return true;
-    if (_blueSlider.handleMouseButtonReleased(e))  return true;
+    if (_redSlider->handleMouseButtonReleased(e))   return true;
+    if (_greenSlider->handleMouseButtonReleased(e)) return true;
+    if (_blueSlider->handleMouseButtonReleased(e))  return true;
 
     if (getBounds().contains(e.x, e.y)) {
         return true;
@@ -155,9 +150,9 @@ bool ColorSelectorMenu::handleKeyPressed(const sf::Event::KeyEvent& e) {
  */
 bool ColorSelectorMenu::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
     if (getBounds().contains(e.x, e.y)) {
-        if (_redSlider.handleMouseMoved(e))   return true;
-        if (_greenSlider.handleMouseMoved(e)) return true;
-        if (_blueSlider.handleMouseMoved(e))  return true;
+        if (_redSlider->handleMouseMoved(e))   return true;
+        if (_greenSlider->handleMouseMoved(e)) return true;
+        if (_blueSlider->handleMouseMoved(e))  return true;
         return true;
     }
     return false;

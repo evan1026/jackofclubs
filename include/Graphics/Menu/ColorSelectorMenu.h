@@ -23,9 +23,9 @@ class ColorSelectorMenu : public Menu {
     sf::Uint8& _greenRef;
     sf::Uint8& _blueRef;
 
-    Slider<sf::Uint8> _redSlider;
-    Slider<sf::Uint8> _greenSlider;
-    Slider<sf::Uint8> _blueSlider;
+    std::shared_ptr<Slider<sf::Uint8>> _redSlider;
+    std::shared_ptr<Slider<sf::Uint8>> _greenSlider;
+    std::shared_ptr<Slider<sf::Uint8>> _blueSlider;
 
     sf::RectangleShape _colorRect;
 
@@ -35,7 +35,7 @@ class ColorSelectorMenu : public Menu {
     sf::Text _titleText; // Says "Color Selector" up at the top
 
     protected:
-        void renderMenu(sf::RenderWindow& w) override;
+        void renderComponent(sf::RenderWindow& w) override;
 
     public:
         ColorSelectorMenu(sf::Color& color);

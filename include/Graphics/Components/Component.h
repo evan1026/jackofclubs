@@ -1,6 +1,12 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include <SFML/Graphics.hpp>
+
+#include "Rendering/RenderEngine.h"
+#include "Rendering/Renderable.h"
 
 /*!
  * Base class for a menu component. Things that would extend this would be buttons,
@@ -10,18 +16,28 @@
  * with an sf::Window (as opposed to also including the render engine, like Renderable).
  * This just makes orthogonal rendering easier.
  */
-class Component {
+class Component : public Renderable {
 
-    protected:
+    private:
         /*! The box that encompasses the component */
         sf::Rect<int> _boundingBox;
         /*! The position of the component relative to its parent */
         sf::Vector2i _localPos;
 
+        std::vector<std::shared_ptr<Component>> _children;
+
         void setGlobalPosition(const sf::Vector2i& pos);
+        void setParentPosition(const sf::Vector2i& pos);
+
+    protected:
+        virtual void renderComponent(sf::RenderWindow& w) = 0;
 
     public:
-        Component(const sf::Vector2i& localPos, const sf::Vector2i& parentPos, const sf::Vector2i& size);
+        Component();
+        Component(const sf::Vector2i& localPos, const sf::Vector2i& size);
+        explicit Component(const sf::Vector2i& size);
+
+        virtual ~Component() = default;
 
         /*! \callergraph
          *
@@ -29,16 +45,18 @@ class Component {
          *
          * \p w - sf::RenderWindow to render to
          */
-        virtual void render(sf::RenderWindow& w) = 0;
+        virtual void render(RenderEngine&, sf::RenderWindow& w) override;
 
         void setSize(const sf::Vector2i& size);
         void setLocalPosition(const sf::Vector2i& pos);
-        void setParentPosition(const sf::Vector2i& pos);
 
-        sf::Vector2i getSize();
-        sf::Vector2i getLocalPosition();
-        sf::Vector2i getGlobalPosition();
-        sf::Vector2i getParentPosition();
+        const sf::Vector2i getSize() const;
+        const sf::Vector2i getLocalPosition() const;
+        const sf::Vector2i getGlobalPosition() const;
+        const sf::Vector2i getParentPosition() const;
 
-        sf::Rect<int> getBounds();
+        const sf::Rect<int> getBounds() const;
+
+        void add(std::shared_ptr<Component>);
+        std::shared_ptr<Component> remove(std::shared_ptr<Component>);
 };

@@ -3,4 +3,5 @@ MESSAGE("Adding ${CURR_DIR}")
 
 set(SOURCES "${SOURCES} ${CURR_DIR}/Menu.cpp
                         ${CURR_DIR}/ColorSelectorMenu.cpp
-                        ${CURR_DIR}/EscapeMenu.cpp" CACHE STRING "Sources for project" FORCE)
+                        ${CURR_DIR}/EscapeMenu.cpp
+                        ${CURR_DIR}/SettingsMenu.cpp" CACHE STRING "Sources for project" FORCE)

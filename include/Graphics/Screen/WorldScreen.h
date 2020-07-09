@@ -47,8 +47,8 @@ class WorldScreen : public Screen, public IKeyboardEventHandler, public IMouseEv
     void placeBlock();
     void removeBlock();
 
-    void addMenu(Menu* const m);
-    void removeMenu();
+    void addMenu(Menu* const m) override;
+    void removeMenu() override;
 
     void handlePlayerMovement();
 

@@ -150,7 +150,7 @@ bool WorldScreen::handleKeyPressed(const sf::Event::KeyEvent& event) {
             return true;
         case sf::Keyboard::Escape:
             if (_activeMenu == nullptr) {
-                addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y, _game));
+                addMenu(new EscapeMenu(_window.getSize().x, _window.getSize().y, _game, *this));
             } else {
                 removeMenu();
             }
@@ -378,6 +378,8 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
 
     // And draw the menu if there is one
     if (_activeMenu != nullptr) {
+        w.pushGLStates();
         _activeMenu->render(re, w);
+        w.popGLStates();
     }
 }

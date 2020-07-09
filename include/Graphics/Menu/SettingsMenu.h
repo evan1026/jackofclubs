@@ -1,27 +1,19 @@
 #pragma once
 
-#include "Game.h"
-#include "Graphics/Components/Button.h"
+#include "Graphics/Components/Slider.h"
 #include "Graphics/Menu/Menu.h"
 
-class EscapeMenu : public Menu {
+class SettingsMenu : public Menu {
 
-    Game& _game;
-    Screen& _screen;
-
-    std::shared_ptr<Button> _quitButton;
-    std::shared_ptr<Button> _resumeButton;
-    std::shared_ptr<Button> _settingsButton;
-
-    bool _resumeButtonClicked;
-
-    void buttonCallback(const std::string& s);
+    //Slider<float> _lightPosXSlider;
+    //Slider<float> _lightPosYSlider;
+    //Slider<float> _lightPosZSlider;
 
     protected:
         void renderComponent(sf::RenderWindow& w) override;
 
     public:
-        EscapeMenu(int width, int height, Game& g, Screen& screen);
+        SettingsMenu();
 
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
         bool handleMouseButtonReleased(const sf::Event::MouseButtonEvent& e) override;

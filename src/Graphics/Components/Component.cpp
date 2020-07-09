@@ -1,18 +1,26 @@
+#include <algorithm>
+
 #include "Graphics/Components/Component.h"
 
 /*! \callergraph
  *
- * Constucts a new component based on its parent's position
- * and its position relative to the parent.
+ * Constucts a new component based on 
+ * its position relative to the parent.
  *
  * \p localPos  - The position of the component relative to its parent                              <br>
- * \p parentPos - The parent's global position (given to the component by the parent)               <br>
  * \p size      - The length and width of the rectangular bounding box surrounding the component    <br>
  */
-Component::Component(const sf::Vector2i& localPos, const sf::Vector2i& parentPos, const sf::Vector2i& size) :
-    _boundingBox(parentPos + localPos, size),
+Component::Component(const sf::Vector2i& localPos, const sf::Vector2i& size) :
+    _boundingBox(localPos, size),
     _localPos(localPos)
 {}
+
+Component::Component(const sf::Vector2i& size) :
+    _boundingBox(sf::Vector2i(0,0), size),
+    _localPos(sf::Vector2i(0,0))
+{}
+
+Component::Component() : Component(sf::Vector2i(0,0)) {}
 
 /*! \callergraph
  *
@@ -67,7 +75,7 @@ void Component::setParentPosition(const sf::Vector2i& pos) {
  * Returns the length and width of the rectangular bounding box
  * surrounding the component
  */
-sf::Vector2i Component::getSize() {
+const sf::Vector2i Component::getSize() const {
     return sf::Vector2i(_boundingBox.width, _boundingBox.height);
 }
 
@@ -75,7 +83,7 @@ sf::Vector2i Component::getSize() {
  *
  * Returns the component's position relative to its parent
  */
-sf::Vector2i Component::getLocalPosition() {
+const sf::Vector2i Component::getLocalPosition() const {
     return _localPos;
 }
 
@@ -84,7 +92,7 @@ sf::Vector2i Component::getLocalPosition() {
  * Returns the component's global position. Note that, unlike
  * setGlobalPosition(), this function is public
  */
-sf::Vector2i Component::getGlobalPosition() {
+const sf::Vector2i Component::getGlobalPosition() const {
     return sf::Vector2i(_boundingBox.left, _boundingBox.top);
 }
 
@@ -93,7 +101,7 @@ sf::Vector2i Component::getGlobalPosition() {
  * Returns what the component thinks its parent's position is.
  * This may or may not be the parent's actual position.
  */
-sf::Vector2i Component::getParentPosition() {
+const sf::Vector2i Component::getParentPosition() const {
     return getGlobalPosition() - getLocalPosition();
 }
 
@@ -101,6 +109,27 @@ sf::Vector2i Component::getParentPosition() {
  *
  * Returns the bounding box of the component
  */
-sf::Rect<int> Component::getBounds() {
+const sf::Rect<int> Component::getBounds() const {
     return _boundingBox;
+}
+
+void Component::add(std::shared_ptr<Component> component) {
+    _children.push_back(component);
+}
+
+std::shared_ptr<Component> Component::remove(std::shared_ptr<Component> component) {
+    auto pos = std::find(_children.begin(), _children.end(), component);
+    if (pos != _children.end()) {
+        _children.erase(pos);
+        return component;
+    }
+    return nullptr;
+}
+
+void Component::render(RenderEngine& e, sf::RenderWindow& w) {
+    renderComponent(w);
+    for (std::shared_ptr<Component> comp : _children) {
+        comp->setParentPosition(getGlobalPosition());
+        comp->render(e, w);
+    }
 }

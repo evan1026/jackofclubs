@@ -69,11 +69,6 @@ RenderEngine::RenderEngine() :
 
     // Make sure the perspective matches the window
     setPerspective(windowSize.x, windowSize.y);
-
-    _shaderProgramLight.setVec4("ambientLight", lightAmbient);
-    _shaderProgramLight.setVec4("diffuseLight", lightDiffuse);
-    _shaderProgramLight.setVec3("light1Pos", lightPos);
-    _shaderProgramLight.setVec3("light2Pos", light2Pos);
 }
 
 /*! \callergraph
@@ -150,6 +145,11 @@ void RenderEngine::useNoLightingShader() {
 void RenderEngine::beginRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     useLightingShader();
+
+    _shaderProgramLight.setVec4("ambientLight", lightAmbient);
+    _shaderProgramLight.setVec4("diffuseLight", lightDiffuse);
+    _shaderProgramLight.setVec3("light1Pos", lightPos);
+    _shaderProgramLight.setVec3("light2Pos", light2Pos);
 }
 
 /*! \callergraph

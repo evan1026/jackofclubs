@@ -21,21 +21,20 @@ class Button : public Component, public IMouseEventHandler {
         /*! \callergraph
          *
          * \p pos       - The position of the button relative to its parent                                                                                                 <br>
-         * \p parentPos - The global position of the parent                                                                                                                 <br>
          * \p size      - The size of the button                                                                                                                            <br>
          * \p f         - The callback function to call when the button is clicked. Should have the signature @code{.cpp} void callback(const std::string& text) @endcode   <br>
          * \p name      - The name of the button. This string is sent to the callback so that you can have multiple buttons call the same function.                         <br>
          * \p text      - The text to display on the button                                                                                                                 <br>
          */
-        Button(const sf::Vector2i& pos, const sf::Vector2i& parentPos, const sf::Vector2i& size, ButtonFunction f, const std::string& name, const std::string& text) :
-            Component(pos, parentPos, size),
+        Button(const sf::Vector2i& pos, const sf::Vector2i& size, ButtonFunction f, const std::string& name, const std::string& text) :
+            Component(pos, size),
             _function(f),
             _name(name),
             _text(text),
             _mouseOver(false)
             {}
 
-        void render(sf::RenderWindow& w) override;
+        void renderComponent(sf::RenderWindow& w) override;
 
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;

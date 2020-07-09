@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Graphics/Menu/Menu.h"
 #include "Rendering/Renderable.h"
 #include "Utils/Events/IEventHandler.h"
 
@@ -16,4 +17,6 @@ class Screen : public Renderable, public IEventHandler {
          */
         virtual void tick() = 0;
         virtual ~Screen() = default;
+        virtual void addMenu(Menu* const m) = 0;
+        virtual void removeMenu() = 0;
 };

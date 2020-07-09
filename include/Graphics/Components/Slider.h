@@ -46,11 +46,10 @@ class Slider : public Component, public IMouseEventHandler {
          * \p max       - The largest value that will be accepted. This will be the value when the slider is at the highest point.    <br>
          * \p value     - The data that the slider will modify.                                                                       <br>
          * \p localPos  - The slider's position relative to its parent.                                                               <br>
-         * \p parentPos - The parent's global position.                                                                               <br>
          * \p size      - The length and width of the bounding box surrounding the slider.                                            <br>
          */
-        Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& parentPos, const sf::Vector2i& size) :
-            Component(localPos, parentPos, size),
+        Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& size) :
+            Component(localPos, size),
             _sliderLine(sf::Vector2f(SLIDER_LINE_WIDTH, size.y)),
             _sliderBar(sf::Vector2f(size.x, SLIDER_BAR_HEIGHT)),
             _text(Utils::toString(value), Font::defaultFont),
@@ -97,15 +96,17 @@ class Slider : public Component, public IMouseEventHandler {
          *
          * \p w - The window to render to
          */
-        void render(sf::RenderWindow& w) override {
+        void renderComponent(sf::RenderWindow& w) override {
             if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_value));
             else                                   _text.setString(Utils::toString(_value));
 
-            float barHeight = float(_value - _min) / (_max - _min) * _boundingBox.height;
+            auto boundingBox = getBounds();
 
-            _sliderLine.setPosition(sf::Vector2f(_boundingBox.left, _boundingBox.top) + sf::Vector2f(_boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
-            _sliderBar.setPosition (sf::Vector2f(_boundingBox.left, _boundingBox.top) + sf::Vector2f(0, _boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
-            _text.setPosition      (sf::Vector2f(_boundingBox.left, _boundingBox.top) + sf::Vector2f(_boundingBox.width / 2 - Utils::textWidth(_text) / 2, _boundingBox.height + SLIDER_BAR_HEIGHT)); //Centers the text horizontally at the bottom
+            float barHeight = float(_value - _min) / (_max - _min) * boundingBox.height;
+
+            _sliderLine.setPosition(sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
+            _sliderBar.setPosition (sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(0, boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
+            _text.setPosition      (sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(boundingBox.width / 2 - Utils::textWidth(_text) / 2, boundingBox.height + SLIDER_BAR_HEIGHT)); //Centers the text horizontally at the bottom
 
             w.draw(_sliderLine);
             w.draw(_sliderBar);
@@ -123,7 +124,7 @@ class Slider : public Component, public IMouseEventHandler {
          * \p e - The mouse button event representing the click
          */
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override {
-            if (_boundingBox.contains(sf::Vector2i(e.x, e.y))) {
+            if (getBounds().contains(sf::Vector2i(e.x, e.y))) {
                 switch(e.button) {
                     case sf::Mouse::Button::Left:
                         _capturedMouse = true;
@@ -164,14 +165,14 @@ class Slider : public Component, public IMouseEventHandler {
          */
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override {
             if (_capturedMouse) {
-
-                if (e.y < _boundingBox.top) {
+                auto boundingBox = getBounds();
+                if (e.y < getBounds().top) {
                     _value = _max;
-                } else if (e.y > _boundingBox.top + _boundingBox.height) {
+                } else if (e.y > boundingBox.top + boundingBox.height) {
                     _value = _min;
                 } else {
-                    float scale = (_max - _min) / float(_boundingBox.height);
-                    int distFromBottom = ((_boundingBox.top + _boundingBox.height) - e.y);
+                    float scale = (_max - _min) / float(boundingBox.height);
+                    int distFromBottom = ((boundingBox.top + boundingBox.height) - e.y);
 
                     T valueFromMouse =  distFromBottom * scale + _min;
 

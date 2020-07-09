@@ -54,4 +54,8 @@ class RenderEngine : public IResizeEventHandler {
 
         void useLightingShader();
         void useNoLightingShader();
+
+        glm::vec3& getLightPos();
+        glm::vec4& getLightAmbient();
+        glm::vec4& getLightDiffuse();
 };
