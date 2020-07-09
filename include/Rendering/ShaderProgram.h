@@ -9,7 +9,7 @@
 
 class ShaderProgram {
 
-    std::optional<unsigned int> _id;
+    std::optional<GLint> _id;
 
     std::string _vertexFilename,
                 _fragmentFilename;

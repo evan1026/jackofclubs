@@ -22,7 +22,7 @@ std::string Shader::getCode() {
         ss << inputStream.rdbuf();
         inputStream.close();
         return ss.str();
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure& e) {
         throw ShaderCompilationFailureException(_fileName, "Could not read from file");
     }
 }

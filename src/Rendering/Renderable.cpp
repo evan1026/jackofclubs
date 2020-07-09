@@ -37,29 +37,29 @@ struct VertexAttribsCalculator {
     template<typename T>
     void addVertexAttrib(int count);
 
-    template<>
-    void addVertexAttrib<GLbyte>(int count) { addVertexAttrib<GLbyte>(GL_BYTE, count); }
-    template<>
-    void addVertexAttrib<GLubyte>(int count) { addVertexAttrib<GLubyte>(GL_UNSIGNED_BYTE, count); }
-    template<>
-    void addVertexAttrib<GLshort>(int count) { addVertexAttrib<GLshort>(GL_SHORT, count); }
-    template<>
-    void addVertexAttrib<GLushort>(int count) { addVertexAttrib<GLushort>(GL_UNSIGNED_SHORT, count); }
-    template<>
-    void addVertexAttrib<GLint>(int count) { addVertexAttrib<GLint>(GL_INT, count); }
-    template<>
-    void addVertexAttrib<GLuint>(int count) { addVertexAttrib<GLuint>(GL_UNSIGNED_INT, count); }
-    template<>
-    void addVertexAttrib<GLfloat>(int count) { addVertexAttrib<GLfloat>(GL_FLOAT, count); }
-    template<>
-    void addVertexAttrib<GLdouble>(int count) { addVertexAttrib<GLdouble>(GL_DOUBLE, count); }
-
     void send() {
         for (VertexAttrib attrib : attribs) {
             glVertexAttribPointer(attrib.index, attrib.count, attrib.type, GL_FALSE /* normalized */, totalSize, attrib.offset);
         }
     }
 };
+
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLbyte>(int count) { addVertexAttrib<GLbyte>(GL_BYTE, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLubyte>(int count) { addVertexAttrib<GLubyte>(GL_UNSIGNED_BYTE, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLshort>(int count) { addVertexAttrib<GLshort>(GL_SHORT, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLushort>(int count) { addVertexAttrib<GLushort>(GL_UNSIGNED_SHORT, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLint>(int count) { addVertexAttrib<GLint>(GL_INT, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLuint>(int count) { addVertexAttrib<GLuint>(GL_UNSIGNED_INT, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLfloat>(int count) { addVertexAttrib<GLfloat>(GL_FLOAT, count); }
+template<>
+void VertexAttribsCalculator::addVertexAttrib<GLdouble>(int count) { addVertexAttrib<GLdouble>(GL_DOUBLE, count); }
 
 void Renderable::initBuffer() {
     glGenVertexArrays(1, &_vao);
