@@ -32,7 +32,10 @@ class Menu : public Component {
         sf::RectangleShape _box;
         Type _type;
 
-        void center(sf::RenderWindow& w);
+        void center(const sf::RenderWindow& w);
+
+    protected:
+        void renderComponent(sf::RenderWindow& w) override;
 
     public:
         /*! Pointer to next menu for menu chaining */
@@ -41,10 +44,12 @@ class Menu : public Component {
         Menu(sf::Vector2f size, Type type);
         virtual ~Menu() = default;
 
-        void renderComponent(sf::RenderWindow& w) override;
+        virtual void layout(const sf::RenderWindow& w) override;
 
         /*! \callergraph
          * Returns what type of Menu this one is
          */
         Type getType() { return _type; }
+
+        virtual bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
 };

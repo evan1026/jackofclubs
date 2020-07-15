@@ -17,11 +17,11 @@ class EscapeMenu : public Menu {
 
     void buttonCallback(const std::string& s);
 
-    protected:
-        void renderComponent(sf::RenderWindow& w) override;
-
     public:
         EscapeMenu(int width, int height, Game& g, Screen& screen);
+        virtual ~EscapeMenu() = default;
+
+        virtual void layout(const sf::RenderWindow& w) override;
 
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;
         bool handleResize(const sf::Event::SizeEvent& e) override;

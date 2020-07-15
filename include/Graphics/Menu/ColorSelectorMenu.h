@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Graphics/Components/Rectangle.h"
 #include "Graphics/Components/Slider.h"
+#include "Graphics/Components/Text.h"
 #include "Graphics/Menu/Menu.h"
 
 /*!
@@ -27,16 +29,17 @@ class ColorSelectorMenu : public Menu {
     std::shared_ptr<Slider<sf::Uint8>> _greenSlider;
     std::shared_ptr<Slider<sf::Uint8>> _blueSlider;
 
-    sf::RectangleShape _colorRect;
+    std::shared_ptr<Rectangle> _colorRect;
 
-    sf::Text _redText;   // Says "Red" above the red slider
-    sf::Text _greenText; // Says "Green" above the green slider
-    sf::Text _blueText;  // Says "Blue" above the blue slider
-    sf::Text _titleText; // Says "Color Selector" up at the top
+    std::shared_ptr<Text> _redText;   // Says "Red" above the red slider
+    std::shared_ptr<Text> _greenText; // Says "Green" above the green slider
+    std::shared_ptr<Text> _blueText;  // Says "Blue" above the blue slider
+    std::shared_ptr<Text> _titleText; // Says "Color Selector" up at the top
 
     protected:
-        void renderComponent(sf::RenderWindow& w) override;
+        virtual void layout(const sf::RenderWindow& w) override;
 
     public:
         ColorSelectorMenu(sf::Color& color);
+        virtual ~ColorSelectorMenu() = default;
 };

@@ -20,7 +20,7 @@ Menu::Menu(sf::Vector2f size, Type type) : Component(sf::Vector2i(size)), _box(s
  *
  * \p w - the window to center on
  */
-void Menu::center(sf::RenderWindow& w) {
+void Menu::center(const sf::RenderWindow& w) {
     _box.setSize(sf::Vector2f(getSize()));
 
     sf::Vector2u wsize = w.getSize();
@@ -38,6 +38,17 @@ void Menu::center(sf::RenderWindow& w) {
  * \p w - the window for sfml calls (used)
  */
 void Menu::renderComponent(sf::RenderWindow& w) {
-    center(w);
     w.draw(_box);
+}
+
+void Menu::layout(const sf::RenderWindow& w) {
+    Component::layout(w);
+    center(w);
+}
+
+bool Menu::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
+    // Return value is whether the event has been fully handled, which it has been as long as
+    // it's within the bounds of the menu
+    Component::handleMouseButtonPressed(e);
+    return getBounds().contains(sf::Vector2i(e.x, e.y));
 }

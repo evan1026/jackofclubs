@@ -379,6 +379,7 @@ void WorldScreen::render(RenderEngine& re, sf::RenderWindow& w) {
     // And draw the menu if there is one
     if (_activeMenu != nullptr) {
         w.pushGLStates();
+        _activeMenu->layout(w);
         _activeMenu->render(re, w);
         w.popGLStates();
     }

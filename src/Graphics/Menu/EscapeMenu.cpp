@@ -34,9 +34,8 @@ EscapeMenu::EscapeMenu(int width, int height, Game& g, Screen& screen) :
     add(_settingsButton);
 }
 
-/*! \callergraph */
-void EscapeMenu::renderComponent(sf::RenderWindow& w) {
-    Menu::renderComponent(w);
+void EscapeMenu::layout(const sf::RenderWindow& w) {
+    Menu::layout(w);
 
     sf::Vector2i quitSize = _quitButton->getSize();
     sf::Vector2i settingsSize = _settingsButton->getSize();

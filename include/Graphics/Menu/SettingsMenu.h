@@ -9,9 +9,6 @@ class SettingsMenu : public Menu {
     //Slider<float> _lightPosYSlider;
     //Slider<float> _lightPosZSlider;
 
-    protected:
-        void renderComponent(sf::RenderWindow& w) override;
-
     public:
         SettingsMenu();
 };

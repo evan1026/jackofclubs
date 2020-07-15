@@ -3,6 +3,8 @@
 #include <type_traits>
 
 #include "Graphics/Components/Component.h"
+#include "Graphics/Components/Rectangle.h"
+#include "Graphics/Components/Text.h"
 #include "Utils/Events/IMouseEventHandler.h"
 #include "Utils/Font.h"
 #include "Utils/Utils.h"
@@ -23,9 +25,9 @@ template<typename T>
 class Slider : public Component {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "Slider can only be contructed with number types!");
 
-    sf::RectangleShape _sliderLine;
-    sf::RectangleShape _sliderBar;
-    sf::Text _text;
+    std::shared_ptr<Rectangle> _sliderLine;
+    std::shared_ptr<Rectangle> _sliderBar;
+    std::shared_ptr<Text> _text;
 
     T _min;
     T _max;
@@ -49,68 +51,59 @@ class Slider : public Component {
          * \p size      - The length and width of the bounding box surrounding the slider.                                            <br>
          */
         Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& size) :
-            Component(localPos, size),
-            _sliderLine(sf::Vector2f(SLIDER_LINE_WIDTH, size.y)),
-            _sliderBar(sf::Vector2f(size.x, SLIDER_BAR_HEIGHT)),
-            _text(Utils::toString(value), Font::defaultFont),
+            Component(localPos, size, false /*childrenAllowed*/),
+            _sliderLine(std::make_shared<Rectangle>(sf::Vector2i(SLIDER_LINE_WIDTH, size.y))),
+            _sliderBar(std::make_shared<Rectangle>(sf::Vector2i(size.x, SLIDER_BAR_HEIGHT))),
+            _text(std::make_shared<Text>(sf::Vector2i(0,0), Utils::toString(value))),
             _min(min),
             _max(max),
             _value(value)
         {
-            _sliderLine.setFillColor(sf::Color(200, 200, 200));
-            _sliderBar.setFillColor(sf::Color::White);
+            forceAdd(_sliderLine);
+            forceAdd(_sliderBar);
+            forceAdd(_text);
+
+            _sliderLine->setFillColor(sf::Color(200, 200, 200));
+            _sliderBar->setFillColor(sf::Color::White);
 
             // Next two loops make sure the text is small enough to fit
             // We just assume that if the min and max fit, that should be small enough,
             // however there are notable cases where that might not apply.
             // Fix this if the issue arises.
-            int charSize = 30;
+            int charSize = _text->getFontSize();
 
-            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_max));
-            else                                   _text.setString(Utils::toString(_max));
+            if (std::is_same<T, sf::Uint8>::value) _text->setString(Utils::toString((int)_max));
+            else                                   _text->setString(Utils::toString(_max));
 
-            _text.setCharacterSize(charSize);
-            while (Utils::textWidth(_text) > _sliderBar.getSize().x) {
+            _text->setFontSize(charSize);
+            while (_text->textWidth() > _sliderBar->getSize().x) {
                 charSize--;
-                _text.setCharacterSize(charSize);
+                _text->setFontSize(charSize);
             }
 
-            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_min));
-            else                                   _text.setString(Utils::toString(_min));
+            if (std::is_same<T, sf::Uint8>::value) _text->setString(Utils::toString((int)_min));
+            else                                   _text->setString(Utils::toString(_min));
 
-            _text.setCharacterSize(charSize);
-            while (Utils::textWidth(_text) > _sliderBar.getSize().x) {
+            _text->setFontSize(charSize);
+            while (_text->textWidth() > _sliderBar->getSize().x) {
                 charSize--;
-                _text.setCharacterSize(charSize);
+                _text->setFontSize(charSize);
             }
         }
 
-        /*! \callergraph
-         *
-         * Renders the slider to the window.
-         *
-         * First, it calculates where the bar should be based on the value of the data
-         * relative to the min and max value. Note that the bar's position has nothing
-         * to do with the mouse's position, and it assumes that the value has been adjusted
-         * such that the bar will be in the right place.
-         *
-         * \p w - The window to render to
-         */
-        void renderComponent(sf::RenderWindow& w) override {
-            if (std::is_same<T, sf::Uint8>::value) _text.setString(Utils::toString((int)_value));
-            else                                   _text.setString(Utils::toString(_value));
+        virtual void layout(const sf::RenderWindow& w) override {
+            Component::layout(w);
+
+            if (std::is_same<T, sf::Uint8>::value) _text->setString(Utils::toString((int)_value));
+            else                                   _text->setString(Utils::toString(_value));
 
             auto boundingBox = getBounds();
 
             float barHeight = float(_value - _min) / (_max - _min) * boundingBox.height;
 
-            _sliderLine.setPosition(sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
-            _sliderBar.setPosition (sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(0, boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
-            _text.setPosition      (sf::Vector2f(boundingBox.left, boundingBox.top) + sf::Vector2f(boundingBox.width / 2 - Utils::textWidth(_text) / 2, boundingBox.height + SLIDER_BAR_HEIGHT)); //Centers the text horizontally at the bottom
-
-            w.draw(_sliderLine);
-            w.draw(_sliderBar);
-            w.draw(_text);
+            _sliderLine->setLocalPosition(sf::Vector2i(boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
+            _sliderBar->setLocalPosition (sf::Vector2i(0, boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
+            _text->setLocalPosition(sf::Vector2i(boundingBox.width / 2 - _text->textWidth() / 2, boundingBox.height + SLIDER_BAR_HEIGHT)); //Centers the text horizontally at the bottom
         }
 
         /*! \callergraph

@@ -3,6 +3,8 @@
 #include <functional>
 
 #include "Graphics/Components/Component.h"
+#include "Graphics/Components/Rectangle.h"
+#include "Graphics/Components/Text.h"
 #include "Utils/Events/IMouseEventHandler.h"
 
 using ButtonFunction = std::function<void(const std::string&)>;
@@ -14,8 +16,9 @@ class Button : public Component {
 
     ButtonFunction _function;
     std::string _name;
-    std::string _text;
-    bool _mouseOver;
+
+    std::shared_ptr<Rectangle> _rect;
+    std::shared_ptr<Text> _text;
 
     public:
         /*! \callergraph
@@ -27,14 +30,21 @@ class Button : public Component {
          * \p text      - The text to display on the button                                                                                                                 <br>
          */
         Button(const sf::Vector2i& pos, const sf::Vector2i& size, ButtonFunction f, const std::string& name, const std::string& text) :
-            Component(pos, size),
+            Component(pos, size, false /*childrenAllowed*/),
             _function(f),
             _name(name),
-            _text(text),
-            _mouseOver(false)
-            {}
+            _rect(std::make_shared<Rectangle>(sf::Vector2i(0,0), size)),
+            _text(std::make_shared<Text>(sf::Vector2i(0,0), text))
+            {
+                forceAdd(_rect);
+                forceAdd(_text);
+                _rect->setFillColor(sf::Color::White);
+                _text->setFillColor(sf::Color::Black);
+            }
 
-        void renderComponent(sf::RenderWindow& w) override;
+        virtual ~Button() = default;
+
+        virtual void layout(const sf::RenderWindow& w) override;
 
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override;
         bool handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) override;

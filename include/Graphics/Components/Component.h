@@ -33,6 +33,8 @@ class Component : public Renderable, public IMouseEventHandler, public IKeyboard
         /*! The position of the component relative to its parent */
         sf::Vector2i _localPos;
 
+        bool _childrenAllowed;
+
         std::vector<std::shared_ptr<Component>> _children;
 
         void setGlobalPosition(const sf::Vector2i& pos);
@@ -50,12 +52,15 @@ class Component : public Renderable, public IMouseEventHandler, public IKeyboard
         }
 
     protected:
-        virtual void renderComponent(sf::RenderWindow& w) = 0;
+        virtual void renderComponent(sf::RenderWindow& w);
+
+        void forceAdd(std::shared_ptr<Component>);
+        std::shared_ptr<Component> forceRemove(std::shared_ptr<Component>);
 
     public:
-        Component();
-        Component(const sf::Vector2i& localPos, const sf::Vector2i& size);
-        explicit Component(const sf::Vector2i& size);
+        Component(bool children = true);
+        Component(const sf::Vector2i& localPos, const sf::Vector2i& size, bool children = true);
+        explicit Component(const sf::Vector2i& size, bool children = true);
 
         virtual ~Component() = default;
 
@@ -66,6 +71,7 @@ class Component : public Renderable, public IMouseEventHandler, public IKeyboard
          * \p w - sf::RenderWindow to render to
          */
         virtual void render(RenderEngine&, sf::RenderWindow& w) override;
+        virtual void layout(const sf::RenderWindow& w);
 
         void setSize(const sf::Vector2i& size);
         void setLocalPosition(const sf::Vector2i& pos);

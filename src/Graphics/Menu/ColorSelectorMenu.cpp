@@ -26,66 +26,54 @@ ColorSelectorMenu::ColorSelectorMenu(sf::Color& color) :
     _redSlider  (std::make_shared<Slider<sf::Uint8>>(0, 255, color.r, sf::Vector2i(START_X, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
     _greenSlider(std::make_shared<Slider<sf::Uint8>>(0, 255, color.g, sf::Vector2i(START_X + SPACER + SLIDER_WIDTH, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
     _blueSlider (std::make_shared<Slider<sf::Uint8>>(0, 255, color.b, sf::Vector2i(START_X + 2 * SPACER + 2 * SLIDER_WIDTH, START_Y), sf::Vector2i(SLIDER_WIDTH, SLIDER_HEIGHT))),
-    _colorRect(sf::Vector2f(COLOR_RECT_SIZE, COLOR_RECT_SIZE)),
-    _redText  ("Red",   Font::defaultFont),
-    _greenText("Green", Font::defaultFont),
-    _blueText ("Blue",  Font::defaultFont),
-    _titleText("Color Selector", Font::defaultFont)
+    _colorRect(std::make_shared<Rectangle>(sf::Vector2i(COLOR_RECT_SIZE, COLOR_RECT_SIZE))),
+    _redText  (std::make_shared<Text>(sf::Vector2i(0,0), "Red")),
+    _greenText(std::make_shared<Text>(sf::Vector2i(0,0), "Green")),
+    _blueText (std::make_shared<Text>(sf::Vector2i(0,0), "Blue")),
+    _titleText(std::make_shared<Text>(sf::Vector2i(0,0), "Color Selector"))
 {
-    _redText.setCharacterSize(COLOR_TEXT_SIZE);
-    _greenText.setCharacterSize(COLOR_TEXT_SIZE);
-    _blueText.setCharacterSize(COLOR_TEXT_SIZE);
-    _titleText.setCharacterSize(TITLE_TEXT_SIZE);
+    _redText->setFontSize(COLOR_TEXT_SIZE);
+    _greenText->setFontSize(COLOR_TEXT_SIZE);
+    _blueText->setFontSize(COLOR_TEXT_SIZE);
+    _titleText->setFontSize(TITLE_TEXT_SIZE);
 
     add(_redSlider);
     add(_greenSlider);
     add(_blueSlider);
+    add(_colorRect);
+    add(_redText);
+    add(_greenText);
+    add(_blueText);
+    add(_titleText);
 }
 
-/*! \callergraph
- *
- * Recalculates the position of the children and draws them to the screen.
- * Note that this function is called from Menu::render(), which handles
- * the rest of the drawing, so we only need to call w.draw() on all of
- * our components (Slider::render() does this automatically)
- *
- * \p w - the window to draw to
- */
-void ColorSelectorMenu::renderComponent(sf::RenderWindow& w) {
-    Menu::renderComponent(w);
+void ColorSelectorMenu::layout(const sf::RenderWindow& w) {
+    Menu::layout(w);
 
     // Get our position...
     sf::IntRect bounds = getBounds();
-    sf::Vector2i pos(bounds.left, bounds.top);
 
     {
         // Now grab the last slider's position and make the color preview
         // be to the right of it (3 SPACER's away)
-        sf::Vector2i blueSliderPos = _blueSlider->getGlobalPosition();
-        _colorRect.setPosition(sf::Vector2f(blueSliderPos.x, blueSliderPos.y)
-                + sf::Vector2f(SLIDER_WIDTH + 3 * SPACER, SLIDER_HEIGHT / 2 - COLOR_RECT_SIZE / 2));
-        _colorRect.setFillColor(sf::Color(_redRef, _greenRef, _blueRef)); // Gotta make sure the preview has the right color
+        sf::Vector2i blueSliderPos = _blueSlider->getLocalPosition();
+        _colorRect->setLocalPosition(blueSliderPos + sf::Vector2i(SLIDER_WIDTH + 3 * SPACER, SLIDER_HEIGHT / 2 - COLOR_RECT_SIZE / 2));
+        _colorRect->setFillColor(sf::Color(_redRef, _greenRef, _blueRef)); // Gotta make sure the preview has the right color
     }
 
     {
         // Now we grab the slider positions...
-        sf::Vector2i redPos = _redSlider->getGlobalPosition();
-        sf::Vector2i greenPos = _greenSlider->getGlobalPosition();
-        sf::Vector2i bluePos = _blueSlider->getGlobalPosition();
+        sf::Vector2i redPos = _redSlider->getLocalPosition();
+        sf::Vector2i greenPos = _greenSlider->getLocalPosition();
+        sf::Vector2i bluePos = _blueSlider->getLocalPosition();
 
         // ...and center the text boxes under them
-        _redText.setPosition  (redPos.x   + SLIDER_WIDTH / 2 - Utils::textWidth(_redText)   / 2, redPos.y   - 25);
-        _greenText.setPosition(greenPos.x + SLIDER_WIDTH / 2 - Utils::textWidth(_greenText) / 2, greenPos.y - 25);
-        _blueText.setPosition (bluePos.x  + SLIDER_WIDTH / 2 - Utils::textWidth(_blueText)  / 2, bluePos.y  - 25);
+        _redText->setLocalPosition  (sf::Vector2i(redPos.x   + SLIDER_WIDTH / 2 - _redText->textWidth()   / 2, redPos.y   - 25));
+        _greenText->setLocalPosition(sf::Vector2i(greenPos.x + SLIDER_WIDTH / 2 - _greenText->textWidth() / 2, greenPos.y - 25));
+        _blueText->setLocalPosition (sf::Vector2i(bluePos.x  + SLIDER_WIDTH / 2 - _blueText->textWidth()  / 2, bluePos.y  - 25));
     }
 
     // Last calculation: center the title text at the top
-    _titleText.setPosition(pos.x + (float)bounds.width / 2 - Utils::textWidth(_titleText) / 2, pos.y + 25);
+    _titleText->setLocalPosition(sf::Vector2i((float)bounds.width / 2 - _titleText->textWidth() / 2, 25));
 
-    // And draw the rest of the components
-    w.draw(_colorRect);
-    w.draw(_redText);
-    w.draw(_greenText);
-    w.draw(_blueText);
-    w.draw(_titleText);
 }

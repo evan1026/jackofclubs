@@ -3,4 +3,6 @@ MESSAGE("Adding ${CURR_DIR}")
 
 set(SOURCES "${SOURCES} ${CURR_DIR}/Component.cpp
                         ${CURR_DIR}/Button.cpp
+                        ${CURR_DIR}/Rectangle.cpp
+                        ${CURR_DIR}/Text.cpp
                         ${CURR_DIR}/HBox.cpp" CACHE STRING "Sources for project" FORCE)

@@ -3,7 +3,11 @@
 
 /*! \callergraph */
 bool Button::handleMouseMoved(const sf::Event::MouseMoveEvent& e) {
-    _mouseOver = getBounds().contains(e.x, e.y);
+    if (getBounds().contains(e.x, e.y)) {
+        _rect->setFillColor(sf::Color(200, 200, 200));
+    } else {
+        _rect->setFillColor(sf::Color::White);
+    }
     return false;
 }
 
@@ -17,26 +21,13 @@ bool Button::handleMouseButtonPressed(const sf::Event::MouseButtonEvent& e) {
     return false;
 }
 
-/*! \callergraph */
-void Button::renderComponent(sf::RenderWindow& w) {
+void Button::layout(const sf::RenderWindow& w) {
+    Component::layout(w);
+
     sf::Vector2i size = getSize();
-    sf::RectangleShape rect(sf::Vector2f(size.x, size.y));
+    _rect->setSize(size);
+    _rect->setLocalPosition(sf::Vector2i(0,0));
 
-    if (_mouseOver) {
-        rect.setFillColor(sf::Color(200, 200, 200));
-    } else {
-        rect.setFillColor(sf::Color::White);
-    }
-
-    sf::Vector2i pos = getGlobalPosition();
-    rect.setPosition(pos.x, pos.y);
-    w.draw(rect);
-
-
-    sf::Text text(_text, Font::defaultFont);
-    text.setFillColor(sf::Color::Black);
-    sf::FloatRect textSize = text.getGlobalBounds();
-    text.setOrigin(textSize.left + textSize.width / 2, textSize.top + textSize.height / 2);
-    text.setPosition(pos.x + size.x / 2, pos.y + size.y / 2);
-    w.draw(text);
+    sf::Vector2i textSize = _text->getSize();
+    _text->setLocalPosition(sf::Vector2i(size.x / 2.f - textSize.x / 2.f, size.y / 2.f - textSize.y / 2.f));
 }

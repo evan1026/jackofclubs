@@ -21,12 +21,4 @@ struct Utils {
         return ss.str();
     }
 
-    /*!
-     * Gets the width of an sf::Text
-     */
-    static float textWidth(const sf::Text& text) {
-        sf::Vector2f start = text.findCharacterPos(0);
-        sf::Vector2f end   = text.findCharacterPos(std::numeric_limits<std::size_t>::max());
-        return end.x - start.x;
-    }
 };

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <stdexcept>
 
 #include "Graphics/Components/Component.h"
 
@@ -10,17 +11,19 @@
  * \p localPos  - The position of the component relative to its parent                              <br>
  * \p size      - The length and width of the rectangular bounding box surrounding the component    <br>
  */
-Component::Component(const sf::Vector2i& localPos, const sf::Vector2i& size) :
+Component::Component(const sf::Vector2i& localPos, const sf::Vector2i& size, bool children) :
     _boundingBox(localPos, size),
-    _localPos(localPos)
+    _localPos(localPos),
+    _childrenAllowed(children)
 {}
 
-Component::Component(const sf::Vector2i& size) :
+Component::Component(const sf::Vector2i& size, bool children) :
     _boundingBox(sf::Vector2i(0,0), size),
-    _localPos(sf::Vector2i(0,0))
+    _localPos(sf::Vector2i(0,0)),
+    _childrenAllowed(children)
 {}
 
-Component::Component() : Component(sf::Vector2i(0,0)) {}
+Component::Component(bool children) : Component(sf::Vector2i(0,0)) {}
 
 /*! \callergraph
  *
@@ -113,11 +116,11 @@ const sf::Rect<int> Component::getBounds() const {
     return _boundingBox;
 }
 
-void Component::add(std::shared_ptr<Component> component) {
+void Component::forceAdd(std::shared_ptr<Component> component) {
     _children.push_back(component);
 }
 
-std::shared_ptr<Component> Component::remove(std::shared_ptr<Component> component) {
+std::shared_ptr<Component> Component::forceRemove(std::shared_ptr<Component> component) {
     auto pos = std::find(_children.begin(), _children.end(), component);
     if (pos != _children.end()) {
         _children.erase(pos);
@@ -126,11 +129,35 @@ std::shared_ptr<Component> Component::remove(std::shared_ptr<Component> componen
     return nullptr;
 }
 
+void Component::add(std::shared_ptr<Component> component) {
+    if (_childrenAllowed) {
+        forceAdd(component);
+    } else {
+        throw std::invalid_argument("Trying to add a child component when doing so is disallowed");
+    }
+}
+
+std::shared_ptr<Component> Component::remove(std::shared_ptr<Component> component) {
+    if (_childrenAllowed) {
+        return forceRemove(component);
+    } else {
+        throw std::invalid_argument("Trying to remove a child component when doing so is disallowed");
+    }
+}
+
 void Component::render(RenderEngine& e, sf::RenderWindow& w) {
     renderComponent(w);
     for (std::shared_ptr<Component> comp : _children) {
         comp->setParentPosition(getGlobalPosition());
         comp->render(e, w);
+    }
+}
+
+void Component::renderComponent(sf::RenderWindow& w) {}
+
+void Component::layout(const sf::RenderWindow& w) {
+    for (auto child : _children) {
+        child->layout(w);
     }
 }
 
