@@ -10,12 +10,13 @@ Text::Text(sf::Vector2i localPos, unsigned int fontSize, const sf::String& text,
 }
 
 void Text::renderComponent(sf::RenderWindow& w) {
+    sf::FloatRect textSize = _theText.getLocalBounds();
+    _theText.setOrigin(textSize.left + textSize.width / 2, textSize.top + textSize.height / 2);
+    _theText.setPosition(sf::Vector2f(getGlobalPosition()) + sf::Vector2f(textSize.width / 2, textSize.height / 2));
     w.draw(_theText);
 }
 
 void Text::layout(const sf::RenderWindow& w) {
-    _theText.setPosition(sf::Vector2f(getGlobalPosition()));
-
     sf::FloatRect textBounds = _theText.getGlobalBounds();
     setSize(sf::Vector2i(textBounds.width, textBounds.height));
 }
