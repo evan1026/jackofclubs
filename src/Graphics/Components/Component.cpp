@@ -36,6 +36,10 @@ void Component::setSize(const sf::Vector2i& size) {
     _boundingBox.height = size.y;
 }
 
+void Component::setSize(int x, int y) {
+    setSize(sf::Vector2i(x, y));
+}
+
 /*! \callergraph
  *
  * Sets the global position of the component. This is the
@@ -60,6 +64,10 @@ void Component::setLocalPosition(const sf::Vector2i& pos) {
     sf::Vector2i parentPos = getParentPosition();
     _localPos = pos;
     setGlobalPosition(parentPos + _localPos);
+}
+
+void Component::setLocalPosition(int x, int y) {
+    setLocalPosition(sf::Vector2i(x, y));
 }
 
 /*! \callergraph

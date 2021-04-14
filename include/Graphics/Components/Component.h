@@ -57,6 +57,10 @@ class Component : public Renderable, public IMouseEventHandler, public IKeyboard
         void forceAdd(std::shared_ptr<Component>);
         std::shared_ptr<Component> forceRemove(std::shared_ptr<Component>);
 
+        const std::vector<std::shared_ptr<Component>>& getChildren() const {
+            return _children;
+        }
+
     public:
         Component(bool children = true);
         Component(const sf::Vector2i& localPos, const sf::Vector2i& size, bool children = true);
@@ -74,7 +78,9 @@ class Component : public Renderable, public IMouseEventHandler, public IKeyboard
         virtual void layout(const sf::RenderWindow& w);
 
         void setSize(const sf::Vector2i& size);
+        void setSize(int x, int y);
         void setLocalPosition(const sf::Vector2i& pos);
+        void setLocalPosition(int x, int y);
 
         const sf::Vector2i getSize() const;
         const sf::Vector2i getLocalPosition() const;
