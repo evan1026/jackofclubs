@@ -5,9 +5,9 @@
 
 SettingsMenu::SettingsMenu() : Menu(sf::Vector2f(WIDTH, HEIGHT), Menu::Type::Settings),
     lightPos{0., 0., 0.}, 
-    _lightPosXSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[0], sf::Vector2i(0,0), sf::Vector2i(50,50))),
-    _lightPosYSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[1], sf::Vector2i(0,0), sf::Vector2i(50,50))),
-    _lightPosZSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[2], sf::Vector2i(0,0), sf::Vector2i(50,50))),
+    _lightPosXSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[0], sf::Vector2i(0,0), sf::Vector2i(200,50), Slider<float>::BAR_DIRECTION::HORIZONTAL, Slider<float>::TEXT_LOCATION::RIGHT)),
+    _lightPosYSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[1], sf::Vector2i(0,0), sf::Vector2i(200,50), Slider<float>::BAR_DIRECTION::HORIZONTAL, Slider<float>::TEXT_LOCATION::RIGHT)),
+    _lightPosZSlider(std::make_shared<Slider<float>>(-1., 1., lightPos[2], sf::Vector2i(0,0), sf::Vector2i(200,50), Slider<float>::BAR_DIRECTION::HORIZONTAL, Slider<float>::TEXT_LOCATION::RIGHT)),
     _lightPosXText(std::make_shared<Text>(sf::Vector2i(0,0), "Light Position X Value:")),
     _lightPosYText(std::make_shared<Text>(sf::Vector2i(0,0), "Light Position Y Value:")),
     _lightPosZText(std::make_shared<Text>(sf::Vector2i(0,0), "Light Position Z Value:")),

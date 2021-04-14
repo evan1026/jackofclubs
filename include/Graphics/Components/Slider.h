@@ -25,16 +25,26 @@ template<typename T>
 class Slider : public Component {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "Slider can only be contructed with number types!");
 
-    std::shared_ptr<Rectangle> _sliderLine;
-    std::shared_ptr<Rectangle> _sliderBar;
-    std::shared_ptr<Text> _text;
+    public:
 
-    T _min;
-    T _max;
+        enum class BAR_DIRECTION { VERTICAL, HORIZONTAL };
+        enum class TEXT_LOCATION { ABOVE, BELOW, LEFT, RIGHT };
 
-    T& _value;
+    private:
 
-    bool _capturedMouse = false;
+        std::shared_ptr<Rectangle> _sliderLine;
+        std::shared_ptr<Rectangle> _sliderBar;
+        std::shared_ptr<Text> _text;
+
+        T _min;
+        T _max;
+
+        T& _value;
+
+        bool _capturedMouse = false;
+
+        BAR_DIRECTION _barDir;
+        TEXT_LOCATION _textLoc;
 
     public:
 
@@ -50,15 +60,42 @@ class Slider : public Component {
          * \p localPos  - The slider's position relative to its parent.                                                               <br>
          * \p size      - The length and width of the bounding box surrounding the slider.                                            <br>
          */
-        Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& size) :
+        Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& size) : Slider(min, max, value, localPos, size, BAR_DIRECTION::VERTICAL, TEXT_LOCATION::BELOW) {}
+
+        /*! \callergraph
+         *
+         * Constructs a new slider.
+         * Mostly just sets up the graphical components and makes note of what data it will be modifying,
+         * and what range it can be in.
+         *
+         * \p min       - The lowest value that will be accepted. This will be the value when the slider is at the lowest point.      <br>
+         * \p max       - The largest value that will be accepted. This will be the value when the slider is at the highest point.    <br>
+         * \p value     - The data that the slider will modify.                                                                       <br>
+         * \p localPos  - The slider's position relative to its parent.                                                               <br>
+         * \p size      - The length and width of the bounding box surrounding the slider.                                            <br>
+         * \p barDir    - The direction the bar goes
+         * \p textLoc   - The location for the text
+         */
+        Slider(T min, T max, T& value, const sf::Vector2i& localPos, const sf::Vector2i& size, BAR_DIRECTION barDir, TEXT_LOCATION textLoc) :
             Component(localPos, size, false /*childrenAllowed*/),
-            _sliderLine(std::make_shared<Rectangle>(sf::Vector2i(SLIDER_LINE_WIDTH, size.y))),
-            _sliderBar(std::make_shared<Rectangle>(sf::Vector2i(size.x, SLIDER_BAR_HEIGHT))),
+            _sliderLine(std::make_shared<Rectangle>(sf::Vector2i(size.x, size.y))),
+            _sliderBar(std::make_shared<Rectangle>(sf::Vector2i(size.x, size.y))),
             _text(std::make_shared<Text>(sf::Vector2i(0,0), Utils::toString(value))),
             _min(min),
             _max(max),
-            _value(value)
+            _value(value),
+            _barDir(barDir),
+            _textLoc(textLoc)
         {
+
+            if (_barDir == BAR_DIRECTION::VERTICAL) {
+                _sliderLine->setSize(SLIDER_LINE_WIDTH, size.y);
+                _sliderBar->setSize(size.x, SLIDER_BAR_HEIGHT);
+            } else {
+                _sliderLine->setSize(size.x, SLIDER_LINE_WIDTH);
+                _sliderBar->setSize(SLIDER_BAR_HEIGHT, size.y);
+            }
+
             forceAdd(_sliderLine);
             forceAdd(_sliderBar);
             forceAdd(_text);
@@ -76,7 +113,8 @@ class Slider : public Component {
             else                                   _text->setString(Utils::toString(_max));
 
             _text->setFontSize(charSize);
-            while (_text->textWidth() > _sliderBar->getSize().x) {
+            while (((_textLoc == TEXT_LOCATION::ABOVE || _textLoc == TEXT_LOCATION::BELOW) && _text->textWidth() > _sliderBar->getSize().x) ||
+                    ((_textLoc == TEXT_LOCATION::LEFT || _textLoc == TEXT_LOCATION::RIGHT) && _text->textHeight() > _sliderBar->getSize().y)) {
                 charSize--;
                 _text->setFontSize(charSize);
             }
@@ -85,7 +123,8 @@ class Slider : public Component {
             else                                   _text->setString(Utils::toString(_min));
 
             _text->setFontSize(charSize);
-            while (_text->textWidth() > _sliderBar->getSize().x) {
+            while (((_textLoc == TEXT_LOCATION::ABOVE || _textLoc == TEXT_LOCATION::BELOW) && _text->textWidth() > _sliderBar->getSize().x) ||
+                    ((_textLoc == TEXT_LOCATION::LEFT || _textLoc == TEXT_LOCATION::RIGHT) && _text->textHeight() > _sliderBar->getSize().y)) {
                 charSize--;
                 _text->setFontSize(charSize);
             }
@@ -99,10 +138,17 @@ class Slider : public Component {
 
             auto boundingBox = getBounds();
 
-            float barHeight = float(_value - _min) / (_max - _min) * boundingBox.height;
+            if (_barDir == BAR_DIRECTION::VERTICAL) {
+                float barHeight = float(_value - _min) / (_max - _min) * boundingBox.height;
 
-            _sliderLine->setLocalPosition(sf::Vector2i(boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
-            _sliderBar->setLocalPosition (sf::Vector2i(0, boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
+                _sliderLine->setLocalPosition(sf::Vector2i(boundingBox.width / 2 - SLIDER_LINE_WIDTH / 2, 0)); //Centers the line horizontally
+                _sliderBar->setLocalPosition (sf::Vector2i(0, boundingBox.height - barHeight - SLIDER_BAR_HEIGHT / 2)); //Centers the bar on the value
+            } else {
+                float barHeight = float(_max - _value) / (_max - _min) * boundingBox.width;
+
+                _sliderLine->setLocalPosition(sf::Vector2i(0, boundingBox.height / 2 - SLIDER_LINE_WIDTH / 2)); //Centers the line horizontally
+                _sliderBar->setLocalPosition (sf::Vector2i(boundingBox.width - barHeight - SLIDER_BAR_HEIGHT / 2, 0)); //Centers the bar on the value
+            }
             _text->setLocalPosition(sf::Vector2i(boundingBox.width / 2 - _text->textWidth() / 2, boundingBox.height + SLIDER_BAR_HEIGHT)); //Centers the text horizontally at the bottom
         }
 
@@ -159,20 +205,38 @@ class Slider : public Component {
         bool handleMouseMoved(const sf::Event::MouseMoveEvent& e) override {
             if (_capturedMouse) {
                 auto boundingBox = getBounds();
-                if (e.y < getBounds().top) {
-                    _value = _max;
-                } else if (e.y > boundingBox.top + boundingBox.height) {
-                    _value = _min;
+                if (_barDir == BAR_DIRECTION::VERTICAL) {
+                    if (e.y < boundingBox.top) {
+                        _value = _max;
+                    } else if (e.y > boundingBox.top + boundingBox.height) {
+                        _value = _min;
+                    } else {
+                        float scale = (_max - _min) / float(boundingBox.height);
+                        int distFromBottom = ((boundingBox.top + boundingBox.height) - e.y);
+
+                        T valueFromMouse =  distFromBottom * scale + _min;
+
+                        if (valueFromMouse < _min) valueFromMouse = _min;
+                        if (valueFromMouse > _max) valueFromMouse = _max;
+
+                        _value = valueFromMouse;
+                    }
                 } else {
-                    float scale = (_max - _min) / float(boundingBox.height);
-                    int distFromBottom = ((boundingBox.top + boundingBox.height) - e.y);
+                    if (e.x > boundingBox.left + boundingBox.width) {
+                        _value = _max;
+                    } else if (e.x < boundingBox.left) {
+                        _value = _min;
+                    } else {
+                        float scale = (_max - _min) / float(boundingBox.width);
+                        int distFromLeft = e.x - boundingBox.left;
 
-                    T valueFromMouse =  distFromBottom * scale + _min;
+                        T valueFromMouse =  distFromLeft * scale + _min;
 
-                    if (valueFromMouse < _min) valueFromMouse = _min;
-                    if (valueFromMouse > _max) valueFromMouse = _max;
+                        if (valueFromMouse < _min) valueFromMouse = _min;
+                        if (valueFromMouse > _max) valueFromMouse = _max;
 
-                    _value = valueFromMouse;
+                        _value = valueFromMouse;
+                    }
                 }
                 return true;
             }

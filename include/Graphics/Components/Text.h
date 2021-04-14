@@ -28,4 +28,5 @@ class Text : public Component {
         void setFontSize(unsigned int size);
         void setString(const sf::String& string);
         float textWidth();
+        float textHeight();
 };

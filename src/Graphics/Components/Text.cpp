@@ -50,3 +50,7 @@ float Text::textWidth() {
     sf::Vector2f end   = _theText.findCharacterPos(std::numeric_limits<std::size_t>::max());
     return end.x - start.x;
 }
+
+float Text::textHeight() {
+    return _theText.getLocalBounds().height;
+}
